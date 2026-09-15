@@ -1,9 +1,7 @@
 {
   "files.exclude": {
     "**/.artifacts": true,
-    "**/.windsurf": true,
-    "**/.claude": true,
-    "**/.agents": true,
+    "**/.idea": true,
     "**/tmp-cache": true
   }
 }
