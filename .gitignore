@@ -7,14 +7,19 @@ coverage/
 .env
 .env.local
 
-# Temporary Caches
+# Temporary Caches & AI folders
 tmp-cache/
 .tmp-cache-clean/
+.artifacts/
+.windsurf/
+.claude/
+.agents/
 *.log
 
 # IDE
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
 
 # Logs
 npm-debug.log*
