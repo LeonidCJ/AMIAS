@@ -1,7 +1,7 @@
 {
-  "name": "amias-textile-studio-backend",
+  "name": "amias-backend",
   "version": "1.0.0",
-  "description": "AMIAS Textile Studio Backend - Clean Architecture & DDD",
+  "description": "AMIAS Backend - Clean Architecture & DDD",
   "author": "LeonidCJ",
   "private": true,
   "license": "UNLICENSED",
