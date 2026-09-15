@@ -1,0 +1,66 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  OPERARIO
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(OPERARIO)
+  createdAt    DateTime @default(now())
+
+  @@map("users")
+}
+
+model ConcertEvent {
+  id        String   @id @default(uuid())
+  name      String
+  venue     String
+  capacity  Int
+  rate      Float    @default(0.004)
+  eventDate DateTime
+  createdAt DateTime @default(now())
+
+  @@map("concert_events")
+}
+
+model TextileCut {
+  id           String   @id @default(uuid())
+  name         String
+  grammageGsm  Int      @default(240)
+  description  String?
+  createdAt    DateTime @default(now())
+
+  @@map("textile_cuts")
+}
+
+model TextileColor {
+  id        String   @id @default(uuid())
+  name      String
+  hexCode   String
+  createdAt DateTime @default(now())
+
+  @@map("textile_colors")
+}
+
+model TextileSize {
+  id        String   @id @default(uuid())
+  label     String
+  chestCm   Int
+  lengthCm  Int
+  shoulderCm Int
+  heightRef String?
+  createdAt DateTime @default(now())
+
+  @@map("textile_sizes")
+}

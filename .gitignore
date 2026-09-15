@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+dist/
+coverage/
+
+# Environment variables
+.env
+.env.local
+
+# Temporary Caches
+tmp-cache/
+.tmp-cache-clean/
+*.log
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+logs/
