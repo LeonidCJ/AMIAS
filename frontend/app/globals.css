@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  color: #121212;
+  background-color: #ffffff;
+}
+
+.btn-dawn-primary {
+  background-color: #121212;
+  color: #ffffff;
+  border: 1px solid #121212;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-dawn-primary:hover {
+  background-color: #ffffff;
+  color: #121212;
+}
+
+.btn-dawn-secondary {
+  background-color: #ffffff;
+  color: #121212;
+  border: 1px solid #121212;
+  transition: all 0.2s ease;
+}
+
+.btn-dawn-secondary:hover {
+  background-color: #121212;
+  color: #ffffff;
+}
