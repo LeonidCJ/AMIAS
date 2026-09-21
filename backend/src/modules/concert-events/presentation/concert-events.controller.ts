@@ -8,7 +8,6 @@ import { Roles } from '../../auth/infrastructure/decorators/roles.decorator';
 import { UserRole } from '../../auth/domain/user.entity';
 
 @Controller('concert-events')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class ConcertEventsController {
   constructor(
     private readonly createConcertEventUseCase: CreateConcertEventUseCase,
@@ -16,6 +15,7 @@ export class ConcertEventsController {
   ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async create(@Body() dto: CreateConcertEventDto) {
     const event = await this.createConcertEventUseCase.execute(
@@ -40,7 +40,6 @@ export class ConcertEventsController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.OPERARIO)
   async findAll() {
     const events = await this.listActiveEventsUseCase.execute();
     return events.map((event) => ({

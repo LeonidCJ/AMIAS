@@ -12,7 +12,6 @@ import { Roles } from '../../auth/infrastructure/decorators/roles.decorator';
 import { UserRole } from '../../auth/domain/user.entity';
 
 @Controller('master-data')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class MasterDataController {
   constructor(
     private readonly createColorUseCase: CreateTextileColorUseCase,
@@ -22,6 +21,7 @@ export class MasterDataController {
   ) {}
 
   @Post('colors')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async createColor(@Body() dto: CreateTextileColorDto) {
     const color = await this.createColorUseCase.execute(dto.name, dto.hexCode);
@@ -37,6 +37,7 @@ export class MasterDataController {
   }
 
   @Post('cuts')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async createCut(@Body() dto: CreateTextileCutDto) {
     const cut = await this.createCutUseCase.execute(dto.name, dto.grammageGsm, dto.description);
@@ -53,6 +54,7 @@ export class MasterDataController {
   }
 
   @Post('sizes')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async createSize(@Body() dto: CreateTextileSizeDto) {
     const size = await this.createSizeUseCase.execute(
@@ -77,7 +79,6 @@ export class MasterDataController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.OPERARIO)
   async findAll() {
     const data = await this.listMasterDataUseCase.execute();
     return {
