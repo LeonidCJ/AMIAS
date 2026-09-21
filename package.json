@@ -10,6 +10,7 @@
     "dev:frontend": "pnpm --filter amias-frontend dev",
     "build:frontend": "pnpm --filter amias-frontend build",
     "prisma:push": "pnpm --filter amias-backend prisma:push",
-    "prisma:generate": "pnpm --filter amias-backend prisma:generate"
+    "prisma:generate": "pnpm --filter amias-backend prisma:generate",
+    "prisma:seed": "pnpm --filter amias-backend prisma:seed"
   }
 }
