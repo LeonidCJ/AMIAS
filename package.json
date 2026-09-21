@@ -5,10 +5,11 @@
   "author": "LeonidCJ",
   "private": true,
   "scripts": {
-    "start:backend": "cd backend && npm run start",
-    "dev:backend": "cd backend && npm run start:dev",
-    "dev:frontend": "cd frontend && npm run dev",
-    "prisma:push": "cd backend && npx prisma db push",
-    "prisma:generate": "cd backend && npx prisma generate"
+    "start:backend": "pnpm --filter amias-backend start",
+    "dev:backend": "pnpm --filter amias-backend start:dev",
+    "dev:frontend": "pnpm --filter amias-frontend dev",
+    "build:frontend": "pnpm --filter amias-frontend build",
+    "prisma:push": "pnpm --filter amias-backend prisma:push",
+    "prisma:generate": "pnpm --filter amias-backend prisma:generate"
   }
 }
