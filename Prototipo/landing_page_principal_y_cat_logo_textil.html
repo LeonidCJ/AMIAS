@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AMIAS — Oficial & Custom Apparel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Assistant', sans-serif;
+      color: #121212;
+      background-color: #ffffff;
+    }
+    .font-body { font-family: 'Inter', sans-serif; }
+    .btn-dawn-primary {
+      background-color: #121212;
+      color: #ffffff;
+      border: 1px solid #121212;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-dawn-primary:hover {
+      background-color: #ffffff;
+      color: #121212;
+    }
+    .btn-dawn-secondary {
+      background-color: #ffffff;
+      color: #121212;
+      border: 1px solid #121212;
+      transition: all 0.2s ease;
+    }
+    .btn-dawn-secondary:hover {
+      background-color: #121212;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body class="selection:bg-neutral-900 selection:text-white flex flex-col min-h-screen">
+
+  <!-- Top Announcement Bar (Dawn Style) -->
+  <div class="bg-[#121212] text-white text-[11px] tracking-[0.15em] uppercase text-center py-2.5 px-4 font-semibold border-b border-neutral-800 flex items-center justify-center gap-2">
+    <span>Envíos garantizados antes del show • Lima 2026 • Algodón 24/1 Reactivo</span>
+  </div>
+
+  <!-- Dawn Header -->
+  <header class="border-b border-[#e8e8e8] bg-white sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo / Wordmark AMIAS -->
+      <button onclick="navigateTab('home')" class="text-left group">
+        <span class="text-2xl font-extrabold tracking-[-0.04em] uppercase block leading-none">AMIAS</span>
+        <span class="text-[10px] tracking-[0.25em] text-neutral-400 uppercase font-body mt-1 block">Textile Studio Lima</span>
+      </button>
+
+      <!-- Navigation Principal: Inicio, Catálogo, Personalizados, About -->
+      <nav class="hidden md:flex items-center gap-9 text-xs uppercase tracking-[0.14em] font-semibold text-neutral-700">
+        <button id="nav-home" onclick="navigateTab('home')" class="py-1 border-b-2 border-neutral-950 text-neutral-950 transition">
+          Inicio
+        </button>
+        <button id="nav-catalog" onclick="navigateTab('catalog')" class="py-1 border-b-2 border-transparent hover:text-neutral-950 transition">
+          Catálogo
+        </button>
+        <button id="nav-custom" onclick="navigateTab('custom')" class="py-1 border-b-2 border-transparent hover:text-neutral-950 transition">
+          Personalizados
+        </button>
+        <button id="nav-about" onclick="navigateTab('about')" class="py-1 border-b-2 border-transparent hover:text-neutral-950 transition">
+          About
+        </button>
+      </nav>
+
+      <!-- Search Trigger & Login -->
+      <div class="flex items-center gap-4">
+        <button onclick="openSearchModal()" title="Buscar prendas o conciertos" class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-neutral-900 hover:opacity-60 transition px-2 py-1">
+          <svg class="w-4 h-4 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <span class="hidden sm:inline">Buscar</span>
+        </button>
+        <button onclick="openLoginModal()" class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-neutral-900 hover:opacity-60 transition border-l border-[#e8e8e8] pl-4">
+          <svg class="w-4 h-4 stroke-[1.8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          <span id="user-btn-label" class="hidden sm:inline">Cuenta Taller</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Submenu -->
+    <div class="md:hidden border-t border-[#e8e8e8] px-4 py-3 flex items-center justify-around text-xs uppercase tracking-wider font-semibold text-neutral-600 bg-white">
+      <button id="mob-home" onclick="navigateTab('home')" class="py-0.5 border-b-2 border-neutral-950 text-neutral-950">Inicio</button>
+      <button id="mob-catalog" onclick="navigateTab('catalog')" class="py-0.5 border-b-2 border-transparent">Catálogo</button>
+      <button id="mob-custom" onclick="navigateTab('custom')" class="py-0.5 border-b-2 border-transparent">Personalizados</button>
+      <button id="mob-about" onclick="navigateTab('about')" class="py-0.5 border-b-2 border-transparent">About</button>
+      <button onclick="openSearchModal()" class="py-0.5 border-b-2 border-transparent">Buscar</button>
+    </div>
+  </header>
+
+  <!-- ======================================================= -->
+  <!-- MODAL DE BÚSQUEDA FLOTANTE (ESTILO DAWN SEARCH DRAWER)  -->
+  <!-- ======================================================= -->
+  <div id="search-modal" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-start justify-center pt-20 px-4 hidden">
+    <div class="bg-white border border-[#e8e8e8] w-full max-w-2xl p-6 sm:p-8 shadow-2xl relative space-y-6">
+      <button onclick="closeSearchModal()" class="absolute top-6 right-6 text-neutral-400 hover:text-neutral-950 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <div>
+        <span class="text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-400 block mb-1">CATÁLOGO AMIAS 2026</span>
+        <h2 class="text-xl font-bold uppercase tracking-tight text-[#121212]">Buscar Prendas y Conciertos</h2>
+      </div>
+      <div class="relative">
+        <input type="text" id="search-input" oninput="handleSearchInput(event)" placeholder="Ej. Coldplay, Blink-182, Acme Circles, Boxy Fit..." class="w-full text-sm px-4 py-3.5 border border-[#cccccc] focus:outline-none focus:border-[#121212] font-body transition" />
+      </div>
+      <div id="search-results-box" class="space-y-2 max-h-60 overflow-y-auto font-body text-xs text-neutral-600 divide-y divide-[#f0f0f0]">
+        <!-- Resultados generados dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================= -->
+  <!-- MAIN ROUTER CONTAINER                                   -->
+  <!-- ======================================================= -->
+  <main class="flex-1">
+
+    <!-- 0. VISTA: INICIO (LANDING EDITORIAL SHOPIFY DAWN) -->
+    <div id="view-home" class="page-view space-y-16 py-8">
+      
+      <!-- Hero Banner Editorial -->
+      <section class="max-w-7xl mx-auto px-6 lg:px-12">
+        <div class="relative bg-[#f6f6f6] border border-[#e8e8e8] min-h-[500px] flex items-center p-8 sm:p-16 lg:p-20 overflow-hidden">
+          <div class="max-w-xl space-y-6 relative z-10">
+            <span class="text-xs uppercase tracking-[0.25em] font-semibold text-neutral-500 block">
+              AMIAS TEXTILE STUDIO — LIMA 2026
+            </span>
+            <h1 class="text-4xl sm:text-6xl font-bold tracking-[-0.03em] uppercase leading-[1.05] text-[#121212]">
+              Viste el show <br>antes de entrar.
+            </h1>
+            <p class="text-sm sm:text-base font-body text-neutral-600 font-normal leading-relaxed">
+              Indumentaria con patronaje Boxy Oversize confeccionada en algodón reactivo 24/1 pesado de 240g. Merch oficial de giras y servicio de estampado DTF a medida con acabado textil industrial.
+            </p>
+            <div class="pt-2 flex flex-wrap gap-4">
+              <button onclick="navigateTab('catalog')" class="btn-dawn-primary px-8 py-3.5 text-xs font-semibold tracking-[0.14em] uppercase">
+                Ver Catálogo de Giras →
+              </button>
+              <button onclick="navigateTab('custom')" class="btn-dawn-secondary px-8 py-3.5 text-xs font-semibold tracking-[0.14em] uppercase">
+                Personalizar Mi Prenda
+              </button>
+            </div>
+          </div>
+          <div class="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-neutral-200/50 to-transparent pointer-events-none hidden lg:block"></div>
+        </div>
+      </section>
+
+      <!-- 4 Pilares de Calidad (Dawn Multi-column) -->
+      <section class="max-w-7xl mx-auto px-6 lg:px-12">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 border-y border-[#e8e8e8]">
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold uppercase tracking-widest text-[#121212]">01 / Tejido 24/1</h4>
+            <p class="text-xs font-body text-neutral-500">Algodón reactivo peinado que no encoge ni destiñe tras lavados continuos.</p>
+          </div>
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold uppercase tracking-widest text-[#121212]">02 / Boxy Fit</h4>
+            <p class="text-xs font-body text-neutral-500">Hombros caídos con silueta urbana estructurada inspirada en streetwear de gira.</p>
+          </div>
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold uppercase tracking-widest text-[#121212]">03 / DTF 300 DPI</h4>
+            <p class="text-xs font-body text-neutral-500">Impresión directa por film curada con poliamida elástica de máxima duración.</p>
+          </div>
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold uppercase tracking-widest text-[#121212]">04 / Entrega Pre-Show</h4>
+            <p class="text-xs font-body text-neutral-500">Garantizamos tu prenda lista para retiro o delivery antes del día del evento.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Selección Destacada de Inicio -->
+      <section class="max-w-7xl mx-auto px-6 lg:px-12 space-y-8">
+        <div class="flex items-center justify-between border-b border-[#e8e8e8] pb-4">
+          <div>
+            <span class="text-[11px] font-body text-neutral-400 uppercase tracking-widest block">TOP DROPS</span>
+            <h2 class="text-2xl font-bold uppercase tracking-[-0.02em] text-[#121212] mt-0.5">Prendas Más Solicitadas</h2>
+          </div>
+          <button onclick="navigateTab('catalog')" class="text-xs font-bold uppercase tracking-wider text-neutral-900 hover:underline underline-offset-4">
+            Ver todas las prendas →
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+          <div class="group cursor-pointer" onclick="openProductDetail('coldplay')">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#121212] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">Coldplay</span>
+              <div class="w-28 h-36 bg-[#121212] text-white flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-400 uppercase">SPHERES</span>
+                <span class="text-xs font-bold mt-1">TOUR 2026</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Polo Oversize Spheres</h3>
+              <p class="text-[11px] font-body text-neutral-500">Reactivo 24/1 • Negro / Blanco</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">S/ 55.00 PEN</p>
+            </div>
+          </div>
+
+          <div class="group cursor-pointer" onclick="openProductDetail('acme')">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#2563eb] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">Geometric</span>
+              <div class="w-28 h-36 bg-neutral-900 text-white flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-400 uppercase">ACME</span>
+                <span class="text-xs font-bold mt-1">CIRCLES</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Acme Circles T-Shirt</h3>
+              <p class="text-[11px] font-body text-neutral-500">Jersey Ringspun • Black / White</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">$20.00 USD</p>
+            </div>
+          </div>
+
+          <div class="group cursor-pointer" onclick="openProductDetail('blink')">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#121212] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">Blink-182</span>
+              <div class="w-28 h-36 bg-white border border-[#e8e8e8] text-[#121212] flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-400 uppercase">WORLD TOUR</span>
+                <span class="text-xs font-bold mt-1">SMILEY V2</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Polo Boxy Revival Blink</h3>
+              <p class="text-[11px] font-body text-neutral-500">Reactivo 24/1 • Blanco Óptico</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">S/ 50.00 PEN</p>
+            </div>
+          </div>
+
+          <div class="bg-[#f7f7f7] aspect-[4/5] border border-dashed border-neutral-300 p-5 flex flex-col justify-between hover:border-neutral-900 transition cursor-pointer" onclick="navigateTab('custom')">
+            <div class="space-y-2">
+              <span class="text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-400 block">PRODUCCIÓN A MEDIDA</span>
+              <h3 class="text-sm font-bold uppercase tracking-tight text-[#121212]">¿Tienes un arte propio listo?</h3>
+              <p class="text-xs font-body text-neutral-600 leading-relaxed">
+                Ingresa al configurador técnico, sube tu PNG o PDF y coordinamos tu pedido en WhatsApp.
+              </p>
+            </div>
+            <button class="btn-dawn-secondary w-full py-2.5 text-[11px] uppercase tracking-wider font-semibold">
+              Personalizar →
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+
+    <!-- 1. VISTA: CATÁLOGO CON SUBDIVISIONES Y PRODUCTOS COMPACTOS -->
+    <div id="view-catalog" class="page-view hidden space-y-12 py-8">
+      
+      <!-- Banner de Entrada Catálogo -->
+      <section class="max-w-7xl mx-auto px-6 lg:px-12">
+        <div class="bg-[#f6f6f6] border border-[#e8e8e8] p-8 sm:p-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="space-y-2 max-w-xl">
+            <span class="text-xs uppercase tracking-[0.25em] font-semibold text-neutral-500 block">AMIAS COLECCIONES 2026</span>
+            <h1 class="text-3xl sm:text-4xl font-bold tracking-[-0.03em] uppercase text-[#121212]">Catálogo de Conciertos</h1>
+            <p class="text-xs sm:text-sm font-body text-neutral-600 leading-relaxed">
+              Selecciona cualquier prenda para abrir el configurador visual, revisar variantes de color/talla y enviar tu orden al taller.
+            </p>
+          </div>
+          <button onclick="navigateTab('custom')" class="btn-dawn-secondary px-6 py-3 text-xs font-bold uppercase tracking-wider whitespace-nowrap self-start md:self-auto">
+            Configurar Tu Propio Arte →
+          </button>
+        </div>
+      </section>
+
+      <!-- Filtros y Grid Compacto -->
+      <section class="max-w-7xl mx-auto px-6 lg:px-12 space-y-6">
+        
+        <!-- Barra de Subdivisiones e Información -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e8e8e8] pb-4">
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs uppercase tracking-wider font-semibold">
+            <button onclick="filterCatalog('all', this)" class="catalog-filter-btn px-4 py-1.5 border border-[#121212] bg-[#121212] text-white transition">Todos</button>
+            <button onclick="filterCatalog('coldplay', this)" class="catalog-filter-btn px-4 py-1.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition">Coldplay</button>
+            <button onclick="filterCatalog('acme', this)" class="catalog-filter-btn px-4 py-1.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition">Acme Circles</button>
+            <button onclick="filterCatalog('blink', this)" class="catalog-filter-btn px-4 py-1.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition">Blink-182</button>
+            <button onclick="filterCatalog('weeknd', this)" class="catalog-filter-btn px-4 py-1.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition">The Weeknd</button>
+          </div>
+          <span class="text-xs font-body text-neutral-400" id="catalog-count-badge">Mostrando 4 prendas</span>
+        </div>
+
+        <!-- Grilla de Productos Compactos Proporcionales -->
+        <div id="catalog-products-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+          
+          <!-- Item 1 -->
+          <div class="catalog-item group cursor-pointer" data-category="coldplay" onclick="openProductDetail('coldplay')">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#121212] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">Coldplay</span>
+              <div class="w-28 h-36 bg-[#121212] text-white flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-400 uppercase">SPHERES</span>
+                <span class="text-xs font-bold mt-1">TOUR 2026</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Polo Oversize Spheres</h3>
+              <p class="text-[11px] font-body text-neutral-500">Reactivo 24/1 • Negro / Blanco</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">S/ 55.00 PEN</p>
+            </div>
+          </div>
+
+          <!-- Item 2 (Acme Circles de la imagen) -->
+          <div class="catalog-item group cursor-pointer" data-category="acme" onclick="openProductDetail('acme')">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#2563eb] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">Geometric</span>
+              <div class="w-28 h-36 bg-neutral-900 text-white flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-400 uppercase">ACME</span>
+                <span class="text-xs font-bold mt-1">CIRCLES</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Acme Circles T-Shirt</h3>
+              <p class="text-[11px] font-body text-neutral-500">Jersey Ringspun • Black / White</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">$20.00 USD</p>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="catalog-item group cursor-pointer" data-category="blink" onclick="openProductDetail('blink')">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#121212] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">Blink-182</span>
+              <div class="w-28 h-36 bg-white border border-[#e8e8e8] text-[#121212] flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-400 uppercase">WORLD TOUR</span>
+                <span class="text-xs font-bold mt-1">SMILEY V2</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Polo Boxy Revival Blink</h3>
+              <p class="text-[11px] font-body text-neutral-500">Reactivo 24/1 • Blanco Óptico</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">S/ 50.00 PEN</p>
+            </div>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="catalog-item group cursor-pointer" data-category="weeknd" onclick="openProductDetail('weeknd')">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#121212] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">The Weeknd</span>
+              <div class="w-28 h-36 bg-[#d8ccc0] text-[#121212] flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-700 uppercase">AFTER HOURS</span>
+                <span class="text-xs font-bold mt-1">VINTAGE</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Polo Acid After Hours</h3>
+              <p class="text-[11px] font-body text-neutral-500">Beige Crudo • DTF Espalda</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">S/ 60.00 PEN</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- 2. VISTA: DETALLE DE PRENDA EXACTO A LA IMAGEN (VERCEL PRODUCT DISPLAY)  -->
+    <!-- ========================================================================= -->
+    <div id="view-product-detail" class="page-view hidden max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-8">
+      
+      <!-- Back to Catalog Link -->
+      <button onclick="navigateTab('catalog')" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-600 hover:text-neutral-950 transition">
+        ← Volver al Catálogo
+      </button>
+
+      <!-- Stage Idéntico a la Referencia Proporcionada -->
+      <div class="bg-black text-white p-8 sm:p-12 lg:p-16 border border-neutral-800 shadow-2xl relative">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <!-- Left Column: Shirt Presentation & Arrows + Carousel Thumbnails -->
+          <div class="lg:col-span-7 flex flex-col items-center justify-center space-y-8">
+            
+            <div class="relative w-72 h-84 sm:w-80 sm:h-96 flex flex-col items-center justify-center">
+              
+              <!-- Graphic Shirt Representation -->
+              <div id="p-detail-mockup" class="relative w-full h-full flex items-center justify-center transition-all duration-300">
+                <svg viewBox="0 0 24 24" class="w-72 h-72 drop-shadow-2xl transition-colors duration-300" id="detail-shirt-svg" fill="#121212" stroke="#333333" stroke-width="0.3">
+                  <path d="M16 2l4 4-2.5 4.5-2.5-1.5V21H9V9L6.5 10.5 4 6l4-4h2a3 3 0 0 0 6 0h2z" stroke-linejoin="round" stroke-linecap="round"/>
+                </svg>
+
+                <!-- Vector Lines Geometric Artwork (Acme Circles like reference) -->
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none p-12">
+                  <svg viewBox="0 0 100 100" class="w-40 h-40 stroke-white/80 fill-none stroke-[1.2] opacity-90 transition-all duration-300" id="detail-art-svg">
+                    <ellipse cx="50" cy="50" rx="38" ry="18" transform="rotate(-25 50 50)"/>
+                    <ellipse cx="50" cy="50" rx="38" ry="18" transform="rotate(15 50 50)"/>
+                    <ellipse cx="50" cy="50" rx="38" ry="18" transform="rotate(55 50 50)"/>
+                    <ellipse cx="50" cy="50" rx="38" ry="18" transform="rotate(-65 50 50)"/>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Navigation Controls (Flechas en cápsula) -->
+              <div class="absolute bottom-0 flex items-center bg-neutral-900/90 backdrop-blur border border-neutral-800 rounded-full px-4 py-2 gap-4 text-neutral-400">
+                <button onclick="prevDetailImage()" class="hover:text-white transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <span class="w-[1px] h-3 bg-neutral-700"></span>
+                <button onclick="nextDetailImage()" class="hover:text-white transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Mini Thumbnails Carousel con selector activo azul -->
+            <div class="flex items-center gap-3 pt-2">
+              <button onclick="setDetailColor('Black', '#121212', '#ffffff', 0)" class="thumb-btn w-14 h-14 bg-black border-2 border-blue-600 rounded-lg flex items-center justify-center p-1 transition overflow-hidden">
+                <span class="text-[9px] font-mono text-neutral-400">BLACK</span>
+              </button>
+              <button onclick="setDetailColor('White', '#f4f4f5', '#121212', 1)" class="thumb-btn w-14 h-14 bg-neutral-900 border border-neutral-800 rounded-lg flex items-center justify-center p-1 transition overflow-hidden hover:border-neutral-600">
+                <span class="text-[9px] font-mono text-neutral-400">WHITE</span>
+              </button>
+              <button onclick="setDetailColor('Blue', '#2563eb', '#ffffff', 2)" class="thumb-btn w-14 h-14 bg-neutral-900 border border-neutral-800 rounded-lg flex items-center justify-center p-1 transition overflow-hidden hover:border-neutral-600">
+                <span class="text-[9px] font-mono text-neutral-400">BLUE</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Product Details Exactos a la imagen -->
+          <div class="lg:col-span-5 space-y-6">
+            
+            <div>
+              <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-white font-body" id="detail-title-text">
+                Acme Circles T-Shirt
+              </h1>
+              <div class="mt-3">
+                <span class="inline-block bg-[#2563eb] text-white text-xs font-bold px-3 py-1.5 rounded-full font-body" id="detail-price-pill">
+                  $20.00 USD
+                </span>
+              </div>
+            </div>
+
+            <hr class="border-neutral-800" />
+
+            <!-- COLOR Selector -->
+            <div class="space-y-3">
+              <span class="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-body block">COLOR</span>
+              <div class="flex flex-wrap items-center gap-2">
+                <button onclick="setDetailColor('Black', '#121212', '#ffffff', 0)" class="color-choice-pill px-4 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 hover:border-neutral-600 font-body transition">
+                  Black
+                </button>
+                <button onclick="setDetailColor('White', '#f4f4f5', '#121212', 1)" class="color-choice-pill px-4 py-1.5 rounded-full border-2 border-blue-600 bg-black text-xs text-white font-body font-semibold transition">
+                  White
+                </button>
+                <button disabled title="Agotado" class="relative px-4 py-1.5 rounded-full border border-neutral-900 bg-neutral-950 text-xs text-neutral-600 font-body cursor-not-allowed overflow-hidden">
+                  <span>Blue</span>
+                  <div class="absolute inset-0 border-t border-neutral-600 rotate-45 top-1/2"></div>
+                </button>
+              </div>
+            </div>
+
+            <!-- SIZE Selector (L tachada idéntica a la imagen) -->
+            <div class="space-y-3">
+              <span class="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-body block">SIZE</span>
+              <div class="flex flex-wrap items-center gap-2">
+                <button onclick="setDetailSize('XS', this)" class="size-choice-pill px-3.5 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 hover:border-neutral-600 font-body transition">
+                  XS
+                </button>
+                <button onclick="setDetailSize('S', this)" class="size-choice-pill px-3.5 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 hover:border-neutral-600 font-body transition">
+                  S
+                </button>
+                <button onclick="setDetailSize('M', this)" class="size-choice-pill px-3.5 py-1.5 rounded-full border-2 border-blue-600 bg-black text-xs text-white font-body font-bold transition">
+                  M
+                </button>
+                <button disabled title="Agotado en stock" class="relative px-3.5 py-1.5 rounded-full border border-neutral-900 bg-neutral-950 text-xs text-neutral-600 font-body cursor-not-allowed overflow-hidden">
+                  <span>L</span>
+                  <div class="absolute inset-0 border-t border-neutral-600 rotate-45 top-1/2"></div>
+                </button>
+                <button onclick="setDetailSize('XL', this)" class="size-choice-pill px-3.5 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 hover:border-neutral-600 font-body transition">
+                  XL
+                </button>
+                <button onclick="setDetailSize('XXL', this)" class="size-choice-pill px-3.5 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 hover:border-neutral-600 font-body transition">
+                  XXL
+                </button>
+                <button onclick="setDetailSize('XXXL', this)" class="size-choice-pill px-3 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 hover:border-neutral-600 font-body transition">
+                  XXXL
+                </button>
+              </div>
+            </div>
+
+            <!-- Material Spec Text -->
+            <p class="text-xs text-neutral-400 font-body leading-relaxed">
+              60% combed ringspun cotton/40% polyester jersey tee. Confeccionado por AMIAS con tejido reactivo y estampado DTF de alta definición.
+            </p>
+
+            <!-- Large Blue Add to Cart Button -->
+            <button onclick="sendVercelStyleOrderWhatsApp()" class="w-full py-4 rounded-full bg-[#2563eb] hover:bg-blue-500 text-white font-body font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl transition active:scale-95">
+              <span class="text-base leading-none font-light">+</span>
+              <span>Add To Cart / Pedir vía WhatsApp</span>
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- 3. VISTA: PERSONALIZADOS (CONFIGURADOR TÉCNICO AMIAS) -->
+    <div id="view-custom" class="page-view hidden max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-10">
+      <div class="border-b border-[#e8e8e8] pb-4">
+        <span class="text-[11px] font-body text-neutral-400 uppercase tracking-widest block">HERRAMIENTA A MEDIDA</span>
+        <h1 class="text-3xl font-bold uppercase tracking-[-0.02em] text-[#121212] mt-0.5">Personalizados</h1>
+        <p class="text-xs font-body text-neutral-500 mt-1">Configura patronaje, color de tela, ubicación de estampa y carga tu archivo gráfico.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        
+        <!-- Previsualizador SVG -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="bg-[#f7f7f7] border border-[#e8e8e8] min-h-[460px] flex flex-col items-center justify-center relative p-8">
+            <span class="absolute top-4 left-4 text-[10px] uppercase tracking-widest font-body bg-white border border-[#e8e8e8] px-3 py-1 text-neutral-600 font-semibold">
+              PATRÓN: <span id="custom-preview-cut">OVERSIZE BOXY</span>
+            </span>
+
+            <div class="relative w-72 h-72 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" class="w-full h-full transition-colors duration-200" id="custom-shirt-svg" fill="#18181b" stroke="#3f3f46" stroke-width="0.35">
+                <path d="M16 2l4 4-2.5 4.5-2.5-1.5V21H9V9L6.5 10.5 4 6l4-4h2a3 3 0 0 0 6 0h2z" stroke-linejoin="round" stroke-linecap="round"/>
+              </svg>
+
+              <div id="custom-target-box" class="absolute border border-dashed border-white/80 bg-white/10 flex items-center justify-center pointer-events-none transition-all duration-300">
+                <span id="custom-target-text" class="text-[9px] font-body font-bold text-white bg-[#121212] px-1.5 py-0.5 tracking-wider uppercase">ESPALDA A3</span>
+              </div>
+            </div>
+
+            <div class="w-full flex items-center justify-between text-xs font-body text-neutral-500 border-t border-[#e8e8e8] pt-4 mt-4">
+              <span>Jersey Reactivo 24/1 Pesado (240g)</span>
+              <span id="custom-size-badge" class="font-semibold text-neutral-900">Talla: L</span>
+            </div>
+          </div>
+
+          <div class="border border-dashed border-[#cccccc] hover:border-[#121212] bg-[#fbfbfb] p-6 text-center transition cursor-pointer">
+            <input type="file" id="custom-file-input" class="hidden" onchange="handleCustomFileUpload(event)">
+            <label for="custom-file-input" class="cursor-pointer block space-y-1">
+              <span class="text-xs uppercase tracking-wider font-semibold text-[#121212] block" id="custom-upload-text">
+                Adjuntar Archivo Gráfico (PNG / PDF 300 DPI)
+              </span>
+              <span class="text-[11px] font-body text-neutral-400 block">Formato transparente para DTF industrial</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Opciones de Configuración -->
+        <div class="lg:col-span-6 space-y-6">
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.15em] font-bold text-neutral-700 block mb-2">Corte</span>
+            <div class="grid grid-cols-2 gap-3">
+              <button onclick="setCustomCut('Oversize Boxy', this)" class="custom-cut-pill p-3 border border-neutral-950 text-neutral-950 text-left text-xs font-semibold uppercase tracking-wider bg-[#121212] text-white">
+                Oversize Boxy
+              </button>
+              <button onclick="setCustomCut('Regular Fit', this)" class="custom-cut-pill p-3 border border-[#e8e8e8] text-neutral-700 text-left text-xs font-semibold uppercase tracking-wider">
+                Regular Fit
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.15em] font-bold text-neutral-700 block mb-2">Color</span>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setCustomColor('#18181b', 'Negro', this)" class="custom-color-btn px-4 py-1.5 border border-neutral-950 bg-[#121212] text-white text-xs font-semibold uppercase">Negro</button>
+              <button onclick="setCustomColor('#f4f4f5', 'Blanco', this)" class="custom-color-btn px-4 py-1.5 border border-[#e8e8e8] text-neutral-800 text-xs font-semibold uppercase">Blanco</button>
+              <button onclick="setCustomColor('#d8ccc0', 'Beige', this)" class="custom-color-btn px-4 py-1.5 border border-[#e8e8e8] text-neutral-800 text-xs font-semibold uppercase">Beige</button>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.15em] font-bold text-neutral-700 block mb-2">Área de Impresión DTF</span>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="setCustomZone('pocket', 'Bolsillo', 45, this)" class="custom-zone-pill p-3 border border-[#e8e8e8] text-xs font-bold uppercase text-center">Bolsillo</button>
+              <button onclick="setCustomZone('front_a4', 'Pecho A4', 50, this)" class="custom-zone-pill p-3 border border-[#e8e8e8] text-xs font-bold uppercase text-center">Pecho A4</button>
+              <button onclick="setCustomZone('back_a3', 'Espalda A3', 55, this)" class="custom-zone-pill p-3 border border-neutral-950 bg-[#121212] text-white text-xs font-bold uppercase text-center">Espalda A3</button>
+            </div>
+          </div>
+
+          <div class="border-t border-[#e8e8e8] pt-4 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-body text-neutral-400 uppercase tracking-wider block">Total Calculado</span>
+              <span id="custom-price-display" class="text-2xl font-bold text-[#121212] font-body">S/ 55.00 PEN</span>
+            </div>
+            <button onclick="sendCustomWhatsApp()" class="btn-dawn-primary px-6 py-3.5 text-xs font-bold uppercase tracking-wider">
+              Confirmar por WhatsApp →
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- 4. VISTA: ABOUT (HISTORIA AMIAS + PATRONAJE) -->
+    <div id="view-about" class="page-view hidden max-w-5xl mx-auto px-6 lg:px-12 py-10 space-y-12">
+      <div class="border-b border-[#e8e8e8] pb-6 text-center max-w-2xl mx-auto space-y-2">
+        <span class="text-[11px] font-body text-neutral-400 uppercase tracking-widest block">PROCESO TEXTIL & TALLER</span>
+        <h1 class="text-3xl font-bold uppercase tracking-tight text-[#121212]">About AMIAS</h1>
+        <p class="text-xs font-body text-neutral-600 leading-relaxed">
+          Taller textil en Lima especializado en indumentaria para eventos masivos y streetwear. Unificamos confección en algodón reactivo 24/1 pesado con impresión DTF de alta definición.
+        </p>
+      </div>
+
+      <div class="border border-[#e8e8e8] p-6 lg:p-8 space-y-4">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-[#121212]">Guía de Patronaje Boxy (Medidas en cm)</h3>
+        <table class="w-full text-left text-xs font-body">
+          <thead class="border-b border-[#e8e8e8] text-neutral-400 uppercase text-[10px]">
+            <tr>
+              <th class="py-2.5">TALLA</th>
+              <th class="py-2.5">ANCHO PECHO</th>
+              <th class="py-2.5">LARGO TOTAL</th>
+              <th class="py-2.5">CAÍDA HOMBRO</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#f0f0f0] text-neutral-800">
+            <tr><td class="py-3 font-bold">S</td><td>56 cm</td><td>70 cm</td><td>22 cm</td></tr>
+            <tr><td class="py-3 font-bold">M</td><td>59 cm</td><td>73 cm</td><td>23 cm</td></tr>
+            <tr class="bg-[#fafafa]"><td class="py-3 font-bold">L (Recomendada)</td><td>62 cm</td><td>76 cm</td><td>24 cm</td></tr>
+            <tr><td class="py-3 font-bold">XL</td><td>65 cm</td><td>79 cm</td><td>25 cm</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- 5. VISTA: PANEL PRIVADO DEL TALLER -->
+    <div id="view-admin" class="page-view hidden max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-6">
+      <div class="flex items-center justify-between border-b border-[#e8e8e8] pb-4">
+        <div>
+          <span class="text-[10px] font-body bg-[#121212] text-white px-2 py-0.5 uppercase tracking-widest">PANEL ACTIVO AMIAS</span>
+          <h1 class="text-2xl font-bold uppercase text-[#121212] mt-1">Control de Confección</h1>
+        </div>
+        <button onclick="logoutAdmin()" class="text-xs uppercase font-semibold text-red-600 hover:underline">Cerrar Sesión</button>
+      </div>
+      <div class="border border-[#e8e8e8] p-4 text-xs font-body text-neutral-600">
+        Bandeja administrativa enlazada a PostgreSQL & Cloudinary para pedidos AMIAS.
+      </div>
+    </div>
+
+  </main>
+
+
+  <!-- ======================================================= -->
+  <!-- MODAL DE LOGIN                                          -->
+  <!-- ======================================================= -->
+  <div id="login-modal" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white border border-[#e8e8e8] w-full max-w-md p-8 relative space-y-5">
+      <button onclick="closeLoginModal()" class="absolute top-6 right-6 text-neutral-400 hover:text-neutral-950 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <div>
+        <span class="text-xs uppercase tracking-[0.2em] font-semibold text-neutral-400 block mb-1">ACCESO AMIAS</span>
+        <h2 class="text-2xl font-bold uppercase text-[#121212]">Iniciar Sesión</h2>
+      </div>
+      <form onsubmit="handleLoginSubmit(event)" class="space-y-4 font-body">
+        <input type="email" required placeholder="taller@amias.pe" class="w-full text-xs px-3.5 py-3 border border-[#cccccc] focus:outline-none focus:border-[#121212]" />
+        <input type="password" required placeholder="••••••••" class="w-full text-xs px-3.5 py-3 border border-[#cccccc] focus:outline-none focus:border-[#121212]" />
+        <button type="submit" class="btn-dawn-primary w-full py-3.5 text-xs font-bold uppercase tracking-[0.15em]">Entrar al Panel</button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ======================================================= -->
+  <!-- FOOTER (SHOPIFY DAWN STYLE)                             -->
+  <!-- ======================================================= -->
+  <footer class="border-t border-[#e8e8e8] bg-[#fbfbfb] mt-auto">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 py-14">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+        <div class="md:col-span-5 space-y-2">
+          <span class="text-lg font-extrabold uppercase tracking-tight block text-[#121212]">AMIAS</span>
+          <p class="text-xs font-body text-neutral-600 max-w-sm">
+            Indumentaria para eventos masivos en Lima. Algodón reactivo 24/1 pesado y tecnología de estampa DTF.
+          </p>
+        </div>
+        <div class="md:col-span-3 space-y-2">
+          <p class="text-xs uppercase tracking-[0.2em] font-bold text-neutral-900">Menú</p>
+          <ul class="space-y-1.5 text-xs uppercase tracking-wider text-neutral-600">
+            <li><button onclick="navigateTab('home')" class="hover:text-neutral-950">Inicio</button></li>
+            <li><button onclick="navigateTab('catalog')" class="hover:text-neutral-950">Catálogo</button></li>
+            <li><button onclick="navigateTab('custom')" class="hover:text-neutral-950">Personalizados</button></li>
+            <li><button onclick="navigateTab('about')" class="hover:text-neutral-950">About</button></li>
+          </ul>
+        </div>
+        <div class="md:col-span-4 space-y-2">
+          <p class="text-xs uppercase tracking-[0.2em] font-bold text-neutral-900">Atención WhatsApp</p>
+          <p class="text-xs font-body text-neutral-600">Lunes a Sábado para coordinación y vouchers.</p>
+          <a href="https://wa.me/51999999999" target="_blank" class="inline-block text-xs font-semibold tracking-wider uppercase border border-[#121212] px-4 py-2 hover:bg-[#121212] hover:text-white transition">
+            WhatsApp AMIAS
+          </a>
+        </div>
+      </div>
+      <div class="border-t border-[#e8e8e8] mt-10 pt-6 flex justify-between text-[11px] font-body text-neutral-400">
+        <p>© 2026 AMIAS Textile Studio. Todos los derechos reservados.</p>
+        <p>Lima, Perú</p>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ======================================================= -->
+  <!-- CONTROLADORES JAVASCRIPT                                -->
+  <!-- ======================================================= -->
+  <script>
+    // Datos de productos para el buscador
+    const PRODUCTS_DATA = [
+      { id: 'coldplay', name: 'Polo Oversize Spheres', concert: 'Coldplay Lima 2026', price: 'S/ 55.00', color: 'Negro' },
+      { id: 'acme', name: 'Acme Circles T-Shirt', concert: 'Geometric Tour Edition', price: '$20.00 USD', color: 'Black/White' },
+      { id: 'blink', name: 'Polo Boxy Revival Blink', concert: 'Blink-182 Tour', price: 'S/ 50.00', color: 'Blanco' },
+      { id: 'weeknd', name: 'Polo Acid After Hours', concert: 'The Weeknd Gira', price: 'S/ 60.00', color: 'Beige' }
+    ];
+
+    // Estado de la pantalla de detalle Vercel Store
+    let detailState = {
+      title: 'Acme Circles T-Shirt',
+      price: '$20.00 USD',
+      colorName: 'White',
+      colorHex: '#f4f4f5',
+      textColor: '#121212',
+      size: 'M'
+    };
+
+    let isLoggedInAdmin = false;
+
+    // SPA Router (home | catalog | custom | about | admin)
+    function navigateTab(tabId) {
+      document.querySelectorAll('.page-view').forEach(view => view.classList.add('hidden'));
+
+      ['home', 'catalog', 'custom', 'about'].forEach(id => {
+        const btn = document.getElementById('nav-' + id);
+        if (btn) btn.className = "py-1 border-b-2 border-transparent hover:text-neutral-950 transition";
+        const mob = document.getElementById('mob-' + id);
+        if (mob) mob.className = "py-0.5 border-b-2 border-transparent text-neutral-600";
+      });
+
+      const target = document.getElementById('view-' + tabId);
+      if (target) target.classList.remove('hidden');
+
+      const activeNav = document.getElementById('nav-' + tabId);
+      if (activeNav) activeNav.className = "py-1 border-b-2 border-neutral-950 text-neutral-950 transition";
+
+      const activeMob = document.getElementById('mob-' + tabId);
+      if (activeMob) activeMob.className = "py-0.5 border-b-2 border-neutral-950 text-neutral-950";
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Modal de Búsqueda
+    function openSearchModal() {
+      document.getElementById('search-modal').classList.remove('hidden');
+      document.getElementById('search-input').focus();
+      renderSearchResults('');
+    }
+
+    function closeSearchModal() {
+      document.getElementById('search-modal').classList.add('hidden');
+    }
+
+    function handleSearchInput(e) {
+      renderSearchResults(e.target.value.toLowerCase().trim());
+    }
+
+    function renderSearchResults(query) {
+      const container = document.getElementById('search-results-box');
+      container.innerHTML = '';
+
+      const filtered = PRODUCTS_DATA.filter(p => 
+        p.name.toLowerCase().includes(query) || 
+        p.concert.toLowerCase().includes(query) ||
+        p.color.toLowerCase().includes(query)
+      );
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="py-4 text-neutral-400">No se encontraron productos coincidentes.</div>';
+        return;
+      }
+
+      filtered.forEach(p => {
+        const div = document.createElement('div');
+        div.className = "py-2.5 flex items-center justify-between hover:bg-neutral-50 px-2 cursor-pointer transition";
+        div.onclick = () => {
+          closeSearchModal();
+          openProductDetail(p.id);
+        };
+        div.innerHTML = `
+          <div>
+            <div class="font-bold text-neutral-900">${p.name}</div>
+            <div class="text-[11px] text-neutral-400">${p.concert} • ${p.color}</div>
+          </div>
+          <span class="font-bold text-neutral-900">${p.price}</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Filtros de Catálogo
+    function filterCatalog(category, btn) {
+      document.querySelectorAll('.catalog-filter-btn').forEach(b => {
+        b.className = "catalog-filter-btn px-4 py-1.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition";
+      });
+      btn.className = "catalog-filter-btn px-4 py-1.5 border border-[#121212] bg-[#121212] text-white transition";
+
+      const items = document.querySelectorAll('.catalog-item');
+      let count = 0;
+      items.forEach(item => {
+        if (category === 'all' || item.getAttribute('data-category') === category) {
+          item.classList.remove('hidden');
+          count++;
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+      document.getElementById('catalog-count-badge').innerText = `Mostrando ${count} prendas`;
+    }
+
+    // Abrir Vista de Detalle (Exacta a la imagen)
+    function openProductDetail(productId) {
+      document.querySelectorAll('.page-view').forEach(view => view.classList.add('hidden'));
+      document.getElementById('view-product-detail').classList.remove('hidden');
+
+      if (productId === 'coldplay') {
+        detailState.title = "Acme Circles T-Shirt (Coldplay Edition)";
+        detailState.price = "S/ 55.00 PEN";
+      } else if (productId === 'blink') {
+        detailState.title = "Blink Revival Geometric Tee";
+        detailState.price = "S/ 50.00 PEN";
+      } else if (productId === 'weeknd') {
+        detailState.title = "After Hours Vintage Geometric";
+        detailState.price = "S/ 60.00 PEN";
+      } else {
+        detailState.title = "Acme Circles T-Shirt";
+        detailState.price = "$20.00 USD";
+      }
+
+      document.getElementById('detail-title-text').innerText = detailState.title;
+      document.getElementById('detail-price-pill').innerText = detailState.price;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Controles de Variantes en la Vista Oscura
+    function setDetailColor(name, bgHex, artColorHex, thumbIndex) {
+      detailState.colorName = name;
+      detailState.colorHex = bgHex;
+      detailState.textColor = artColorHex;
+
+      document.getElementById('detail-shirt-svg').setAttribute('fill', bgHex);
+      document.getElementById('detail-art-svg').setAttribute('class', `w-40 h-40 fill-none stroke-[1.2] opacity-90 transition-all duration-300 ${name === 'White' ? 'stroke-neutral-950' : 'stroke-white'}`);
+
+      // Thumbnails activos
+      const thumbs = document.querySelectorAll('.thumb-btn');
+      thumbs.forEach((t, i) => {
+        t.className = i === thumbIndex 
+          ? "thumb-btn w-14 h-14 bg-black border-2 border-blue-600 rounded-lg flex items-center justify-center p-1 transition overflow-hidden"
+          : "thumb-btn w-14 h-14 bg-neutral-900 border border-neutral-800 rounded-lg flex items-center justify-center p-1 transition overflow-hidden hover:border-neutral-600";
+      });
+
+      // Píldoras de color
+      const colorPills = document.querySelectorAll('.color-choice-pill');
+      colorPills.forEach(p => {
+        if (p.innerText.trim() === name) {
+          p.className = "color-choice-pill px-4 py-1.5 rounded-full border-2 border-blue-600 bg-black text-xs text-white font-body font-semibold transition";
+        } else {
+          p.className = "color-choice-pill px-4 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 hover:border-neutral-600 font-body transition";
+        }
+      });
+    }
+
+    function setDetailSize(size, btn) {
+      detailState.size = size;
+      document.querySelectorAll('.size-choice-pill').forEach(b => {
+        b.className = "size-choice-pill px-3.5 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 hover:border-neutral-600 font-body transition";
+      });
+      btn.className = "size-choice-pill px-3.5 py-1.5 rounded-full border-2 border-blue-600 bg-black text-xs text-white font-body font-bold transition";
+    }
+
+    function prevDetailImage() {
+      setDetailColor('Black', '#121212', '#ffffff', 0);
+    }
+
+    function nextDetailImage() {
+      setDetailColor('White', '#f4f4f5', '#121212', 1);
+    }
+
+    function sendVercelStyleOrderWhatsApp() {
+      const text = `Hola AMIAS, deseo ordenar esta prenda:\n- Modelo: ${detailState.title}\n- Precio: ${detailState.price}\n- Color: ${detailState.colorName}\n- Talla: ${detailState.size}\n- Coordinar recojo o envío en Lima.`;
+      window.open(`https://wa.me/51999999999?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    // Controladores del Personalizador
+    let customState = { cut: 'Oversize Boxy', color: 'Negro', zone: 'Espalda A3', price: 55 };
+
+    function setCustomCut(cut, btn) {
+      customState.cut = cut;
+      document.getElementById('custom-preview-cut').innerText = cut.toUpperCase();
+      document.querySelectorAll('.custom-cut-pill').forEach(b => b.className = "custom-cut-pill p-3 border border-[#e8e8e8] text-neutral-700 text-left text-xs font-semibold uppercase tracking-wider");
+      btn.className = "custom-cut-pill p-3 border border-neutral-950 text-neutral-950 text-left text-xs font-semibold uppercase tracking-wider bg-[#121212] text-white";
+    }
+
+    function setCustomColor(hex, name, btn) {
+      customState.color = name;
+      document.getElementById('custom-shirt-svg').setAttribute('fill', hex);
+      document.querySelectorAll('.custom-color-btn').forEach(b => b.className = "custom-color-btn px-4 py-1.5 border border-[#e8e8e8] text-neutral-800 text-xs font-semibold uppercase");
+      btn.className = "custom-color-btn px-4 py-1.5 border border-neutral-950 bg-[#121212] text-white text-xs font-semibold uppercase";
+    }
+
+    function setCustomZone(zoneKey, label, price, btn) {
+      customState.zone = label;
+      customState.price = price;
+      document.getElementById('custom-price-display').innerText = `S/ ${price}.00 PEN`;
+      document.querySelectorAll('.custom-zone-pill').forEach(b => b.className = "custom-zone-pill p-3 border border-[#e8e8e8] text-xs font-bold uppercase text-center");
+      btn.className = "custom-zone-pill p-3 border border-neutral-950 bg-[#121212] text-white text-xs font-bold uppercase text-center";
+
+      const target = document.getElementById('custom-target-box');
+      const text = document.getElementById('custom-target-text');
+      if (zoneKey === 'pocket') {
+        target.style.top = '28%'; target.style.left = '56%'; target.style.width = '42px'; target.style.height = '42px';
+        text.innerText = 'BOLSILLO';
+      } else if (zoneKey === 'front_a4') {
+        target.style.top = '30%'; target.style.left = '36%'; target.style.width = '76px'; target.style.height = '100px';
+        text.innerText = 'PECHO A4';
+      } else {
+        target.style.top = '24%'; target.style.left = '32%'; target.style.width = '96px'; target.style.height = '125px';
+        text.innerText = 'ESPALDA A3';
+      }
+    }
+
+    function handleCustomFileUpload(e) {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById('custom-upload-text').innerText = `✓ ${file.name} (${(file.size/1024/1024).toFixed(1)} MB)`;
+      }
+    }
+
+    function sendCustomWhatsApp() {
+      const msg = `Hola AMIAS, deseo personalizar mi polo:\n- Corte: ${customState.cut}\n- Color: ${customState.color}\n- Zona: ${customState.zone}\n- Total: S/ ${customState.price}.00 PEN`;
+      window.open(`https://wa.me/51999999999?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // Modal de Login
+    function openLoginModal() {
+      if (isLoggedInAdmin) { navigateTab('admin'); return; }
+      document.getElementById('login-modal').classList.remove('hidden');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('login-modal').classList.add('hidden');
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      isLoggedInAdmin = true;
+      closeLoginModal();
+      document.getElementById('user-btn-label').innerText = "Panel Activo";
+      navigateTab('admin');
+    }
+
+    function logoutAdmin() {
+      isLoggedInAdmin = false;
+      document.getElementById('user-btn-label').innerText = "Cuenta Taller";
+      navigateTab('home');
+    }
+  </script>
+</body>
+</html>

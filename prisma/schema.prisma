@@ -23,23 +23,25 @@ model User {
 }
 
 model ConcertEvent {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String
   venue     String
   capacity  Int
-  rate      Float    @default(0.004)
+  rate      Float     @default(0.004)
   eventDate DateTime
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  products  Product[]
 
   @@map("concert_events")
 }
 
 model TextileCut {
-  id           String   @id @default(uuid())
-  name         String
-  grammageGsm  Int      @default(240)
-  description  String?
-  createdAt    DateTime @default(now())
+  id          String    @id @default(uuid())
+  name        String
+  grammageGsm Int       @default(240)
+  description String?
+  createdAt   DateTime  @default(now())
+  products    Product[]
 
   @@map("textile_cuts")
 }
@@ -54,13 +56,42 @@ model TextileColor {
 }
 
 model TextileSize {
-  id        String   @id @default(uuid())
-  label     String
-  chestCm   Int
-  lengthCm  Int
-  shoulderCm Int
-  heightRef String?
-  createdAt DateTime @default(now())
+  id           String        @id @default(uuid())
+  label        String
+  chestCm      Int
+  lengthCm     Int
+  shoulderCm   Int
+  heightRef    String?
+  createdAt    DateTime      @default(now())
+  productSizes ProductSize[]
 
   @@map("textile_sizes")
+}
+
+model Product {
+  id             String        @id @default(uuid())
+  name           String
+  description    String?
+  basePrice      Float
+  concertEventId String
+  concertEvent   ConcertEvent  @relation(fields: [concertEventId], references: [id])
+  cutId          String
+  cut            TextileCut    @relation(fields: [cutId], references: [id])
+  imageUrl       String?
+  isActive       Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  sizes          ProductSize[]
+
+  @@map("products")
+}
+
+model ProductSize {
+  productId String
+  sizeId    String
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size      TextileSize @relation(fields: [sizeId], references: [id], onDelete: Cascade)
+
+  @@id([productId, sizeId])
+  @@map("product_sizes")
 }
