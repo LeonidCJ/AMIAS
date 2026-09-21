@@ -25,8 +25,8 @@ export class LoginUserUseCase {
 
     const payload = { sub: user.id, email: user.email, role: user.role };
 
-    const accessToken = this.jwtService.sign(payload, 'access', 15); // 15 minutes
-    const refreshToken = this.jwtService.sign(payload, 'refresh', 7 * 24 * 60); // 7 days
+    const accessToken = this.jwtService.sign(payload, 'access', 15);
+    const refreshToken = this.jwtService.sign(payload, 'refresh', 7 * 24 * 60);
 
     return {
       accessToken,
