@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AMIAS — Official & Custom Apparel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Assistant', sans-serif;
+      color: #121212;
+      background-color: #ffffff;
+    }
+    .font-body { font-family: 'Inter', sans-serif; }
+    .btn-dawn-primary {
+      background-color: #121212;
+      color: #ffffff;
+      border: 1px solid #121212;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-dawn-primary:hover {
+      background-color: #ffffff;
+      color: #121212;
+    }
+    .btn-dawn-secondary {
+      background-color: #ffffff;
+      color: #121212;
+      border: 1px solid #121212;
+      transition: all 0.2s ease;
+    }
+    .btn-dawn-secondary:hover {
+      background-color: #121212;
+      color: #ffffff;
+    }
+    .dawn-input {
+      border: 1px solid #cccccc;
+      transition: border-color 0.2s ease;
+    }
+    .dawn-input:focus {
+      outline: none;
+      border-color: #121212;
+    }
+    .dawn-pill-active {
+      background-color: #121212 !important;
+      color: #ffffff !important;
+      border-color: #121212 !important;
+    }
+  </style>
+</head>
+<body class="selection:bg-neutral-900 selection:text-white flex flex-col min-h-screen">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-[#121212] text-white text-[11px] tracking-[0.15em] uppercase text-center py-2.5 px-4 font-semibold border-b border-neutral-800 flex items-center justify-center gap-2">
+    <span>Envíos garantizados antes del show • Lima 2026 • Algodón 24/1 Reactivo</span>
+  </div>
+
+  <!-- Dawn Header -->
+  <header class="border-b border-[#e8e8e8] bg-white sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <button onclick="navigateTab('home')" class="text-left group">
+        <span class="text-2xl font-extrabold tracking-[-0.04em] uppercase block leading-none">AMIAS</span>
+        <span class="text-[10px] tracking-[0.25em] text-neutral-400 uppercase font-body mt-1 block">Textile Studio Lima</span>
+      </button>
+
+      <!-- Navigation Principal -->
+      <nav class="hidden md:flex items-center gap-9 text-xs uppercase tracking-[0.14em] font-semibold text-neutral-700">
+        <button id="nav-home" onclick="navigateTab('home')" class="py-1 border-b-2 border-neutral-950 text-neutral-950 transition">
+          Inicio
+        </button>
+        <button id="nav-catalog" onclick="navigateTab('catalog')" class="py-1 border-b-2 border-transparent hover:text-neutral-950 transition">
+          Catálogo
+        </button>
+        <button id="nav-custom" onclick="navigateTab('custom')" class="py-1 border-b-2 border-transparent hover:text-neutral-950 transition">
+          Personalizados
+        </button>
+        <button id="nav-about" onclick="navigateTab('about')" class="py-1 border-b-2 border-transparent hover:text-neutral-950 transition">
+          About
+        </button>
+      </nav>
+
+      <!-- Search Trigger & User Status (Click al perfil) -->
+      <div class="flex items-center gap-5">
+        <button onclick="openSearchModal()" title="Buscar prendas o conciertos" class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-neutral-900 hover:opacity-60 transition">
+          <svg class="w-4 h-4 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <span class="hidden sm:inline">Buscar</span>
+        </button>
+
+        <div class="border-l border-[#e8e8e8] pl-5 flex items-center gap-2">
+          <button onclick="navigateTab('profile')" class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-neutral-950 hover:opacity-60 transition group">
+            <span class="w-7 h-7 rounded-full bg-[#121212] text-white flex items-center justify-center text-[10px] font-bold">
+              CR
+            </span>
+            <span class="font-bold border-b border-transparent group-hover:border-neutral-950 transition">
+              Carlos Rivas
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Submenu -->
+    <div class="md:hidden border-t border-[#e8e8e8] px-4 py-3 flex items-center justify-around text-xs uppercase tracking-wider font-semibold text-neutral-600 bg-white">
+      <button id="mob-home" onclick="navigateTab('home')" class="py-0.5 border-b-2 border-neutral-950 text-neutral-950">Inicio</button>
+      <button id="mob-catalog" onclick="navigateTab('catalog')" class="py-0.5 border-b-2 border-transparent">Catálogo</button>
+      <button id="mob-custom" onclick="navigateTab('custom')" class="py-0.5 border-b-2 border-transparent">Personalizados</button>
+      <button id="mob-about" onclick="navigateTab('about')" class="py-0.5 border-b-2 border-transparent">About</button>
+      <button id="mob-profile" onclick="navigateTab('profile')" class="py-0.5 border-b-2 border-transparent text-neutral-950 font-bold">Mi Cuenta</button>
+    </div>
+  </header>
+
+  <!-- Modal de Búsqueda -->
+  <div id="search-modal" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-start justify-center pt-20 px-4 hidden">
+    <div class="bg-white border border-[#e8e8e8] w-full max-w-2xl p-6 sm:p-8 shadow-2xl relative space-y-6">
+      <button onclick="closeSearchModal()" class="absolute top-6 right-6 text-neutral-400 hover:text-neutral-950 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <div>
+        <span class="text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-400 block mb-1">CATÁLOGO AMIAS 2026</span>
+        <h2 class="text-xl font-bold uppercase tracking-tight text-[#121212]">Buscar Prendas y Conciertos</h2>
+      </div>
+      <div class="relative">
+        <input type="text" id="search-input" oninput="handleSearchInput(event)" placeholder="Ej. Coldplay, Blink-182, Acme Circles, Boxy Fit..." class="w-full text-sm px-4 py-3.5 border border-[#cccccc] focus:outline-none focus:border-[#121212] font-body transition" />
+      </div>
+      <div id="search-results-box" class="space-y-2 max-h-60 overflow-y-auto font-body text-xs text-neutral-600 divide-y divide-[#f0f0f0]"></div>
+    </div>
+  </div>
+
+  <!-- ======================================================= -->
+  <!-- MAIN ROUTER CONTAINER                                   -->
+  <!-- ======================================================= -->
+  <main class="flex-1">
+
+    <!-- 0. VISTA: INICIO (COMPLETO CON BANNER, 4 PILARES Y 4 DESTACADOS) -->
+    <div id="view-home" class="page-view space-y-16 py-8">
+      
+      <!-- Hero Banner Editorial -->
+      <section class="max-w-7xl mx-auto px-6 lg:px-12">
+        <div class="relative bg-[#f6f6f6] border border-[#e8e8e8] min-h-[500px] flex items-center p-8 sm:p-16 lg:p-20 overflow-hidden">
+          <div class="max-w-xl space-y-6 relative z-10">
+            <span class="text-xs uppercase tracking-[0.25em] font-semibold text-neutral-500 block">
+              AMIAS TEXTILE STUDIO — LIMA 2026
+            </span>
+            <h1 class="text-4xl sm:text-6xl font-bold tracking-[-0.03em] uppercase leading-[1.05] text-[#121212]">
+              Viste el show <br>antes de entrar.
+            </h1>
+            <p class="text-sm sm:text-base font-body text-neutral-600 font-normal leading-relaxed">
+              Indumentaria con patronaje Boxy Oversize confeccionada en algodón reactivo 24/1 pesado de 240g. Merch oficial de giras y servicio de estampado DTF a medida con acabado textil industrial.
+            </p>
+            <div class="pt-2 flex flex-wrap gap-4">
+              <button onclick="navigateTab('catalog')" class="btn-dawn-primary px-8 py-3.5 text-xs font-semibold tracking-[0.14em] uppercase">
+                Ver Catálogo de Giras →
+              </button>
+              <button onclick="navigateTab('custom')" class="btn-dawn-secondary px-8 py-3.5 text-xs font-semibold tracking-[0.14em] uppercase">
+                Personalizar Mi Prenda
+              </button>
+            </div>
+          </div>
+          <div class="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-neutral-200/50 to-transparent pointer-events-none hidden lg:block"></div>
+        </div>
+      </section>
+
+      <!-- 4 Pilares de Calidad -->
+      <section class="max-w-7xl mx-auto px-6 lg:px-12">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 border-y border-[#e8e8e8]">
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold uppercase tracking-widest text-[#121212]">01 / Tejido 24/1</h4>
+            <p class="text-xs font-body text-neutral-500">Algodón reactivo peinado que no encoge ni destiñe tras lavados continuos.</p>
+          </div>
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold uppercase tracking-widest text-[#121212]">02 / Boxy Fit</h4>
+            <p class="text-xs font-body text-neutral-500">Hombros caídos con silueta urbana estructurada inspirada en streetwear de gira.</p>
+          </div>
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold uppercase tracking-widest text-[#121212]">03 / DTF 300 DPI</h4>
+            <p class="text-xs font-body text-neutral-500">Impresión directa por film curada con poliamida elástica de máxima duración.</p>
+          </div>
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold uppercase tracking-widest text-[#121212]">04 / Entrega Pre-Show</h4>
+            <p class="text-xs font-body text-neutral-500">Garantizamos tu prenda lista para retiro o delivery antes del día del evento.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Selección Destacada Completa (4 Tarjetas Restauradas) -->
+      <section class="max-w-7xl mx-auto px-6 lg:px-12 space-y-8">
+        <div class="flex items-center justify-between border-b border-[#e8e8e8] pb-4">
+          <div>
+            <span class="text-[11px] font-body text-neutral-400 uppercase tracking-widest block">TOP DROPS</span>
+            <h2 class="text-2xl font-bold uppercase tracking-[-0.02em] text-[#121212] mt-0.5">Prendas Más Solicitadas</h2>
+          </div>
+          <button onclick="navigateTab('catalog')" class="text-xs font-bold uppercase tracking-wider text-neutral-900 hover:underline underline-offset-4">
+            Ver todas las prendas →
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+          
+          <!-- Card 1: Coldplay -->
+          <div class="group cursor-pointer" onclick="openProductDetail('coldplay', 'Polo Oversize Spheres (Coldplay)', 55)">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#121212] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">Coldplay</span>
+              <div class="w-28 h-36 bg-[#121212] text-white flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-400 uppercase">SPHERES</span>
+                <span class="text-xs font-bold mt-1">TOUR 2026</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Polo Oversize Spheres</h3>
+              <p class="text-[11px] font-body text-neutral-500">Reactivo 24/1 • Negro / Blanco</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">S/ 55.00 PEN</p>
+            </div>
+          </div>
+
+          <!-- Card 2: Acme Circles -->
+          <div class="group cursor-pointer" onclick="openProductDetail('acme', 'Acme Circles T-Shirt', 75)">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#2563eb] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">Geometric</span>
+              <div class="w-28 h-36 bg-neutral-900 text-white flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-400 uppercase">ACME</span>
+                <span class="text-xs font-bold mt-1">CIRCLES</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Acme Circles T-Shirt</h3>
+              <p class="text-[11px] font-body text-neutral-500">Jersey Ringspun • Black / White</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">S/ 75.00 PEN</p>
+            </div>
+          </div>
+
+          <!-- Card 3: Blink-182 -->
+          <div class="group cursor-pointer" onclick="openProductDetail('blink', 'Polo Boxy Revival Blink-182', 50)">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#121212] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">Blink-182</span>
+              <div class="w-28 h-36 bg-white border border-[#e8e8e8] text-[#121212] flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-400 uppercase">WORLD TOUR</span>
+                <span class="text-xs font-bold mt-1">SMILEY V2</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Polo Boxy Revival Blink</h3>
+              <p class="text-[11px] font-body text-neutral-500">Reactivo 24/1 • Blanco Óptico</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">S/ 50.00 PEN</p>
+            </div>
+          </div>
+
+          <!-- Card 4: Callout Personalizados -->
+          <div class="bg-[#f7f7f7] aspect-[4/5] border border-dashed border-neutral-300 p-5 flex flex-col justify-between hover:border-neutral-900 transition cursor-pointer" onclick="navigateTab('custom')">
+            <div class="space-y-2">
+              <span class="text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-400 block">PRODUCCIÓN A MEDIDA</span>
+              <h3 class="text-sm font-bold uppercase tracking-tight text-[#121212]">¿Tienes un arte propio listo?</h3>
+              <p class="text-xs font-body text-neutral-600 leading-relaxed">
+                Ingresa al configurador técnico, sube tu PNG o PDF y coordinamos tu pedido en WhatsApp.
+              </p>
+            </div>
+            <button class="btn-dawn-secondary w-full py-2.5 text-[11px] uppercase tracking-wider font-semibold">
+              Personalizar →
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+
+    <!-- 1. VISTA: CATÁLOGO CON SUBDIVISIONES -->
+    <div id="view-catalog" class="page-view hidden space-y-12 py-8">
+      <section class="max-w-7xl mx-auto px-6 lg:px-12">
+        <div class="bg-[#f6f6f6] border border-[#e8e8e8] p-8 sm:p-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="space-y-2 max-w-xl">
+            <span class="text-xs uppercase tracking-[0.25em] font-semibold text-neutral-500 block">AMIAS COLECCIONES 2026</span>
+            <h1 class="text-3xl sm:text-4xl font-bold tracking-[-0.03em] uppercase text-[#121212]">Catálogo de Conciertos</h1>
+            <p class="text-xs sm:text-sm font-body text-neutral-600 leading-relaxed">
+              Selecciona tu polo para elegir talla, color y proceder al checkout directo con código QR o transferencia.
+            </p>
+          </div>
+          <button onclick="navigateTab('custom')" class="btn-dawn-secondary px-6 py-3 text-xs font-bold uppercase tracking-wider whitespace-nowrap self-start md:self-auto">
+            Configurar Tu Propio Arte →
+          </button>
+        </div>
+      </section>
+
+      <section class="max-w-7xl mx-auto px-6 lg:px-12 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e8e8e8] pb-4">
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs uppercase tracking-wider font-semibold">
+            <button onclick="filterCatalog('all', this)" class="catalog-filter-btn px-4 py-1.5 border border-[#121212] bg-[#121212] text-white transition">Todos</button>
+            <button onclick="filterCatalog('coldplay', this)" class="catalog-filter-btn px-4 py-1.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition">Coldplay</button>
+            <button onclick="filterCatalog('acme', this)" class="catalog-filter-btn px-4 py-1.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition">Acme Circles</button>
+            <button onclick="filterCatalog('blink', this)" class="catalog-filter-btn px-4 py-1.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition">Blink-182</button>
+          </div>
+          <span class="text-xs font-body text-neutral-400" id="catalog-count-badge">Mostrando 3 prendas</span>
+        </div>
+
+        <div id="catalog-products-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+          <div class="catalog-item group cursor-pointer" data-category="coldplay" onclick="openProductDetail('coldplay', 'Polo Oversize Spheres (Coldplay)', 55)">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#121212] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">Coldplay</span>
+              <div class="w-28 h-36 bg-[#121212] text-white flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-400 uppercase">SPHERES</span>
+                <span class="text-xs font-bold mt-1">TOUR 2026</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Polo Oversize Spheres</h3>
+              <p class="text-[11px] font-body text-neutral-500">Reactivo 24/1 • Negro / Blanco</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">S/ 55.00 PEN</p>
+            </div>
+          </div>
+
+          <div class="catalog-item group cursor-pointer" data-category="acme" onclick="openProductDetail('acme', 'Acme Circles T-Shirt', 75)">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#2563eb] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">Geometric</span>
+              <div class="w-28 h-36 bg-neutral-900 text-white flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-400 uppercase">ACME</span>
+                <span class="text-xs font-bold mt-1">CIRCLES</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Acme Circles T-Shirt</h3>
+              <p class="text-[11px] font-body text-neutral-500">Jersey Ringspun • Black / White</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">S/ 75.00 PEN</p>
+            </div>
+          </div>
+
+          <div class="catalog-item group cursor-pointer" data-category="blink" onclick="openProductDetail('blink', 'Polo Boxy Revival Blink-182', 50)">
+            <div class="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+              <span class="absolute top-2.5 left-2.5 bg-[#121212] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5">Blink-182</span>
+              <div class="w-28 h-36 bg-white border border-[#e8e8e8] text-[#121212] flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+                <span class="text-[9px] tracking-widest font-body text-neutral-400 uppercase">WORLD TOUR</span>
+                <span class="text-xs font-bold mt-1">SMILEY V2</span>
+              </div>
+            </div>
+            <div class="pt-3 space-y-0.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">Polo Boxy Revival Blink</h3>
+              <p class="text-[11px] font-body text-neutral-500">Reactivo 24/1 • Blanco Óptico</p>
+              <p class="text-xs font-bold text-[#121212] font-body pt-1">S/ 50.00 PEN</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+
+    <!-- 2. VISTA: DETALLE DE PRENDA (STAGE VERCEL OSCURO) -->
+    <div id="view-product-detail" class="page-view hidden max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-8">
+      <button onclick="navigateTab('catalog')" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-600 hover:text-neutral-950 transition">
+        ← Volver al Catálogo
+      </button>
+
+      <div class="bg-black text-white p-8 sm:p-12 lg:p-16 border border-neutral-800 shadow-2xl relative">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <div class="lg:col-span-7 flex flex-col items-center justify-center space-y-8">
+            <div class="relative w-72 h-84 sm:w-80 sm:h-96 flex flex-col items-center justify-center">
+              <div class="relative w-full h-full flex items-center justify-center transition-all duration-300">
+                <svg viewBox="0 0 24 24" class="w-72 h-72 drop-shadow-2xl transition-colors duration-300" id="detail-shirt-svg" fill="#121212" stroke="#333333" stroke-width="0.3">
+                  <path d="M16 2l4 4-2.5 4.5-2.5-1.5V21H9V9L6.5 10.5 4 6l4-4h2a3 3 0 0 0 6 0h2z" stroke-linejoin="round" stroke-linecap="round"/>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none p-12">
+                  <svg viewBox="0 0 100 100" class="w-40 h-40 stroke-white/80 fill-none stroke-[1.2] opacity-90 transition-all duration-300" id="detail-art-svg">
+                    <ellipse cx="50" cy="50" rx="38" ry="18" transform="rotate(-25 50 50)"/>
+                    <ellipse cx="50" cy="50" rx="38" ry="18" transform="rotate(15 50 50)"/>
+                    <ellipse cx="50" cy="50" rx="38" ry="18" transform="rotate(55 50 50)"/>
+                    <ellipse cx="50" cy="50" rx="38" ry="18" transform="rotate(-65 50 50)"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 pt-2">
+              <button onclick="setDetailColor('Black', '#121212', 0)" class="thumb-btn w-14 h-14 bg-black border-2 border-blue-600 rounded-lg flex items-center justify-center p-1 transition">
+                <span class="text-[9px] font-mono text-neutral-400">BLACK</span>
+              </button>
+              <button onclick="setDetailColor('White', '#f4f4f5', 1)" class="thumb-btn w-14 h-14 bg-neutral-900 border border-neutral-800 rounded-lg flex items-center justify-center p-1 transition">
+                <span class="text-[9px] font-mono text-neutral-400">WHITE</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 space-y-6">
+            <div>
+              <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-white font-body" id="detail-title-text">
+                Acme Circles T-Shirt
+              </h1>
+              <div class="mt-3">
+                <span class="inline-block bg-[#2563eb] text-white text-xs font-bold px-3 py-1.5 rounded-full font-body" id="detail-price-pill">
+                  S/ 75.00 PEN
+                </span>
+              </div>
+            </div>
+
+            <hr class="border-neutral-800" />
+
+            <div class="space-y-3">
+              <span class="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-body block">COLOR</span>
+              <div class="flex flex-wrap items-center gap-2">
+                <button onclick="setDetailColor('Black', '#121212', 0)" class="color-choice-pill px-4 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 font-body transition">
+                  Black
+                </button>
+                <button onclick="setDetailColor('White', '#f4f4f5', 1)" class="color-choice-pill px-4 py-1.5 rounded-full border-2 border-blue-600 bg-black text-xs text-white font-body font-semibold transition">
+                  White
+                </button>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <span class="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-body block">SIZE</span>
+              <div class="flex flex-wrap items-center gap-2">
+                <button onclick="setDetailSize('S', this)" class="size-choice-pill px-3.5 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 font-body">S</button>
+                <button onclick="setDetailSize('M', this)" class="size-choice-pill px-3.5 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 font-body">M</button>
+                <button onclick="setDetailSize('L', this)" class="size-choice-pill px-3.5 py-1.5 rounded-full border-2 border-blue-600 bg-black text-xs text-white font-body font-bold">L</button>
+                <button onclick="setDetailSize('XL', this)" class="size-choice-pill px-3.5 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 font-body">XL</button>
+              </div>
+            </div>
+
+            <button onclick="proceedToPaymentFromDetail()" class="w-full py-4 rounded-full bg-[#2563eb] hover:bg-blue-500 text-white font-body font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl transition">
+              <span>Continuar al Pago / Realizar Pedido →</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 3. VISTA: CHECKOUT & MÉTODOS DE PAGO (QR / CCI / WHATSAPP) -->
+    <div id="view-payment" class="page-view hidden max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-10">
+      <button onclick="navigateTab('catalog')" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-600 hover:text-neutral-950 transition">
+        ← Cambiar Prenda / Volver al Catálogo
+      </button>
+
+      <div class="border-b border-[#e8e8e8] pb-4">
+        <span class="text-[11px] font-body text-neutral-400 uppercase tracking-widest block">PASARELA TEXTIL AMIAS</span>
+        <h1 class="text-3xl font-bold uppercase tracking-[-0.02em] text-[#121212] mt-0.5">Finalizar Pedido y Pago</h1>
+        <p class="text-xs font-body text-neutral-500 mt-1">
+          Transfiere o escanea el código QR de billeteras digitales para asegurar la tela reactiva y programar la impresión DTF.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        <div class="lg:col-span-7 space-y-6">
+          <div class="flex items-center gap-2 border-b border-[#e8e8e8] pb-3 text-xs uppercase tracking-wider font-semibold">
+            <button id="pay-tab-qr" onclick="switchPaymentMethod('qr')" class="px-4 py-2 border border-[#121212] bg-[#121212] text-white transition">
+              1. Yape / Plin (QR Rápido)
+            </button>
+            <button id="pay-tab-bank" onclick="switchPaymentMethod('bank')" class="px-4 py-2 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition">
+              2. Transferencia / CCI
+            </button>
+          </div>
+
+          <!-- QR Yape / Plin -->
+          <div id="payment-panel-qr" class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-6">
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+              <div class="w-48 h-48 bg-neutral-950 text-white p-3 border border-neutral-300 flex flex-col items-center justify-between relative shadow-sm">
+                <div class="w-full flex justify-between items-center text-[9px] font-mono tracking-widest">
+                  <span>YAPE</span>
+                  <span>PLIN</span>
+                </div>
+                <svg viewBox="0 0 100 100" class="w-32 h-32 fill-white">
+                  <rect x="10" y="10" width="25" height="25" fill="white" />
+                  <rect x="15" y="15" width="15" height="15" fill="black" />
+                  <rect x="65" y="10" width="25" height="25" fill="white" />
+                  <rect x="70" y="15" width="15" height="15" fill="black" />
+                  <rect x="10" y="65" width="25" height="25" fill="white" />
+                  <rect x="15" y="70" width="15" height="15" fill="black" />
+                  <rect x="42" y="15" width="8" height="8" fill="white" />
+                  <rect x="42" y="30" width="8" height="18" fill="white" />
+                  <rect x="15" y="45" width="18" height="8" fill="white" />
+                  <rect x="42" y="60" width="16" height="8" fill="white" />
+                  <rect x="65" y="45" width="8" height="28" fill="white" />
+                  <rect x="78" y="65" width="12" height="12" fill="white" />
+                </svg>
+                <span class="text-[9px] font-mono tracking-widest text-amber-400">AMIAS TEXTILE</span>
+              </div>
+
+              <div class="space-y-3 font-body text-xs text-neutral-600 flex-1">
+                <span class="text-[10px] font-mono uppercase tracking-widest text-neutral-400 block font-bold">DATOS DE BILLETERA DIGITAL</span>
+                <div>
+                  <span class="text-neutral-400 block text-[11px]">Titular:</span>
+                  <strong class="text-sm text-[#121212]">AMIAS TEXTILE STUDIO E.I.R.L.</strong>
+                </div>
+                <div>
+                  <span class="text-neutral-400 block text-[11px]">Número (Yape / Plin):</span>
+                  <div class="flex items-center gap-2 mt-0.5">
+                    <strong class="text-base text-[#121212] font-mono">+51 987 654 321</strong>
+                    <button onclick="navigator.clipboard.writeText('987654321'); alert('Número copiado al portapapeles');" class="text-[11px] underline text-neutral-500 hover:text-neutral-950 font-sans">Copiar</button>
+                  </div>
+                </div>
+                <div class="p-3 bg-[#fbfbfb] border border-[#e8e8e8] text-[11px] text-neutral-500 space-y-0.5">
+                  <p>• Escanea o digita el número en tu app.</p>
+                  <p>• Coloca tu nombre en el concepto.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CCI / Banco -->
+          <div id="payment-panel-bank" class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-5 hidden font-body">
+            <span class="text-[10px] font-mono uppercase tracking-widest text-neutral-400 block font-bold">CUENTAS CORRIENTES SOLES (BCP & BBVA)</span>
+            <div class="p-4 border border-[#e8e8e8] bg-[#fbfbfb] space-y-1">
+              <div class="flex justify-between items-center text-xs font-bold text-[#121212]">
+                <span>Banco de Crédito del Perú (BCP)</span>
+                <span class="text-[10px] uppercase bg-neutral-200 px-2 py-0.5 font-mono">Soles</span>
+              </div>
+              <p class="text-xs text-neutral-600">Cuenta: <strong class="font-mono text-neutral-900">191-84729103-0-45</strong></p>
+              <p class="text-xs text-neutral-600">CCI: <strong class="font-mono text-neutral-900">002-191-0084729103045-52</strong></p>
+            </div>
+            <div class="p-4 border border-[#e8e8e8] bg-[#fbfbfb] space-y-1">
+              <div class="flex justify-between items-center text-xs font-bold text-[#121212]">
+                <span>BBVA Perú</span>
+                <span class="text-[10px] uppercase bg-neutral-200 px-2 py-0.5 font-mono">Soles</span>
+              </div>
+              <p class="text-xs text-neutral-600">Cuenta: <strong class="font-mono text-neutral-900">0011-0382-0100482910</strong></p>
+              <p class="text-xs text-neutral-600">CCI: <strong class="font-mono text-neutral-900">011-382-000100482910-18</strong></p>
+            </div>
+          </div>
+
+          <!-- Adjuntar Voucher -->
+          <div class="border border-[#e8e8e8] p-6 bg-[#fafafa] space-y-4 font-body">
+            <div class="space-y-1">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212]">Adjuntar Constancia o Enviar Voucher</h3>
+              <p class="text-xs text-neutral-500">Sube la captura de tu transferencia o envíala directo a nuestro WhatsApp.</p>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+              <input type="file" id="voucher-file" class="hidden" onchange="handleVoucherUpload(event)" />
+              <label for="voucher-file" class="btn-dawn-secondary px-5 py-3 text-xs font-bold uppercase tracking-wider cursor-pointer w-full sm:w-auto text-center">
+                <span id="voucher-upload-text">Subir Captura de Pago (JPG/PNG)</span>
+              </label>
+              <button onclick="confirmOrderWithWhatsAppPayment()" class="btn-dawn-primary px-6 py-3 text-xs font-bold uppercase tracking-wider w-full sm:w-auto flex items-center justify-center gap-2">
+                <span>Confirmar por WhatsApp</span>
+                <svg class="w-3.5 h-3.5 fill-emerald-400" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.599 2.679-.702c.97.53 1.83.812 2.776.812 3.182 0 5.767-2.587 5.768-5.766 0-3.18-2.585-5.766-5.763-5.766zm9.969 5.766c0 5.514-4.486 10-10 10-1.748 0-3.39-.452-4.82-1.246l-5.18 1.358 1.38-5.048c-.902-1.504-1.38-3.23-1.38-5.064 0-5.514 4.486-10 10-10s10 4.486 10 10z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 space-y-6 font-body">
+          <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-5">
+            <div class="border-b border-[#f0f0f0] pb-3">
+              <span class="text-[10px] font-mono uppercase tracking-widest text-neutral-400 block font-bold">RESUMEN DE PEDIDO</span>
+              <h3 class="text-sm font-bold uppercase tracking-wider text-[#121212] mt-0.5">Orden #ORD-1083</h3>
+            </div>
+            <div class="space-y-2.5 text-xs text-neutral-600">
+              <div class="flex justify-between"><span>Prenda:</span><strong class="text-neutral-900" id="checkout-prod-name">Acme Circles T-Shirt</strong></div>
+              <div class="flex justify-between"><span>Corte & Talla:</span><strong class="text-neutral-900" id="checkout-prod-spec">Boxy Oversize • L</strong></div>
+              <div class="flex justify-between"><span>Color:</span><strong class="text-neutral-900" id="checkout-prod-color">Negro Reactivo 24/1</strong></div>
+              <div class="flex justify-between"><span>Cliente:</span><strong class="text-neutral-900">Carlos Rivas (+51 987 654 321)</strong></div>
+            </div>
+            <div class="border-t border-[#f0f0f0] pt-4 flex justify-between items-end">
+              <div><span class="text-[11px] text-neutral-400 block uppercase">Total a Transferir</span><span class="text-xs text-emerald-600 font-semibold">Sin comisiones bancarias</span></div>
+              <span class="text-2xl font-bold text-[#121212] font-body" id="checkout-prod-price">S/ 75.00 PEN</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 4. VISTA: PERSONALIZADOS COMPLETO CON PREVIEW DINÁMICO -->
+    <div id="view-custom" class="page-view hidden max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-10">
+      <div class="border-b border-[#e8e8e8] pb-4">
+        <span class="text-[11px] font-body text-neutral-400 uppercase tracking-widest block">CONFECCIÓN Y ESTAMPADO DTF</span>
+        <h1 class="text-3xl font-bold uppercase tracking-[-0.02em] text-[#121212] mt-0.5">Personalizados</h1>
+        <p class="text-xs font-body text-neutral-500 mt-1">Sube tu diseño, selecciona corte y calcula el costo exacto antes de mandar a confeccionar.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        <div class="lg:col-span-6 space-y-4">
+          <div class="bg-[#f7f7f7] border border-[#e8e8e8] min-h-[460px] flex flex-col items-center justify-center relative p-8">
+            <span class="absolute top-4 left-4 text-[10px] uppercase tracking-widest font-body bg-white border border-[#e8e8e8] px-3 py-1 text-neutral-600 font-semibold">
+              PATRÓN: <span id="custom-preview-cut">OVERSIZE BOXY</span>
+            </span>
+            <div class="relative w-72 h-72 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" class="w-full h-full transition-colors duration-200" id="custom-shirt-svg" fill="#18181b" stroke="#3f3f46" stroke-width="0.35">
+                <path d="M16 2l4 4-2.5 4.5-2.5-1.5V21H9V9L6.5 10.5 4 6l4-4h2a3 3 0 0 0 6 0h2z" stroke-linejoin="round" stroke-linecap="round"/>
+              </svg>
+              <div id="custom-target-box" class="absolute border border-dashed border-white/80 bg-white/10 flex items-center justify-center pointer-events-none transition-all duration-300">
+                <span id="custom-target-text" class="text-[9px] font-body font-bold text-white bg-[#121212] px-1.5 py-0.5 tracking-wider uppercase">ESPALDA A3</span>
+              </div>
+            </div>
+            <div class="w-full flex items-center justify-between text-xs font-body text-neutral-500 border-t border-[#e8e8e8] pt-4 mt-4">
+              <span>Jersey Reactivo 24/1 Pesado (240g)</span>
+              <span id="custom-size-badge" class="font-semibold text-neutral-900">Talla: L</span>
+            </div>
+          </div>
+
+          <div class="border border-dashed border-[#cccccc] hover:border-[#121212] bg-[#fbfbfb] p-6 text-center transition cursor-pointer">
+            <input type="file" id="custom-file-input" class="hidden" onchange="handleCustomFileUpload(event)">
+            <label for="custom-file-input" class="cursor-pointer block space-y-1">
+              <span class="text-xs uppercase tracking-wider font-semibold text-[#121212] block" id="custom-upload-text">
+                Adjuntar Archivo Gráfico (PNG / PDF 300 DPI)
+              </span>
+              <span class="text-[11px] font-body text-neutral-400 block">Formato con fondo transparente para DTF</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6 space-y-6">
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.15em] font-bold text-neutral-700 block mb-2">1. Silueta / Corte</span>
+            <div class="grid grid-cols-2 gap-3">
+              <button onclick="setCustomCut('Oversize Boxy', this)" class="custom-cut-pill p-3 border border-neutral-950 text-neutral-950 text-left text-xs font-semibold uppercase tracking-wider dawn-pill-active">
+                Oversize Boxy
+                <span class="block text-[10px] text-neutral-400 lowercase font-normal mt-0.5">caída amplia 240g</span>
+              </button>
+              <button onclick="setCustomCut('Regular Fit', this)" class="custom-cut-pill p-3 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 text-left text-xs font-semibold uppercase tracking-wider">
+                Regular Clásico
+                <span class="block text-[10px] text-neutral-400 lowercase font-normal mt-0.5">corte estándar 180g</span>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.15em] font-bold text-neutral-700 block mb-2">2. Color Reactivo</span>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setCustomColor('#18181b', 'Negro', this)" class="custom-color-btn px-4 py-2 border border-neutral-950 text-neutral-950 text-xs font-semibold uppercase tracking-wider dawn-pill-active">Negro</button>
+              <button onclick="setCustomColor('#f4f4f5', 'Blanco', this)" class="custom-color-btn px-4 py-2 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 text-xs font-semibold uppercase tracking-wider">Blanco</button>
+              <button onclick="setCustomColor('#d8ccc0', 'Beige', this)" class="custom-color-btn px-4 py-2 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 text-xs font-semibold uppercase tracking-wider">Beige</button>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-[11px] uppercase tracking-[0.15em] font-bold text-neutral-700 block mb-2">3. Área de Impresión DTF</span>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="setCustomZone('pocket', 'Bolsillo', 45, this)" class="custom-zone-pill p-3 border border-[#e8e8e8] text-xs font-bold uppercase text-center">Bolsillo (S/ 45)</button>
+              <button onclick="setCustomZone('front_a4', 'Pecho A4', 50, this)" class="custom-zone-pill p-3 border border-[#e8e8e8] text-xs font-bold uppercase text-center">Pecho A4 (S/ 50)</button>
+              <button onclick="setCustomZone('back_a3', 'Espalda A3', 55, this)" class="custom-zone-pill p-3 border border-neutral-950 text-xs font-bold uppercase text-center dawn-pill-active">Espalda A3 (S/ 55)</button>
+            </div>
+          </div>
+
+          <div class="border-t border-[#e8e8e8] pt-4 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-body text-neutral-400 uppercase tracking-wider block">Total Calculado</span>
+              <span id="custom-price-display" class="text-2xl font-bold text-[#121212] font-body">S/ 55.00 PEN</span>
+            </div>
+            <button onclick="proceedToPaymentFromCustom()" class="btn-dawn-primary px-8 py-3.5 text-xs font-bold uppercase tracking-wider">
+              Ir al Pago / Generar QR →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 5. VISTA: ABOUT COMPLETO -->
+    <div id="view-about" class="page-view hidden max-w-5xl mx-auto px-6 lg:px-12 py-10 space-y-16">
+      <div class="border-b border-[#e8e8e8] pb-8 text-center max-w-2xl mx-auto space-y-2">
+        <span class="text-[11px] font-body text-neutral-400 uppercase tracking-widest block">IDENTIDAD & INGENIERÍA TEXTIL</span>
+        <h1 class="text-4xl font-bold uppercase tracking-tight text-[#121212]">About AMIAS</h1>
+        <p class="text-sm font-body text-neutral-600 leading-relaxed">
+          Nacimos en Lima para transformar la experiencia del merchandising de conciertos y streetwear nacional, integrando patronaje de alto gramaje con tecnología de impresión directa sobre film (DTF).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+        <div class="space-y-2 border-t border-[#e8e8e8] pt-4">
+          <span class="text-[11px] font-body text-neutral-400 uppercase tracking-widest block">01 / ESTANDARIZACIÓN</span>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-[#121212]">Trazabilidad Digital</h3>
+          <p class="text-xs font-body text-neutral-600 leading-relaxed">
+            Eliminamos la informalidad de los audios de WhatsApp. Toda orden captura de forma unívoca medidas, corte, color y resolución de arte antes de llegar a la mesa de corte.
+          </p>
+        </div>
+        <div class="space-y-2 border-t border-[#e8e8e8] pt-4">
+          <span class="text-[11px] font-body text-neutral-400 uppercase tracking-widest block">02 / LA MATERIA PRIMA</span>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-[#121212]">Algodón 24/1 Reactivo</h3>
+          <p class="text-xs font-body text-neutral-600 leading-relaxed">
+            Tejido pesado de 240 gramos teñido con reactivo. La prenda mantiene el tono negro profundo y su caída boxy cuadrada sin encoger tras lavados intensos.
+          </p>
+        </div>
+        <div class="space-y-2 border-t border-[#e8e8e8] pt-4">
+          <span class="text-[11px] font-body text-neutral-400 uppercase tracking-widest block">03 / DEFINICIÓN GRÁFICA</span>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-[#121212]">DTF Textil a 300 DPI</h3>
+          <p class="text-xs font-body text-neutral-600 leading-relaxed">
+            Impresión con cabezales industriales i3200 curado con poliamida elástica para que los degradados fotográficos nunca se quiebren.
+          </p>
+        </div>
+      </div>
+
+      <!-- Tabla de Medidas -->
+      <div class="border border-[#e8e8e8] p-6 lg:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#e8e8e8] pb-4">
+          <div>
+            <h3 class="text-sm font-bold uppercase tracking-wider text-[#121212]">Tabla de Medidas Oficial (Corte Boxy Oversize)</h3>
+            <p class="text-xs font-body text-neutral-500 mt-0.5">Medidas en centímetros tomadas en prenda extendida sobre plano horizontal.</p>
+          </div>
+          <span class="text-[11px] font-body text-neutral-500 uppercase tracking-wider">Tolerancia ±1 cm</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-body">
+            <thead class="border-b border-[#e8e8e8] text-neutral-400 uppercase tracking-wider text-[10px]">
+              <tr>
+                <th class="py-3">TALLA</th>
+                <th class="py-3">ANCHO PECHO (A)</th>
+                <th class="py-3">LARGO TOTAL (B)</th>
+                <th class="py-3">CAÍDA HOMBRO (C)</th>
+                <th class="py-3">RECOMENDACIÓN ESTATURA</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#f0f0f0] text-neutral-800">
+              <tr><td class="py-4 font-bold text-[#121212]">S</td><td>56 cm</td><td>70 cm</td><td>22 cm</td><td class="text-neutral-500">1.60 m – 1.70 m</td></tr>
+              <tr><td class="py-4 font-bold text-[#121212]">M</td><td>59 cm</td><td>73 cm</td><td>23 cm</td><td class="text-neutral-500">1.70 m – 1.78 m</td></tr>
+              <tr class="bg-[#fafafa]"><td class="py-4 font-bold text-[#121212]">L (Recomendada)</td><td>62 cm</td><td>76 cm</td><td>24 cm</td><td class="text-neutral-500">1.78 m – 1.85 m</td></tr>
+              <tr><td class="py-4 font-bold text-[#121212]">XL</td><td>65 cm</td><td>79 cm</td><td>25 cm</td><td class="text-neutral-500">+1.85 m</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 6. VISTA: MI PERFIL (COMPLETO CON LAS 4 SECCIONES) -->
+    <div id="view-profile" class="page-view hidden max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-10">
+      
+      <div class="border-b border-[#e8e8e8] pb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <span class="text-[11px] font-body text-neutral-400 uppercase tracking-widest block">PORTAL PRIVADO</span>
+          <h1 class="text-3xl font-bold uppercase tracking-tight text-[#121212] mt-0.5">Mi Perfil & Pedidos</h1>
+          <p class="text-xs font-body text-neutral-500 mt-1">Gestiona tus órdenes activas en taller y tus medidas corporales guardadas.</p>
+        </div>
+        <button onclick="navigateTab('catalog')" class="btn-dawn-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wider">
+          + Nuevo Pedido
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Pestañas Laterales del Perfil -->
+        <aside class="lg:col-span-3 space-y-4">
+          <div class="p-5 border border-[#e8e8e8] bg-[#fbfbfb] space-y-2">
+            <span class="text-[10px] font-mono uppercase text-neutral-400 block font-bold">CLIENTE AUTENTICADO</span>
+            <strong class="text-sm font-bold text-neutral-900 block">Carlos Rivas</strong>
+            <span class="text-xs font-body text-neutral-500 block">carlos.rivas@gmail.com</span>
+            <span class="text-[11px] font-mono text-neutral-400 block">+51 987 654 321</span>
+          </div>
+
+          <nav class="border border-[#e8e8e8] divide-y divide-[#f0f0f0] text-xs uppercase tracking-wider font-semibold">
+            <button onclick="switchProfileSection('orders', this)" class="profile-subtab-btn w-full p-3.5 text-left flex items-center justify-between text-[#121212] bg-neutral-100 font-bold border-l-4 border-[#121212] transition">
+              <span>1. Pedidos en Confección</span>
+              <span class="text-[10px] bg-[#121212] text-white px-2 py-0.5 rounded font-mono">1</span>
+            </button>
+            <button onclick="switchProfileSection('sizing', this)" class="profile-subtab-btn w-full p-3.5 text-left flex items-center justify-between text-neutral-600 hover:text-neutral-950 transition">
+              <span>2. Tallas & Patronaje</span>
+            </button>
+            <button onclick="switchProfileSection('personal', this)" class="profile-subtab-btn w-full p-3.5 text-left flex items-center justify-between text-neutral-600 hover:text-neutral-950 transition">
+              <span>3. Datos Personales</span>
+            </button>
+            <button onclick="switchProfileSection('address', this)" class="profile-subtab-btn w-full p-3.5 text-left flex items-center justify-between text-neutral-600 hover:text-neutral-950 transition">
+              <span>4. Dirección de Despacho</span>
+            </button>
+          </nav>
+        </aside>
+
+        <!-- Subpaneles de Perfil -->
+        <section class="lg:col-span-9 space-y-6">
+
+          <!-- 1. PEDIDOS EN CONFECCIÓN CON HISTORIAL -->
+          <div id="subpane-orders" class="profile-subpane space-y-6">
+            <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-6">
+              
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#f0f0f0] pb-4 gap-2">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-base text-[#121212] font-mono">#ORD-1082</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-amber-100 text-amber-900">
+                      En Mesa de Corte
+                    </span>
+                  </div>
+                  <p class="text-xs font-body text-neutral-500 mt-1">Concierto: <strong>Coldplay Music of the Spheres (Estadio Nacional)</strong></p>
+                </div>
+                <span class="text-base font-bold text-[#121212] font-body">S/ 55.00 PEN</span>
+              </div>
+
+              <!-- Tracker de 4 Fases -->
+              <div class="py-2">
+                <span class="text-[11px] font-bold uppercase tracking-widest text-neutral-400 block mb-4">Línea de Confección en Taller</span>
+                <div class="grid grid-cols-4 gap-2 text-center text-xs font-body">
+                  <div class="space-y-1">
+                    <div class="w-7 h-7 mx-auto rounded-full bg-[#121212] text-white flex items-center justify-center font-bold">✓</div>
+                    <strong class="block text-neutral-900">1. Confirmado</strong>
+                  </div>
+                  <div class="space-y-1">
+                    <div class="w-7 h-7 mx-auto rounded-full bg-amber-400 text-neutral-950 border border-neutral-950 flex items-center justify-center font-bold animate-pulse">●</div>
+                    <strong class="block text-neutral-900">2. En Corte</strong>
+                  </div>
+                  <div class="space-y-1 opacity-30">
+                    <div class="w-7 h-7 mx-auto rounded-full border border-neutral-300 text-neutral-400 flex items-center justify-center font-bold">3</div>
+                    <span class="block text-neutral-500">3. DTF</span>
+                  </div>
+                  <div class="space-y-1 opacity-30">
+                    <div class="w-7 h-7 mx-auto rounded-full border border-neutral-300 text-neutral-400 flex items-center justify-center font-bold">4</div>
+                    <span class="block text-neutral-500">4. Listo</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Especificaciones -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-[#f0f0f0] text-xs font-body">
+                <div class="p-3 bg-[#fbfbfb] border border-[#e8e8e8]">
+                  <span class="text-neutral-400 text-[10px] uppercase font-bold block">Prenda</span>
+                  <strong class="text-neutral-900 block mt-0.5">Oversize Boxy (240g)</strong>
+                  <span class="text-neutral-500">Negro Reactivo • Talla L</span>
+                </div>
+                <div class="p-3 bg-[#fbfbfb] border border-[#e8e8e8]">
+                  <span class="text-neutral-400 text-[10px] uppercase font-bold block">Impresión</span>
+                  <strong class="text-neutral-900 block mt-0.5">DTF Textil 300 DPI</strong>
+                  <span class="text-neutral-500">Espalda A3 (30 × 42 cm)</span>
+                </div>
+                <div class="p-3 bg-[#fbfbfb] border border-[#e8e8e8]">
+                  <span class="text-neutral-400 text-[10px] uppercase font-bold block">Entrega</span>
+                  <strong class="text-neutral-900 block mt-0.5">24/10/2026</strong>
+                  <span class="text-neutral-500">Pre-show garantizado</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Historial de Pedidos -->
+            <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-4">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#121212]">Historial de Compras Entregadas</h3>
+              <div class="divide-y divide-[#f0f0f0] text-xs font-body">
+                <div class="py-3 flex items-center justify-between">
+                  <div>
+                    <strong class="text-neutral-900 block">Polo Boxy Blink-182 Revival</strong>
+                    <span class="text-neutral-400 text-[11px]">Orden #ORD-0954 • 15/03/2026</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="font-bold text-neutral-900 block">S/ 50.00 PEN</span>
+                    <span class="text-[10px] text-emerald-600 font-bold uppercase">Entregado</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 2. TALLAS & PATRONAJE COMPLETO -->
+          <div id="subpane-sizing" class="profile-subpane space-y-6 hidden">
+            <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-5">
+              <div>
+                <span class="text-[11px] font-body text-neutral-400 uppercase tracking-widest block">PATRONAJE TEXTIL</span>
+                <h2 class="text-xl font-bold uppercase text-[#121212] mt-0.5">Medidas Guardadas</h2>
+                <p class="text-xs font-body text-neutral-500 mt-1">El personalizador aplicará estas medidas automáticamente al abrir un nuevo diseño.</p>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 font-body">
+                <div class="space-y-1">
+                  <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">Corte Habitual</label>
+                  <select class="dawn-input w-full text-xs px-3.5 py-3 bg-white">
+                    <option selected>Oversize Boxy (240g)</option>
+                    <option>Regular Fit (180g)</option>
+                  </select>
+                </div>
+                <div class="space-y-1">
+                  <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">Talla Base</label>
+                  <select class="dawn-input w-full text-xs px-3.5 py-3 bg-white">
+                    <option>S (56 × 70 cm)</option>
+                    <option>M (59 × 73 cm)</option>
+                    <option selected>L (62 × 76 cm)</option>
+                    <option>XL (65 × 79 cm)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="p-4 bg-[#fafafa] border border-[#e8e8e8] space-y-2 font-body text-xs">
+                <span class="font-bold uppercase text-neutral-900 block">Medidas de referencia de tu talla L actual:</span>
+                <div class="grid grid-cols-3 gap-2 text-center">
+                  <div class="bg-white p-2 border border-[#e8e8e8]"><span class="text-[10px] text-neutral-400 block uppercase">Ancho Pecho</span><strong class="text-neutral-900">62 cm</strong></div>
+                  <div class="bg-white p-2 border border-[#e8e8e8]"><span class="text-[10px] text-neutral-400 block uppercase">Largo Total</span><strong class="text-neutral-900">76 cm</strong></div>
+                  <div class="bg-white p-2 border border-[#e8e8e8]"><span class="text-[10px] text-neutral-400 block uppercase">Caída Hombro</span><strong class="text-neutral-900">24 cm</strong></div>
+                </div>
+              </div>
+
+              <button onclick="alert('Medidas actualizadas en tu perfil.')" class="btn-dawn-primary px-6 py-3 text-xs font-bold uppercase tracking-wider">
+                Guardar Talla Predeterminada
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. DATOS PERSONALES -->
+          <div id="subpane-personal" class="profile-subpane space-y-6 hidden">
+            <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-5">
+              <h2 class="text-xl font-bold uppercase text-[#121212]">Datos Personales</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 font-body">
+                <div>
+                  <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700 mb-1">Nombre Completo</label>
+                  <input type="text" value="Carlos Rivas" class="dawn-input w-full text-xs px-3.5 py-3" />
+                </div>
+                <div>
+                  <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700 mb-1">WhatsApp de Contacto</label>
+                  <input type="tel" value="+51 987 654 321" class="dawn-input w-full text-xs px-3.5 py-3 font-mono" />
+                </div>
+              </div>
+              <button onclick="alert('Datos personales actualizados.')" class="btn-dawn-primary px-6 py-3 text-xs font-bold uppercase tracking-wider">
+                Actualizar Datos
+              </button>
+            </div>
+          </div>
+
+          <!-- 4. DIRECCIÓN DE DESPACHO -->
+          <div id="subpane-address" class="profile-subpane space-y-6 hidden">
+            <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-5">
+              <h2 class="text-xl font-bold uppercase text-[#121212]">Dirección de Entrega</h2>
+              <div class="space-y-3 font-body">
+                <div>
+                  <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700 mb-1">Dirección y Distrito en Lima</label>
+                  <input type="text" value="Av. Petit Thouars 1850, Dpto 402 - Lince" class="dawn-input w-full text-xs px-3.5 py-3" />
+                </div>
+                <div>
+                  <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700 mb-1">Referencia</label>
+                  <input type="text" value="Frente al parque, portón negro" class="dawn-input w-full text-xs px-3.5 py-3" />
+                </div>
+              </div>
+              <button onclick="alert('Dirección guardada.')" class="btn-dawn-primary px-6 py-3 text-xs font-bold uppercase tracking-wider">
+                Guardar Dirección
+              </button>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Dawn Footer -->
+  <footer class="border-t border-[#e8e8e8] bg-[#fbfbfb] mt-auto">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12 flex flex-col sm:flex-row items-center justify-between text-xs font-body text-neutral-500 gap-4">
+      <p>© 2026 AMIAS Textile Studio. Todos los derechos reservados.</p>
+      <div class="flex items-center gap-6 uppercase text-[11px] tracking-wider">
+        <button onclick="navigateTab('home')" class="hover:text-neutral-950">Inicio</button>
+        <button onclick="navigateTab('catalog')" class="hover:text-neutral-950">Catálogo</button>
+        <button onclick="navigateTab('profile')" class="hover:text-neutral-950 font-bold text-neutral-900">Mi Cuenta</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Controladores JS -->
+  <script>
+    let currentCheckoutOrder = {
+      name: 'Acme Circles T-Shirt',
+      price: 75,
+      color: 'Negro Reactivo 24/1',
+      size: 'L',
+      cut: 'Boxy Oversize'
+    };
+
+    function navigateTab(tabId) {
+      document.querySelectorAll('.page-view').forEach(view => view.classList.add('hidden'));
+
+      ['home', 'catalog', 'custom', 'about'].forEach(id => {
+        const btn = document.getElementById('nav-' + id);
+        if (btn) btn.className = "py-1 border-b-2 border-transparent hover:text-neutral-950 transition";
+        const mob = document.getElementById('mob-' + id);
+        if (mob) mob.className = "py-0.5 border-b-2 border-transparent text-neutral-600";
+      });
+
+      const mobProfile = document.getElementById('mob-profile');
+      if (mobProfile) mobProfile.className = "py-0.5 border-b-2 border-transparent text-neutral-600";
+
+      const target = document.getElementById('view-' + tabId);
+      if (target) target.classList.remove('hidden');
+
+      const activeNav = document.getElementById('nav-' + tabId);
+      if (activeNav) activeNav.className = "py-1 border-b-2 border-neutral-950 text-neutral-950 transition";
+
+      const activeMob = document.getElementById('mob-' + tabId);
+      if (activeMob) activeMob.className = "py-0.5 border-b-2 border-neutral-950 text-neutral-950 font-bold";
+
+      if (tabId === 'profile' && mobProfile) {
+        mobProfile.className = "py-0.5 border-b-2 border-neutral-950 text-neutral-950 font-bold";
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openProductDetail(id, name, price) {
+      currentCheckoutOrder.name = name;
+      currentCheckoutOrder.price = price;
+      document.getElementById('detail-title-text').innerText = name;
+      document.getElementById('detail-price-pill').innerText = `S/ ${price}.00 PEN`;
+      
+      document.querySelectorAll('.page-view').forEach(view => view.classList.add('hidden'));
+      document.getElementById('view-product-detail').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function proceedToPaymentFromDetail() {
+      document.getElementById('checkout-prod-name').innerText = currentCheckoutOrder.name;
+      document.getElementById('checkout-prod-spec').innerText = `${currentCheckoutOrder.cut} • ${currentCheckoutOrder.size}`;
+      document.getElementById('checkout-prod-color').innerText = currentCheckoutOrder.color;
+      document.getElementById('checkout-prod-price').innerText = `S/ ${currentCheckoutOrder.price}.00 PEN`;
+
+      document.querySelectorAll('.page-view').forEach(view => view.classList.add('hidden'));
+      document.getElementById('view-payment').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function proceedToPaymentFromCustom() {
+      currentCheckoutOrder.name = "Polo Personalizado con Diseño Propio";
+      currentCheckoutOrder.price = customState.price;
+      currentCheckoutOrder.color = `${customState.color} Reactivo 24/1`;
+      currentCheckoutOrder.size = "L";
+      currentCheckoutOrder.cut = customState.cut;
+      proceedToPaymentFromDetail();
+    }
+
+    function switchPaymentMethod(method) {
+      const qrPanel = document.getElementById('payment-panel-qr');
+      const bankPanel = document.getElementById('payment-panel-bank');
+      const btnQr = document.getElementById('pay-tab-qr');
+      const btnBank = document.getElementById('pay-tab-bank');
+
+      if (method === 'qr') {
+        qrPanel.classList.remove('hidden');
+        bankPanel.classList.add('hidden');
+        btnQr.className = "px-4 py-2 border border-[#121212] bg-[#121212] text-white transition";
+        btnBank.className = "px-4 py-2 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition";
+      } else {
+        bankPanel.classList.remove('hidden');
+        qrPanel.classList.add('hidden');
+        btnBank.className = "px-4 py-2 border border-[#121212] bg-[#121212] text-white transition";
+        btnQr.className = "px-4 py-2 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition";
+      }
+    }
+
+    function handleVoucherUpload(e) {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById('voucher-upload-text').innerText = `✓ Constancia cargada: ${file.name}`;
+      }
+    }
+
+    function confirmOrderWithWhatsAppPayment() {
+      const msg = `Hola AMIAS, acabo de generar mi orden #ORD-1083:\n- Prenda: ${currentCheckoutOrder.name}\n- Detalle: ${currentCheckoutOrder.cut} / Talla ${currentCheckoutOrder.size}\n- Color: ${currentCheckoutOrder.color}\n- Monto: S/ ${currentCheckoutOrder.price}.00 PEN\nAdjunto la constancia de mi transferencia/Yape para que pase a corte.`;
+      window.open(`https://wa.me/51987654321?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function switchProfileSection(sectionKey, btn) {
+      document.querySelectorAll('.profile-subpane').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll('.profile-subtab-btn').forEach(b => {
+        b.className = "profile-subtab-btn w-full p-3.5 text-left flex items-center justify-between text-neutral-600 hover:text-neutral-950 transition";
+      });
+
+      document.getElementById('subpane-' + sectionKey).classList.remove('hidden');
+      btn.className = "profile-subtab-btn w-full p-3.5 text-left flex items-center justify-between text-[#121212] bg-neutral-100 font-bold border-l-4 border-[#121212] transition";
+    }
+
+    function setDetailColor(name, hex, idx) {
+      document.getElementById('detail-shirt-svg').setAttribute('fill', hex);
+      currentCheckoutOrder.color = `${name} Reactivo`;
+      const pills = document.querySelectorAll('.color-choice-pill');
+      pills.forEach((p, i) => {
+        p.className = i === idx 
+          ? "color-choice-pill px-4 py-1.5 rounded-full border-2 border-blue-600 bg-black text-xs text-white font-body font-semibold transition"
+          : "color-choice-pill px-4 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 font-body transition";
+      });
+    }
+
+    function setDetailSize(size, btn) {
+      currentCheckoutOrder.size = size;
+      document.querySelectorAll('.size-choice-pill').forEach(b => {
+        b.className = "size-choice-pill px-3.5 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 text-xs text-neutral-300 font-body";
+      });
+      btn.className = "size-choice-pill px-3.5 py-1.5 rounded-full border-2 border-blue-600 bg-black text-xs text-white font-body font-bold";
+    }
+
+    let customState = { cut: 'Oversize Boxy', color: 'Negro', zone: 'Espalda A3', price: 55 };
+    function setCustomCut(cut, btn) {
+      customState.cut = cut;
+      document.getElementById('custom-preview-cut').innerText = cut.toUpperCase();
+      document.querySelectorAll('.custom-cut-pill').forEach(b => b.className = "custom-cut-pill p-3 border border-[#e8e8e8] text-neutral-700 text-left text-xs font-semibold uppercase tracking-wider");
+      btn.className = "custom-cut-pill p-3 border border-neutral-950 text-neutral-950 text-left text-xs font-semibold uppercase tracking-wider dawn-pill-active";
+    }
+    function setCustomColor(hex, name, btn) {
+      customState.color = name;
+      document.getElementById('custom-shirt-svg').setAttribute('fill', hex);
+      document.querySelectorAll('.custom-color-btn').forEach(b => b.className = "custom-color-btn px-4 py-2 border border-[#e8e8e8] text-neutral-700 text-xs font-semibold uppercase tracking-wider");
+      btn.className = "custom-color-btn px-4 py-2 border border-neutral-950 text-neutral-950 text-xs font-semibold uppercase tracking-wider dawn-pill-active";
+    }
+    function setCustomZone(zone, label, price, btn) {
+      customState.zone = label;
+      customState.price = price;
+      document.getElementById('custom-price-display').innerText = `S/ ${price}.00 PEN`;
+      document.querySelectorAll('.custom-zone-pill').forEach(b => b.className = "custom-zone-pill p-3 border border-[#e8e8e8] text-xs font-bold uppercase text-center");
+      btn.className = "custom-zone-pill p-3 border border-neutral-950 text-xs font-bold uppercase text-center dawn-pill-active";
+    }
+    function handleCustomFileUpload(e) {
+      const f = e.target.files[0];
+      if(f) document.getElementById('custom-upload-text').innerText = `✓ Arte adjunto: ${f.name}`;
+    }
+
+    function openSearchModal() { document.getElementById('search-modal').classList.remove('hidden'); document.getElementById('search-input').focus(); }
+    function closeSearchModal() { document.getElementById('search-modal').classList.add('hidden'); }
+    function handleSearchInput(e) {
+      const q = e.target.value.toLowerCase();
+      const b = document.getElementById('search-results-box');
+      if (!q) { b.innerHTML = ''; return; }
+      b.innerHTML = `<div class="p-3 hover:bg-neutral-50 cursor-pointer" onclick="closeSearchModal(); openProductDetail('coldplay', 'Polo Oversize Spheres', 55);"><strong>Polo Oversize Spheres</strong> (Coldplay Lima 2026)</div>`;
+    }
+    function filterCatalog(c, b) {
+      document.querySelectorAll('.catalog-filter-btn').forEach(x => x.className = "catalog-filter-btn px-4 py-1.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition");
+      b.className = "catalog-filter-btn px-4 py-1.5 border border-[#121212] bg-[#121212] text-white transition";
+    }
+  </script>
+</body>
+</html>

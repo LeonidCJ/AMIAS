@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AMIAS — Consola de Operaciones & Catálogo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Assistant', sans-serif;
+      color: #121212;
+      background-color: #fcfcfc;
+    }
+    .font-body { font-family: 'Inter', sans-serif; }
+    .btn-dawn-primary {
+      background-color: #121212;
+      color: #ffffff;
+      border: 1px solid #121212;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-dawn-primary:hover {
+      background-color: #ffffff;
+      color: #121212;
+    }
+    .btn-dawn-secondary {
+      background-color: #ffffff;
+      color: #121212;
+      border: 1px solid #121212;
+      transition: all 0.2s ease;
+    }
+    .btn-dawn-secondary:hover {
+      background-color: #121212;
+      color: #ffffff;
+    }
+    .dawn-input {
+      border: 1px solid #cccccc;
+      transition: border-color 0.2s ease;
+    }
+    .dawn-input:focus {
+      outline: none;
+      border-color: #121212;
+    }
+    .badge-urgent { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .badge-pending { background-color: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+    .badge-ready { background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+  </style>
+</head>
+<body class="selection:bg-neutral-900 selection:text-white min-h-screen flex flex-col justify-between">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-[#121212] text-white text-[11px] tracking-[0.15em] uppercase text-center py-2 px-4 font-semibold border-b border-neutral-800 flex items-center justify-center gap-2">
+    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+    <span>SISTEMA TALLER AMIAS • GESTIÓN DE PRODUCCIÓN Y MODELO ANALÍTICO DE DEMANDA</span>
+  </div>
+
+  <!-- Header Superior -->
+  <header class="border-b border-[#e8e8e8] bg-white sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xl font-extrabold tracking-[-0.04em] uppercase block leading-none">AMIAS</span>
+        <span class="text-[10px] font-mono tracking-widest bg-neutral-100 text-neutral-800 px-2 py-0.5 border border-[#e8e8e8] flex items-center gap-1.5">
+          <svg class="w-3 h-3 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+          PANEL OPERATIVO
+        </span>
+      </div>
+
+      <div class="hidden sm:flex items-center gap-6 text-xs font-body text-neutral-500">
+        <div>Ventas Registradas: <strong id="header-sales-count" class="text-neutral-900 font-mono">0</strong></div>
+        <div>Giras: <strong id="header-events-count" class="text-neutral-900 font-mono">3</strong></div>
+        <div>Colores: <strong id="header-colors-count" class="text-neutral-900 font-mono">4</strong></div>
+        <div>Cortes: <strong id="header-cuts-count" class="text-neutral-900 font-mono">3</strong></div>
+      </div>
+
+      <div>
+        <button onclick="alert('Cerrando sesión de taller...')" class="text-xs uppercase tracking-wider font-bold text-neutral-500 hover:text-red-600 transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal Admin -->
+  <main class="flex-1 max-w-7xl mx-auto px-6 lg:px-12 py-8 w-full space-y-6">
+
+    <!-- Navegación de 5 Módulos -->
+    <div class="flex items-center justify-between border-b border-[#e8e8e8] pb-4">
+      <div class="flex items-center gap-2 overflow-x-auto text-xs uppercase tracking-wider font-semibold">
+        <button id="mod-tab-events" onclick="switchAdminModule('events')" class="px-4 py-2.5 border border-[#121212] bg-[#121212] text-white transition flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span>1. Giras & Conciertos</span>
+          <span id="tab-events-badge" class="px-1.5 py-0.2 bg-white text-black text-[10px] font-mono font-bold">3</span>
+        </button>
+        <button id="mod-tab-catalog" onclick="switchAdminModule('catalog')" class="px-4 py-2.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          <span>2. Catálogo</span>
+        </button>
+        <button id="mod-tab-production" onclick="switchAdminModule('production')" class="px-4 py-2.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          <span>3. Producción & Ventas</span>
+          <span id="tab-sales-badge" class="px-1.5 py-0.2 bg-neutral-200 text-neutral-800 text-[10px] font-mono font-bold">0</span>
+        </button>
+        <button id="mod-tab-stock" onclick="switchAdminModule('stock')" class="px-4 py-2.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <span>4. Almacén & Predicción</span>
+          <span class="px-1.5 py-0.2 bg-blue-600 text-white text-[9px] font-mono font-bold uppercase">Predicción N1</span>
+        </button>
+        <button id="mod-tab-attributes" onclick="switchAdminModule('attributes')" class="px-4 py-2.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+          <span>5. Parámetros Textiles</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MÓDULO 1: GIRAS & CONCIERTOS -->
+    <div id="module-events" class="space-y-6">
+      <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#f0f0f0] pb-4 gap-2">
+          <div>
+            <span class="text-[10px] font-mono uppercase text-neutral-400 font-bold block">CONTROL MAESTRO DE EVENTOS</span>
+            <h2 class="text-lg font-bold uppercase tracking-wider text-[#121212]">Giras y Conciertos Activos</h2>
+            <p class="text-xs font-body text-neutral-500 mt-0.5">Alimentan exclusivamente los selectores del sistema.</p>
+          </div>
+          <button onclick="openCreateEventModal()" class="btn-dawn-primary px-4 py-2 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>+ Crear Nuevo Concierto</span>
+          </button>
+        </div>
+        <div id="admin-events-list" class="space-y-3 font-body text-xs"></div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 2: CATÁLOGO DE PRENDAS -->
+    <div id="module-catalog" class="space-y-6 hidden">
+      <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#f0f0f0] pb-4 gap-2">
+          <div>
+            <span class="text-[10px] font-mono uppercase text-neutral-400 font-bold block">ADMINISTRADOR DEL CATÁLOGO</span>
+            <h2 class="text-lg font-bold uppercase tracking-wider text-[#121212]">Prendas de Concierto en Tienda</h2>
+          </div>
+          <button onclick="openCreateProductModal()" class="btn-dawn-primary px-4 py-2 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Agregar Nueva Prenda</span>
+          </button>
+        </div>
+        <div id="admin-product-list" class="space-y-3 font-body text-xs"></div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 3: PRODUCCIÓN & DATASET HISTÓRICO DE VENTAS -->
+    <div id="module-production" class="space-y-6 hidden">
+      <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#f0f0f0] pb-4 gap-2">
+          <div>
+            <span class="text-[10px] font-mono uppercase text-neutral-400 font-bold block">DATASET & PEDIDOS</span>
+            <h2 class="text-lg font-bold uppercase tracking-wider text-[#121212]">Registro de Órdenes y Ventas</h2>
+            <p class="text-xs font-body text-neutral-500 mt-0.5">Toda venta confirmada se guarda localmente estructurada con timestamps para entrenar modelos futuros.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openRegisterSaleModal()" class="btn-dawn-primary px-4 py-2 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span>+ Registrar Venta Manual</span>
+            </button>
+            <button onclick="exportSalesDatasetJSON()" class="btn-dawn-secondary px-4 py-2 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span>Exportar Dataset (JSON)</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-body divide-y divide-[#f0f0f0]">
+            <thead class="bg-[#fafafa] text-neutral-400 uppercase tracking-wider text-[10px] border-b border-[#e8e8e8]">
+              <tr>
+                <th class="p-3.5">ID / FECHA</th>
+                <th class="p-3.5">CLIENTE</th>
+                <th class="p-3.5">GIRA / CONCIERTO</th>
+                <th class="p-3.5">PRENDA / ESPECIFICACIÓN</th>
+                <th class="p-3.5">TALLA</th>
+                <th class="p-3.5">TOTAL</th>
+                <th class="p-3.5">ESTADO</th>
+              </tr>
+            </thead>
+            <tbody id="admin-orders-tbody" class="divide-y divide-[#f0f0f0] text-neutral-800">
+              <!-- Renderizado dinámicamente vía renderOrdersTable() -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 4: ALMACÉN CON ASISTENTE PREDICTIVO DE DEMANDA -->
+    <div id="module-stock" class="space-y-8 hidden">
+      
+      <!-- Panel Predictivo Nivel 1 -->
+      <div class="border-2 border-[#121212] p-6 lg:p-8 bg-white shadow-sm space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#e8e8e8] pb-5">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-blue-50 border border-blue-200 text-blue-800 text-[10px] font-mono font-bold tracking-widest uppercase">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+              MODELO HEURÍSTICO • PREVENCIÓN DE QUIEBRE DE TELA
+            </div>
+            <h2 class="text-xl font-bold uppercase tracking-tight text-[#121212]">Previsión de Demanda para Conciertos</h2>
+            <p class="text-xs font-body text-neutral-500">
+              Proyección matemática de polos necesarios basada en aforo del recinto y sesgo de tallas verificado con ventas históricas.
+            </p>
+          </div>
+
+          <div class="text-right">
+            <span class="text-[10px] uppercase tracking-wider font-semibold text-neutral-400 block font-body">Evaluar Evento</span>
+            <select id="predict-event-select" onchange="runPredictiveModel()" class="dawn-input text-xs px-3 py-2 bg-[#fbfbfb] font-bold text-neutral-900">
+              <!-- Sincronizado dinámicamente con ACTIVE_CONCERTS -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Métricas del Modelo -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-body">
+          <div class="p-4 bg-[#fbfbfb] border border-[#e8e8e8] space-y-1">
+            <span class="text-neutral-400 uppercase text-[10px] block font-bold">Aforo del Recinto</span>
+            <strong id="pred-venue-capacity" class="text-lg font-mono text-neutral-900 block">45,000 personas</strong>
+            <span id="pred-venue-name" class="text-neutral-500 text-[11px]">Estadio Nacional</span>
+          </div>
+          <div class="p-4 bg-[#fbfbfb] border border-[#e8e8e8] space-y-1">
+            <span class="text-neutral-400 uppercase text-[10px] block font-bold">Demanda Proyectada</span>
+            <strong id="pred-total-demand" class="text-lg font-mono text-blue-700 block">180 polos base</strong>
+            <span class="text-neutral-500 text-[11px]">Tasa de penetración: 0.4% de asistentes</span>
+          </div>
+          <div class="p-4 bg-[#fbfbfb] border border-[#e8e8e8] space-y-1">
+            <span class="text-neutral-400 uppercase text-[10px] block font-bold">Déficit Crítico de Tela</span>
+            <strong id="pred-total-deficit" class="text-lg font-mono text-red-600 block">0 unidades por cortar</strong>
+            <span class="text-neutral-500 text-[11px]">Suma de faltantes en inventario</span>
+          </div>
+        </div>
+
+        <!-- Desglose por Talla -->
+        <div class="border border-[#e8e8e8] overflow-hidden">
+          <div class="p-3.5 bg-[#fafafa] border-b border-[#e8e8e8] flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-neutral-900 font-body">Desglose Sugerido por Tallas (Patronaje Boxy 24/1)</span>
+            <span class="text-[11px] font-mono text-neutral-400">Distribución calculada según histórico</span>
+          </div>
+          <table class="w-full text-left text-xs font-body divide-y divide-[#f0f0f0]">
+            <thead class="bg-white text-neutral-400 uppercase text-[10px] font-mono border-b border-[#e8e8e8]">
+              <tr>
+                <th class="p-3">TALLA</th>
+                <th class="p-3">DISTRIBUCIÓN (%)</th>
+                <th class="p-3">DEMANDA CALCULADA</th>
+                <th class="p-3">STOCK ACTUAL</th>
+                <th class="p-3">ESTADO</th>
+                <th class="p-3 text-right">SUGERENCIA DE COMPRA</th>
+              </tr>
+            </thead>
+            <tbody id="predictive-breakdown-tbody" class="divide-y divide-[#f0f0f0] text-neutral-800"></tbody>
+          </table>
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <span class="text-xs text-neutral-500 font-body">Carga automáticamente la talla con mayor déficit en el módulo de entrada de tela.</span>
+          <button onclick="applySuggestedStockOrder()" class="btn-dawn-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Auto-Rellenar en "Ingresar Lote"</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Cuadrícula Factual de Almacén -->
+      <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#f0f0f0] pb-4 gap-2">
+          <div>
+            <span class="text-[10px] font-mono uppercase text-neutral-400 font-bold block">INVENTARIO TEXTIL LISO</span>
+            <h2 class="text-lg font-bold uppercase tracking-wider text-[#121212]">Polos sin Estampar Disponibles</h2>
+            <p class="text-xs font-body text-neutral-500 mt-0.5">Sincronizado dinámicamente con siluetas, colores y tallas registradas.</p>
+          </div>
+          <button onclick="openAddStockModal()" class="btn-dawn-primary px-4 py-2 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Ingresar Lote de Telas</span>
+          </button>
+        </div>
+        <div id="stock-grid-container" class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-body"></div>
+      </div>
+
+    </div>
+
+    <!-- MÓDULO 5: PARÁMETROS TEXTILES -->
+    <div id="module-attributes" class="space-y-8 hidden">
+      <!-- Colores -->
+      <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#f0f0f0] pb-4 gap-2">
+          <div>
+            <span class="text-[10px] font-mono uppercase text-neutral-400 font-bold block">PALETA TEXTIL MAESTRA</span>
+            <h2 class="text-base font-bold uppercase tracking-wider text-[#121212]">Colores de Algodón Reactivo</h2>
+          </div>
+          <button onclick="openAddColorModal()" class="btn-dawn-primary px-4 py-2 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>+ Agregar Color</span>
+          </button>
+        </div>
+        <div id="admin-colors-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-body"></div>
+      </div>
+
+      <!-- Siluetas -->
+      <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#f0f0f0] pb-4 gap-2">
+          <div>
+            <span class="text-[10px] font-mono uppercase text-neutral-400 font-bold block">PATRONAJE & DENSIDAD</span>
+            <h2 class="text-base font-bold uppercase tracking-wider text-[#121212]">Tipos de Silueta / Cortes</h2>
+          </div>
+          <button onclick="openAddCutModal()" class="btn-dawn-primary px-4 py-2 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>+ Agregar Silueta</span>
+          </button>
+        </div>
+        <div id="admin-cuts-list" class="space-y-3 font-body text-xs"></div>
+      </div>
+
+      <!-- Tallas -->
+      <div class="border border-[#e8e8e8] p-6 lg:p-8 bg-white space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#f0f0f0] pb-4 gap-2">
+          <div>
+            <span class="text-[10px] font-mono uppercase text-neutral-400 font-bold block">TABLA OFICIAL DE MEDIDAS</span>
+            <h2 class="text-base font-bold uppercase tracking-wider text-[#121212]">Tallas & Centímetros Exactos</h2>
+          </div>
+          <button onclick="openAddSizeModal()" class="btn-dawn-primary px-4 py-2 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>+ Agregar Talla</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-body divide-y divide-[#f0f0f0]">
+            <thead class="bg-[#fafafa] text-neutral-400 uppercase tracking-wider text-[10px] border-b border-[#e8e8e8]">
+              <tr>
+                <th class="p-3.5">TALLA</th>
+                <th class="p-3.5">ANCHO PECHO (CM)</th>
+                <th class="p-3.5">LARGO TOTAL (CM)</th>
+                <th class="p-3.5">CAÍDA HOMBRO (CM)</th>
+                <th class="p-3.5">ESTATURA REFERENCIAL</th>
+                <th class="p-3.5 text-right">ACCIONES</th>
+              </tr>
+            </thead>
+            <tbody id="admin-sizes-tbody" class="divide-y divide-[#f0f0f0] text-neutral-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ======================================================= -->
+  <!-- MODAL: AGREGAR PRENDA (SELECTORES EXCLUSIVOS)          -->
+  <!-- ======================================================= -->
+  <div id="create-product-modal" class="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white border-2 border-[#121212] w-full max-w-2xl p-6 sm:p-8 relative space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <button type="button" onclick="closeCreateProductModal()" class="absolute top-6 right-6 text-neutral-400 hover:text-neutral-950">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <div class="border-b border-[#e8e8e8] pb-3">
+        <span class="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-bold block">ALTA RESTRINGIDA DE PRENDAS</span>
+        <h2 class="text-xl font-bold uppercase tracking-tight text-[#121212] mt-0.5">Crear Prenda para Catálogo</h2>
+        <p class="text-xs font-body text-neutral-500 mt-0.5">Solo permite seleccionar conciertos, siluetas, colores y tallas previamente autorizados.</p>
+      </div>
+
+      <form onsubmit="handleCreateProductSubmit(event)" class="space-y-4 font-body text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">Nombre de la Prenda</label>
+            <input type="text" id="new-prod-name" required placeholder="Ej. Polo Boxy After Hours Tour" class="dawn-input w-full px-3.5 py-2.5 text-xs text-neutral-900" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">Concierto / Gira Autorizada</label>
+            <select id="new-prod-event-select" required class="dawn-input w-full px-3.5 py-2.5 text-xs bg-white text-neutral-900 font-semibold"></select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="space-y-1">
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">Silueta Registrada</label>
+            <select id="new-prod-cut-select" required class="dawn-input w-full px-3.5 py-2.5 text-xs bg-white text-neutral-900"></select>
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">Color Reactivo Registrado</label>
+            <select id="new-prod-color-select" required class="dawn-input w-full px-3.5 py-2.5 text-xs bg-white text-neutral-900"></select>
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">Precio Público (PEN)</label>
+            <input type="number" id="new-prod-price" required placeholder="60.00" step="0.50" class="dawn-input w-full px-3.5 py-2.5 text-xs text-neutral-900 font-mono" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">Área de Impresión DTF</label>
+            <select id="new-prod-zone" class="dawn-input w-full px-3.5 py-2.5 text-xs bg-white text-neutral-900">
+              <option value="Espalda A3 (30x42 cm)">Espalda A3 (30 × 42 cm)</option>
+              <option value="Pecho A4 (21x30 cm)">Pecho A4 (21 × 30 cm)</option>
+              <option value="Bolsillo (10x10 cm)">Bolsillo (10 × 10 cm)</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">Mockup / Arte (PNG 300 DPI)</label>
+            <input type="file" class="dawn-input w-full px-2 py-2 text-xs bg-white text-neutral-600 file:mr-2 file:py-1 file:px-2 file:border file:border-neutral-300 file:text-xs file:bg-neutral-100" />
+          </div>
+        </div>
+
+        <div class="space-y-1.5 pt-1">
+          <span class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">Tallas Activas para esta Prenda:</span>
+          <div id="new-prod-sizes-checkboxes" class="flex flex-wrap items-center gap-4 text-xs font-mono font-bold"></div>
+        </div>
+
+        <div class="pt-4 border-t border-[#f0f0f0] flex items-center justify-end gap-3">
+          <button type="button" onclick="closeCreateProductModal()" class="btn-dawn-secondary px-5 py-2.5 text-xs font-bold uppercase tracking-wider">Cancelar</button>
+          <button type="submit" class="btn-dawn-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wider">Publicar Prenda</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================= -->
+  <!-- MODAL: INGRESAR LOTE DE TELAS (COMBINACIÓN ESTRICTA)   -->
+  <!-- ======================================================= -->
+  <div id="add-stock-modal" class="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white border-2 border-[#121212] w-full max-w-lg p-6 sm:p-8 relative space-y-6 shadow-2xl">
+      <button type="button" onclick="closeAddStockModal()" class="absolute top-6 right-6 text-neutral-400 hover:text-neutral-950">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <div class="border-b border-[#e8e8e8] pb-3">
+        <span class="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-bold block">ENTRADA CONTROLADA DE ALMACÉN</span>
+        <h2 class="text-xl font-bold uppercase tracking-tight text-[#121212] mt-0.5">Ingresar Lote de Telas Base</h2>
+      </div>
+
+      <form onsubmit="handleAddStockSubmit(event)" class="space-y-4 font-body text-xs">
+        <div class="space-y-1">
+          <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">1. Silueta / Corte</label>
+          <select id="stock-cut-select" required class="dawn-input w-full px-3.5 py-2.5 text-xs bg-white text-neutral-900"></select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">2. Color Reactivo</label>
+            <select id="stock-color-select" required class="dawn-input w-full px-3.5 py-2.5 text-xs bg-white text-neutral-900"></select>
+          </div>
+          <div class="space-y-1">
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">3. Talla Oficial</label>
+            <select id="stock-size-select" required class="dawn-input w-full px-3.5 py-2.5 text-xs bg-white text-neutral-900 font-mono font-bold"></select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">Cantidad (Polos Base)</label>
+            <input type="number" id="stock-qty-input" required min="1" placeholder="Ej. 30" class="dawn-input w-full px-3.5 py-2.5 text-xs text-neutral-900 font-mono" />
+          </div>
+          <div class="space-y-1">
+            <label class="block text-[11px] uppercase tracking-wider font-semibold text-neutral-700">Proveedor / Tejido</label>
+            <input type="text" id="stock-supplier-input" required placeholder="Gamarra Hilado 24/1" class="dawn-input w-full px-3.5 py-2.5 text-xs text-neutral-900" />
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-[#f0f0f0] flex items-center justify-end gap-3">
+          <button type="button" onclick="closeAddStockModal()" class="btn-dawn-secondary px-5 py-2.5 text-xs font-bold uppercase tracking-wider">Cancelar</button>
+          <button type="submit" class="btn-dawn-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wider">Ingresar al Inventario</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================= -->
+  <!-- MODAL: REGISTRAR VENTA MANUAL (DATA CAPTURE)           -->
+  <!-- ======================================================= -->
+  <div id="register-sale-modal" class="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white border-2 border-[#121212] w-full max-w-lg p-6 sm:p-8 relative space-y-6 shadow-2xl">
+      <button type="button" onclick="closeRegisterSaleModal()" class="absolute top-6 right-6 text-neutral-400 hover:text-neutral-950">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <div class="border-b border-[#e8e8e8] pb-3">
+        <span class="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-bold block">CAPTURA DE DATOS OPERATIVOS</span>
+        <h2 class="text-xl font-bold uppercase tracking-tight text-[#121212] mt-0.5">Registrar Venta Directa</h2>
+        <p class="text-xs font-body text-neutral-500 mt-0.5">Guarda la orden en el dataset histórico y descuenta la prenda del stock físico.</p>
+      </div>
+
+      <form onsubmit="handleRegisterSaleSubmit(event)" class="space-y-4 font-body text-xs">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Nombre del Cliente</label>
+            <input type="text" id="sale-client-name" required placeholder="Ej. Lucía Martínez" class="dawn-input w-full p-2.5" />
+          </div>
+          <div>
+            <label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">WhatsApp de Contacto</label>
+            <input type="tel" id="sale-client-phone" required placeholder="+51 912 345 678" class="dawn-input w-full p-2.5 font-mono" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Prenda del Catálogo</label>
+          <select id="sale-product-select" onchange="syncSaleProductOptions()" required class="dawn-input w-full p-2.5 bg-white font-semibold text-neutral-900"></select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Talla Elegida</label>
+            <select id="sale-size-select" required class="dawn-input w-full p-2.5 bg-white font-mono font-bold"></select>
+          </div>
+          <div>
+            <label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Precio Cobrado (PEN)</label>
+            <input type="number" id="sale-price-input" required step="0.50" class="dawn-input w-full p-2.5 font-mono" />
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-[#f0f0f0] flex items-center justify-end gap-3">
+          <button type="button" onclick="closeRegisterSaleModal()" class="btn-dawn-secondary px-5 py-2.5 text-xs font-bold uppercase tracking-wider">Cancelar</button>
+          <button type="submit" class="btn-dawn-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wider">Guardar Venta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modales de Parámetros -->
+  <div id="create-event-modal" class="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white border-2 border-[#121212] w-full max-w-lg p-6 sm:p-8 relative space-y-6 shadow-2xl">
+      <button type="button" onclick="closeCreateEventModal()" class="absolute top-6 right-6 text-neutral-400 hover:text-neutral-950"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/></svg></button>
+      <div class="border-b border-[#e8e8e8] pb-3"><h2 class="text-xl font-bold uppercase tracking-tight text-[#121212]">Crear Concierto</h2></div>
+      <form onsubmit="handleCreateEventSubmit(event)" class="space-y-4 font-body text-xs">
+        <div><label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Nombre</label><input type="text" id="new-event-name" required class="dawn-input w-full p-2.5" /></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Recinto</label><select id="new-event-venue" class="dawn-input w-full p-2.5 bg-white"><option value="Estadio Nacional">Estadio Nacional (~45k)</option><option value="Estadio San Marcos">Estadio San Marcos (~40k)</option><option value="Costa 21">Costa 21 (~15k)</option><option value="Arena 1">Arena 1 (~20k)</option></select></div>
+          <div><label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Fecha</label><input type="date" id="new-event-date" required class="dawn-input w-full p-2.5" /></div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2"><button type="button" onclick="closeCreateEventModal()" class="btn-dawn-secondary px-4 py-2 uppercase font-bold">Cancelar</button><button type="submit" class="btn-dawn-primary px-5 py-2 uppercase font-bold">Crear</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="add-color-modal" class="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white border-2 border-[#121212] w-full max-w-md p-6 sm:p-8 relative space-y-5 shadow-2xl">
+      <button onclick="closeAddColorModal()" class="absolute top-6 right-6 text-neutral-400 hover:text-neutral-950"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/></svg></button>
+      <div class="border-b border-[#e8e8e8] pb-3"><h2 class="text-lg font-bold uppercase text-[#121212]">Agregar Color</h2></div>
+      <form onsubmit="handleAddColorSubmit(event)" class="space-y-4 font-body text-xs">
+        <div><label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Nombre</label><input type="text" id="new-color-name" required placeholder="Ej. Chocolate Dark" class="dawn-input w-full p-2.5" /></div>
+        <div><label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Hexadecimal</label><input type="text" id="new-color-hex" required value="#2e1f18" class="dawn-input w-full p-2.5 font-mono" /></div>
+        <div class="flex justify-end gap-2 pt-2"><button type="button" onclick="closeAddColorModal()" class="btn-dawn-secondary px-4 py-2 uppercase font-bold">Cancelar</button><button type="submit" class="btn-dawn-primary px-5 py-2 uppercase font-bold">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="add-cut-modal" class="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white border-2 border-[#121212] w-full max-w-md p-6 sm:p-8 relative space-y-5 shadow-2xl">
+      <button onclick="closeAddCutModal()" class="absolute top-6 right-6 text-neutral-400 hover:text-neutral-950"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/></svg></button>
+      <div class="border-b border-[#e8e8e8] pb-3"><h2 class="text-lg font-bold uppercase text-[#121212]">Agregar Silueta</h2></div>
+      <form onsubmit="handleAddCutSubmit(event)" class="space-y-4 font-body text-xs">
+        <div><label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Nombre</label><input type="text" id="new-cut-name" required placeholder="Ej. Cropped Boxy (220g)" class="dawn-input w-full p-2.5" /></div>
+        <div><label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Descripción</label><input type="text" id="new-cut-desc" required placeholder="Corte recortado a la cintura" class="dawn-input w-full p-2.5" /></div>
+        <div class="flex justify-end gap-2 pt-2"><button type="button" onclick="closeAddCutModal()" class="btn-dawn-secondary px-4 py-2 uppercase font-bold">Cancelar</button><button type="submit" class="btn-dawn-primary px-5 py-2 uppercase font-bold">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="add-size-modal" class="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white border-2 border-[#121212] w-full max-w-lg p-6 sm:p-8 relative space-y-5 shadow-2xl">
+      <button onclick="closeAddSizeModal()" class="absolute top-6 right-6 text-neutral-400 hover:text-neutral-950"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/></svg></button>
+      <div class="border-b border-[#e8e8e8] pb-3"><h2 class="text-lg font-bold uppercase text-[#121212]">Agregar Talla</h2></div>
+      <form onsubmit="handleAddSizeSubmit(event)" class="space-y-4 font-body text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Etiqueta</label><input type="text" id="new-size-label" required placeholder="XXL" class="dawn-input w-full p-2.5 font-mono uppercase" /></div>
+          <div><label class="block text-[11px] uppercase font-semibold text-neutral-700 mb-1">Estatura</label><input type="text" id="new-size-height" required placeholder="+1.90 m" class="dawn-input w-full p-2.5" /></div>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div><label class="block text-[10px] uppercase font-semibold text-neutral-700 mb-1">Pecho (cm)</label><input type="number" id="new-size-chest" required placeholder="68" class="dawn-input w-full p-2" /></div>
+          <div><label class="block text-[10px] uppercase font-semibold text-neutral-700 mb-1">Largo (cm)</label><input type="number" id="new-size-length" required placeholder="82" class="dawn-input w-full p-2" /></div>
+          <div><label class="block text-[10px] uppercase font-semibold text-neutral-700 mb-1">Hombro (cm)</label><input type="number" id="new-size-shoulder" required placeholder="26" class="dawn-input w-full p-2" /></div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2"><button type="button" onclick="closeAddSizeModal()" class="btn-dawn-secondary px-4 py-2 uppercase font-bold">Cancelar</button><button type="submit" class="btn-dawn-primary px-5 py-2 uppercase font-bold">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="border-t border-[#e8e8e8] bg-[#fbfbfb] py-6 text-center text-xs font-body text-neutral-400">
+    <p>© 2026 AMIAS Textile Studio — Gestión Integral & Captura de Datos ML-Ready</p>
+  </footer>
+
+  <!-- Controladores JS & Motor Predictivo Nivel 1 -->
+  <script>
+    const STORAGE_KEY_SALES = 'amias_sales_dataset_v1';
+    const STORAGE_KEY_STOCK = 'amias_stock_inventory_v1';
+
+    // 1. ESTADO GLOBAL CENTRALIZADO
+    const ACTIVE_CONCERTS = [
+      { id: 'coldplay-2026', name: 'Coldplay — Music of the Spheres', venue: 'Estadio Nacional', capacity: 45000, rate: 0.004, date: '2026-10-24' },
+      { id: 'blink-revival', name: 'Blink-182 — Revival Tour', venue: 'Estadio San Marcos', capacity: 40000, rate: 0.0035, date: '2026-11-02' },
+      { id: 'custom-art', name: 'Personalizado / Arte de Cliente', venue: 'Costa 21', capacity: 15000, rate: 0.005, date: '2026-12-31' }
+    ];
+
+    const TEXTILE_COLORS = [
+      { id: 'c-1', name: 'Negro Reactivo', hex: '#18181b' },
+      { id: 'c-2', name: 'Blanco Óptico', hex: '#f4f4f5' },
+      { id: 'c-3', name: 'Beige Crudo', hex: '#d8ccc0' },
+      { id: 'c-4', name: 'Lavanda Dark', hex: '#3f3747' }
+    ];
+
+    const TEXTILE_CUTS = [
+      { id: 'cut-1', name: 'Boxy Oversize (240g)', desc: 'Hombros caídos, silueta pesada y basta recta' },
+      { id: 'cut-2', name: 'Regular Fit (180g)', desc: 'Corte estándar recto en algodón jersey' },
+      { id: 'cut-3', name: 'Acid Wash Pesado (260g)', desc: 'Lavado al ácido vintage de alto gramaje' }
+    ];
+
+    const TEXTILE_SIZES = [
+      { id: 'sz-1', label: 'S', chest: 56, length: 70, shoulder: 22, height: '1.60 m – 1.70 m' },
+      { id: 'sz-2', label: 'M', chest: 59, length: 73, shoulder: 23, height: '1.70 m – 1.78 m' },
+      { id: 'sz-3', label: 'L', chest: 62, length: 76, shoulder: 24, height: '1.78 m – 1.85 m' },
+      { id: 'sz-4', label: 'XL', chest: 65, length: 79, shoulder: 25, height: '+1.85 m' }
+    ];
+
+    // Carga de inventario desde localStorage o inicialización por defecto
+    let INVENTORY_STOCK = JSON.parse(localStorage.getItem(STORAGE_KEY_STOCK)) || [
+      { cut: 'Boxy Oversize (240g)', color: 'Negro Reactivo', size: 'S', qty: 10 },
+      { cut: 'Boxy Oversize (240g)', color: 'Negro Reactivo', size: 'M', qty: 18 },
+      { cut: 'Boxy Oversize (240g)', color: 'Negro Reactivo', size: 'L', qty: 6 },
+      { cut: 'Boxy Oversize (240g)', color: 'Negro Reactivo', size: 'XL', qty: 4 },
+      { cut: 'Boxy Oversize (240g)', color: 'Blanco Óptico', size: 'L', qty: 6 },
+      { cut: 'Regular Fit (180g)', color: 'Negro Reactivo', size: 'XL', qty: 29 }
+    ];
+
+    const ACTIVE_PRODUCTS = [
+      { id: 'prod-1', name: 'Polo Oversize Spheres (Coldplay)', eventId: 'coldplay-2026', cut: 'Boxy Oversize (240g)', color: 'Negro Reactivo', zone: 'Espalda A3 (30x42 cm)', price: '55.00', sizes: ['S', 'M', 'L', 'XL'] },
+      { id: 'prod-2', name: 'Acme Circles Geometric T-Shirt', eventId: 'custom-art', cut: 'Boxy Oversize (240g)', color: 'Blanco Óptico', zone: 'Pecho A4 (21x30 cm)', price: '75.00', sizes: ['M', 'L'] }
+    ];
+
+    // Dataset de Ventas Guardado Localmente (Estructurado para ML tabular en el futuro)
+    let SALES_DATASET = JSON.parse(localStorage.getItem(STORAGE_KEY_SALES)) || [
+      { id: 'ORD-1082', timestamp: '2026-09-07T10:30:00Z', client: 'Carlos Rivas', phone: '+51 987 654 321', eventId: 'coldplay-2026', eventName: 'Coldplay — Music of the Spheres', venue: 'Estadio Nacional', capacity: 45000, prodName: 'Polo Oversize Spheres (Coldplay)', cut: 'Boxy Oversize (240g)', color: 'Negro Reactivo', size: 'L', price: 55.00, status: 'En Corte' }
+    ];
+
+    function saveDatasetToStorage() {
+      localStorage.setItem(STORAGE_KEY_SALES, JSON.stringify(SALES_DATASET));
+      localStorage.setItem(STORAGE_KEY_STOCK, JSON.stringify(INVENTORY_STOCK));
+    }
+
+    // Conmutador de Módulos
+    function switchAdminModule(modKey) {
+      ['events', 'catalog', 'production', 'stock', 'attributes'].forEach(k => {
+        document.getElementById('module-' + k).classList.add('hidden');
+        const btn = document.getElementById('mod-tab-' + k);
+        if (btn) btn.className = "px-4 py-2.5 border border-[#e8e8e8] text-neutral-700 hover:border-neutral-950 transition flex items-center gap-2";
+      });
+
+      document.getElementById('module-' + modKey).classList.remove('hidden');
+      const activeBtn = document.getElementById('mod-tab-' + modKey);
+      if (activeBtn) activeBtn.className = "px-4 py-2.5 border border-[#121212] bg-[#121212] text-white transition flex items-center gap-2";
+    }
+
+    // =========================================================================
+    // 2. MOTOR PREDICTIVO ADAPTATIVO (NIVEL 1)
+    // Calcula distribución de tallas basándose en el historial real o fallback
+    // =========================================================================
+    let lastCalculatedDeficit = null;
+
+    function getEmpiricalSizeDistribution() {
+      if (SALES_DATASET.length >= 5) {
+        const counts = {};
+        TEXTILE_SIZES.forEach(s => counts[s.label] = 0);
+        SALES_DATASET.forEach(order => {
+          if (counts[order.size] !== undefined) counts[order.size]++;
+        });
+        const total = SALES_DATASET.length;
+        return TEXTILE_SIZES.map(s => ({
+          label: s.label,
+          pct: total > 0 ? (counts[s.label] / total) : (1 / TEXTILE_SIZES.length)
+        }));
+      }
+
+      // Fallback estándar en Lima mientras se acumulan datos
+      const fallbackMap = { 'S': 0.15, 'M': 0.35, 'L': 0.40, 'XL': 0.10 };
+      return TEXTILE_SIZES.map(s => ({
+        label: s.label,
+        pct: fallbackMap[s.label] || 0.10
+      }));
+    }
+
+    function runPredictiveModel() {
+      const select = document.getElementById('predict-event-select');
+      const eventId = select ? select.value : ACTIVE_CONCERTS[0].id;
+      const concert = ACTIVE_CONCERTS.find(c => c.id === eventId) || ACTIVE_CONCERTS[0];
+
+      const capacity = concert.capacity || 40000;
+      const rate = concert.rate || 0.004;
+      const totalDemand = Math.round(capacity * rate);
+
+      document.getElementById('pred-venue-capacity').innerText = `${capacity.toLocaleString()} personas`;
+      document.getElementById('pred-venue-name').innerText = concert.venue;
+      document.getElementById('pred-total-demand').innerText = `${totalDemand} polos base`;
+
+      const tbody = document.getElementById('predictive-breakdown-tbody');
+      tbody.innerHTML = '';
+
+      let totalDeficit = 0;
+      lastCalculatedDeficit = [];
+
+      const distributions = getEmpiricalSizeDistribution();
+
+      distributions.forEach(dist => {
+        const neededQty = Math.round(totalDemand * dist.pct);
+        const stockItem = INVENTORY_STOCK.find(i => i.cut === 'Boxy Oversize (240g)' && i.color === 'Negro Reactivo' && i.size === dist.label);
+        const currentQty = stockItem ? stockItem.qty : 0;
+        const deficit = neededQty - currentQty;
+
+        if (deficit > 0) {
+          totalDeficit += deficit;
+          lastCalculatedDeficit.push({ size: dist.label, qty: deficit });
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-[#fafafa]";
+        tr.innerHTML = `
+          <td class="p-3 font-bold font-mono text-sm">${dist.label}</td>
+          <td class="p-3 font-mono text-neutral-500">${(dist.pct * 100).toFixed(1)}%</td>
+          <td class="p-3 font-mono font-bold">${neededQty} und</td>
+          <td class="p-3 font-mono ${currentQty < 10 ? 'text-amber-700 font-bold' : ''}">${currentQty} und</td>
+          <td class="p-3">
+            ${deficit > 0 
+              ? `<span class="badge-urgent text-[10px] font-bold px-2 py-0.5 rounded uppercase">Faltan ${deficit} und</span>`
+              : `<span class="badge-ready text-[10px] font-bold px-2 py-0.5 rounded uppercase">Cubierto</span>`
+            }
+          </td>
+          <td class="p-3 text-right font-mono font-bold ${deficit > 0 ? 'text-red-600' : 'text-emerald-700'}">
+            ${deficit > 0 ? `+${deficit} und` : '0 und'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('pred-total-deficit').innerText = `${totalDeficit} unidades por cortar`;
+    }
+
+    function applySuggestedStockOrder() {
+      if (!lastCalculatedDeficit || lastCalculatedDeficit.length === 0) {
+        alert('El stock actual ya cubre la demanda proyectada.');
+        return;
+      }
+      const mostCritical = lastCalculatedDeficit.reduce((prev, current) => (prev.qty > current.qty) ? prev : current);
+
+      openAddStockModal();
+      document.getElementById('stock-cut-select').value = 'Boxy Oversize (240g)';
+      document.getElementById('stock-color-select').value = 'Negro Reactivo';
+      document.getElementById('stock-size-select').value = mostCritical.size;
+      document.getElementById('stock-qty-input').value = mostCritical.qty;
+      document.getElementById('stock-supplier-input').value = 'Lote Pre-Show Gamarra 24/1';
+    }
+
+    // =========================================================================
+    // 3. REGISTRO Y EXPORTACIÓN DE DATASET DE VENTAS
+    // =========================================================================
+    function renderOrdersTable() {
+      const tbody = document.getElementById('admin-orders-tbody');
+      tbody.innerHTML = '';
+
+      SALES_DATASET.forEach(order => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-[#fafafa]";
+        tr.innerHTML = `
+          <td class="p-3.5">
+            <strong class="font-mono text-[#121212]">${order.id}</strong>
+            <span class="text-[10px] text-neutral-400 block font-mono">${order.timestamp.substring(0, 10)}</span>
+          </td>
+          <td class="p-3.5">
+            <strong class="block text-neutral-900">${order.client}</strong>
+            <span class="text-[11px] text-neutral-400 font-mono">${order.phone}</span>
+          </td>
+          <td class="p-3.5">
+            <span class="font-semibold block">${order.eventName}</span>
+            <span class="text-[11px] text-neutral-500">${order.venue}</span>
+          </td>
+          <td class="p-3.5">
+            <span class="block">${order.prodName}</span>
+            <span class="text-[11px] text-neutral-500">${order.cut} • ${order.color}</span>
+          </td>
+          <td class="p-3.5 font-bold font-mono">${order.size}</td>
+          <td class="p-3.5 font-bold font-mono">S/ ${parseFloat(order.price).toFixed(2)}</td>
+          <td class="p-3.5"><span class="badge-urgent text-[10px] font-bold px-2 py-0.5 rounded uppercase">${order.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('tab-sales-badge').innerText = SALES_DATASET.length;
+      document.getElementById('header-sales-count').innerText = SALES_DATASET.length;
+    }
+
+    function openRegisterSaleModal() {
+      syncSaleProductOptions();
+      document.getElementById('register-sale-modal').classList.remove('hidden');
+    }
+    function closeRegisterSaleModal() {
+      document.getElementById('register-sale-modal').classList.add('hidden');
+    }
+
+    function syncSaleProductOptions() {
+      const prodSel = document.getElementById('sale-product-select');
+      prodSel.innerHTML = '';
+      ACTIVE_PRODUCTS.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = `${p.name} (S/ ${p.price})`;
+        prodSel.appendChild(opt);
+      });
+
+      updateSaleSizeDropdown();
+    }
+
+    function updateSaleSizeDropdown() {
+      const prodId = document.getElementById('sale-product-select').value;
+      const product = ACTIVE_PRODUCTS.find(p => p.id === prodId) || ACTIVE_PRODUCTS[0];
+      const sizeSel = document.getElementById('sale-size-select');
+      sizeSel.innerHTML = '';
+
+      product.sizes.forEach(sz => {
+        const opt = document.createElement('option');
+        opt.value = sz;
+        opt.textContent = `Talla ${sz}`;
+        sizeSel.appendChild(opt);
+      });
+
+      document.getElementById('sale-price-input').value = product.price;
+    }
+
+    function handleRegisterSaleSubmit(e) {
+      e.preventDefault();
+      const client = document.getElementById('sale-client-name').value;
+      const phone = document.getElementById('sale-client-phone').value;
+      const prodId = document.getElementById('sale-product-select').value;
+      const size = document.getElementById('sale-size-select').value;
+      const price = parseFloat(document.getElementById('sale-price-input').value);
+
+      const product = ACTIVE_PRODUCTS.find(p => p.id === prodId);
+      const concert = ACTIVE_CONCERTS.find(c => c.id === product.eventId) || ACTIVE_CONCERTS[0];
+
+      // Descontar del inventario de tela base si existe
+      const stockItem = INVENTORY_STOCK.find(i => i.cut === product.cut && i.color === product.color && i.size === size);
+      if (stockItem && stockItem.qty > 0) {
+        stockItem.qty -= 1;
+      }
+
+      // Estructura de Registro Lista para Modelos Predictivos
+      const newOrder = {
+        id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+        timestamp: new Date().toISOString(),
+        client,
+        phone,
+        eventId: concert.id,
+        eventName: concert.name,
+        venue: concert.venue,
+        capacity: concert.capacity,
+        prodName: product.name,
+        cut: product.cut,
+        color: product.color,
+        size,
+        price,
+        status: 'En Corte'
+      };
+
+      SALES_DATASET.unshift(newOrder);
+      saveDatasetToStorage();
+      renderOrdersTable();
+      renderStockGrid();
+      runPredictiveModel();
+      closeRegisterSaleModal();
+      alert(`[VENTA REGISTRADA]\\nOrden ${newOrder.id} añadida al dataset histórico.\\nSe descontó 1 unidad de stock físico.`);
+    }
+
+    function exportSalesDatasetJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(SALES_DATASET, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `amias_sales_dataset_${new Date().toISOString().substring(0, 10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // =========================================================================
+    // 4. SINCRONIZACIÓN DE SELECTORES EXCLUSIVOS
+    // =========================================================================
+    function syncAllDropdowns() {
+      // 4.1 Selector de Conciertos en Modal de Prendas
+      const prodEventSel = document.getElementById('new-prod-event-select');
+      if (prodEventSel) {
+        prodEventSel.innerHTML = '';
+        ACTIVE_CONCERTS.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = `${c.name} (${c.venue})`;
+          prodEventSel.appendChild(opt);
+        });
+      }
+
+      // 4.2 Selector de Conciertos en el Asistente Predictivo
+      const predEventSel = document.getElementById('predict-event-select');
+      if (predEventSel) {
+        predEventSel.innerHTML = '';
+        ACTIVE_CONCERTS.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = `${c.name} (${c.venue})`;
+          predEventSel.appendChild(opt);
+        });
+      }
+
+      // 4.3 Selector de Siluetas en Modal de Prendas
+      const prodCutSel = document.getElementById('new-prod-cut-select');
+      if (prodCutSel) {
+        prodCutSel.innerHTML = '';
+        TEXTILE_CUTS.forEach(k => {
+          const opt = document.createElement('option');
+          opt.value = k.name;
+          opt.textContent = k.name;
+          prodCutSel.appendChild(opt);
+        });
+      }
+
+      // 4.4 Selector de Colores en Modal de Prendas
+      const prodColorSel = document.getElementById('new-prod-color-select');
+      if (prodColorSel) {
+        prodColorSel.innerHTML = '';
+        TEXTILE_COLORS.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.name;
+          opt.textContent = c.name;
+          prodColorSel.appendChild(opt);
+        });
+      }
+
+      // 4.5 Checkboxes de Tallas en Modal de Prendas
+      const prodSizesBox = document.getElementById('new-prod-sizes-checkboxes');
+      if (prodSizesBox) {
+        prodSizesBox.innerHTML = '';
+        TEXTILE_SIZES.forEach(s => {
+          const label = document.createElement('label');
+          label.className = "flex items-center gap-1.5 cursor-pointer bg-neutral-100 px-2 py-1 border border-neutral-300";
+          label.innerHTML = `<input type="checkbox" name="prod-size-check" value="${s.label}" checked class="accent-black"> <span>${s.label} (${s.chest}x${s.length})</span>`;
+          prodSizesBox.appendChild(label);
+        });
+      }
+
+      // 4.6 Selectores de Almacén de Telas
+      const stockCutSel = document.getElementById('stock-cut-select');
+      if (stockCutSel) {
+        stockCutSel.innerHTML = '';
+        TEXTILE_CUTS.forEach(k => {
+          const opt = document.createElement('option');
+          opt.value = k.name;
+          opt.textContent = k.name;
+          stockCutSel.appendChild(opt);
+        });
+      }
+
+      const stockColorSel = document.getElementById('stock-color-select');
+      if (stockColorSel) {
+        stockColorSel.innerHTML = '';
+        TEXTILE_COLORS.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.name;
+          opt.textContent = c.name;
+          stockColorSel.appendChild(opt);
+        });
+      }
+
+      const stockSizeSel = document.getElementById('stock-size-select');
+      if (stockSizeSel) {
+        stockSizeSel.innerHTML = '';
+        TEXTILE_SIZES.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.label;
+          opt.textContent = `${s.label} (${s.chest}x${s.length} cm)`;
+          stockSizeSel.appendChild(opt);
+        });
+      }
+
+      document.getElementById('header-events-count').innerText = ACTIVE_CONCERTS.length;
+      document.getElementById('header-colors-count').innerText = TEXTILE_COLORS.length;
+      document.getElementById('header-cuts-count').innerText = TEXTILE_CUTS.length;
+    }
+
+    // 5. RENDERIZADORES DE TABLAS Y CUADRÍCULAS
+    function renderStockGrid() {
+      const container = document.getElementById('stock-grid-container');
+      container.innerHTML = '';
+      INVENTORY_STOCK.forEach(item => {
+        const isLow = item.qty < 10;
+        const div = document.createElement('div');
+        div.className = "p-4 border border-[#e8e8e8] bg-[#fafafa] space-y-1";
+        div.innerHTML = `
+          <span class="text-neutral-500 block text-[11px] truncate">${item.cut}</span>
+          <span class="text-neutral-900 block font-bold text-xs">${item.color} — ${item.size}</span>
+          <div class="flex justify-between items-baseline pt-1">
+            <strong class="text-xl ${isLow ? 'text-amber-700' : 'text-neutral-900'} font-mono">${item.qty} und</strong>
+            <span class="${isLow ? 'text-amber-800' : 'text-emerald-700'} font-bold text-[10px]">${isLow ? 'Bajo' : 'Stock OK'}</span>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderProductsList() {
+      const container = document.getElementById('admin-product-list');
+      container.innerHTML = '';
+      ACTIVE_PRODUCTS.forEach(p => {
+        const concertObj = ACTIVE_CONCERTS.find(c => c.id === p.eventId);
+        const concertLabel = concertObj ? concertObj.name : 'Gira Activa';
+
+        const div = document.createElement('div');
+        div.className = "p-4 border border-[#e8e8e8] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#fbfbfb]";
+        div.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-14 bg-neutral-950 text-white flex items-center justify-center font-bold text-[9px] font-mono uppercase">${p.name.substring(0, 4)}</div>
+            <div>
+              <strong class="text-neutral-900 text-sm block">${p.name}</strong>
+              <span class="text-neutral-500 text-[11px]">${concertLabel} • ${p.cut} • ${p.color} • S/ ${p.price} PEN</span>
+              <div class="text-[10px] text-neutral-400 font-mono mt-0.5">Tallas: ${p.sizes.join(', ')}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-emerald-700 font-bold text-[11px] bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Activo</span>
+            <button onclick="deleteProductRow('${p.id}', this)" class="text-neutral-400 hover:text-red-600 p-1">✕</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderConcertsList() {
+      const container = document.getElementById('admin-events-list');
+      container.innerHTML = '';
+      ACTIVE_CONCERTS.forEach(c => {
+        const div = document.createElement('div');
+        div.className = "p-4 border border-[#e8e8e8] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#fbfbfb]";
+        div.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-neutral-900 text-white flex items-center justify-center font-mono font-bold text-xs uppercase">${c.name.substring(0, 2)}</div>
+            <div>
+              <strong class="text-neutral-900 text-sm block">${c.name}</strong>
+              <span class="text-neutral-500 text-[11px] font-body">${c.venue} • Fecha Show: ${c.date}</span>
+            </div>
+          </div>
+          <span class="text-emerald-700 font-bold text-[10px] bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-mono">ACTIVO</span>
+        `;
+        container.appendChild(div);
+      });
+      document.getElementById('tab-events-badge').innerText = ACTIVE_CONCERTS.length;
+    }
+
+    function renderColors() {
+      const container = document.getElementById('admin-colors-grid');
+      container.innerHTML = '';
+      TEXTILE_COLORS.forEach(c => {
+        const div = document.createElement('div');
+        div.className = "p-3 border border-[#e8e8e8] bg-[#fbfbfb] flex items-center justify-between";
+        div.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-full border border-neutral-300 shadow-xs" style="background-color: ${c.hex};"></span>
+            <div>
+              <strong class="text-neutral-900 block">${c.name}</strong>
+              <span class="text-neutral-400 font-mono text-[10px] uppercase">${c.hex}</span>
+            </div>
+          </div>
+          <button onclick="deleteColor('${c.id}')" class="text-neutral-400 hover:text-red-600 text-xs">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderCuts() {
+      const container = document.getElementById('admin-cuts-list');
+      container.innerHTML = '';
+      TEXTILE_CUTS.forEach(k => {
+        const div = document.createElement('div');
+        div.className = "p-3.5 border border-[#e8e8e8] bg-[#fbfbfb] flex items-center justify-between";
+        div.innerHTML = `
+          <div>
+            <strong class="text-neutral-900 text-sm block">${k.name}</strong>
+            <span class="text-neutral-500 text-[11px]">${k.desc}</span>
+          </div>
+          <button onclick="deleteCut('${k.id}')" class="text-neutral-400 hover:text-red-600 text-xs font-bold px-2 py-1">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderSizes() {
+      const tbody = document.getElementById('admin-sizes-tbody');
+      tbody.innerHTML = '';
+      TEXTILE_SIZES.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-[#fafafa]";
+        tr.innerHTML = `
+          <td class="p-3.5 font-bold font-mono text-sm">${s.label}</td>
+          <td class="p-3.5 font-mono">${s.chest} cm</td>
+          <td class="p-3.5 font-mono">${s.length} cm</td>
+          <td class="p-3.5 font-mono">${s.shoulder} cm</td>
+          <td class="p-3.5 text-neutral-500">${s.height}</td>
+          <td class="p-3.5 text-right"><button onclick="deleteSize('${s.id}')" class="text-neutral-400 hover:text-red-600 text-xs font-bold">✕</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // 6. ENVÍO DE FORMULARIOS CONTROLADOS
+    function handleCreateProductSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-prod-name').value;
+      const eventId = document.getElementById('new-prod-event-select').value;
+      const cut = document.getElementById('new-prod-cut-select').value;
+      const color = document.getElementById('new-prod-color-select').value;
+      const price = parseFloat(document.getElementById('new-prod-price').value).toFixed(2);
+      const zone = document.getElementById('new-prod-zone').value;
+
+      const selectedSizes = [];
+      document.querySelectorAll('input[name="prod-size-check"]:checked').forEach(cb => selectedSizes.push(cb.value));
+
+      if (selectedSizes.length === 0) {
+        alert('Debes habilitar al menos una talla para esta prenda.');
+        return;
+      }
+
+      ACTIVE_PRODUCTS.unshift({ id: 'prod-' + Date.now(), name, eventId, cut, color, zone, price, sizes: selectedSizes });
+      renderProductsList();
+      closeCreateProductModal();
+      alert(`[AMIAS CENTRAL]\\nPrenda "${name}" creada con éxito.`);
+      switchAdminModule('catalog');
+    }
+
+    function handleAddStockSubmit(e) {
+      e.preventDefault();
+      const cut = document.getElementById('stock-cut-select').value;
+      const color = document.getElementById('stock-color-select').value;
+      const size = document.getElementById('stock-size-select').value;
+      const qtyToAdd = parseInt(document.getElementById('stock-qty-input').value, 10);
+      const supplier = document.getElementById('stock-supplier-input').value;
+
+      const existing = INVENTORY_STOCK.find(i => i.cut === cut && i.color === color && i.size === size);
+      if (existing) {
+        existing.qty += qtyToAdd;
+      } else {
+        INVENTORY_STOCK.push({ cut, color, size, qty: qtyToAdd });
+      }
+
+      saveDatasetToStorage();
+      renderStockGrid();
+      runPredictiveModel();
+      closeAddStockModal();
+      alert(`[ALMACÉN ACTUALIZADO]\\nSe agregaron ${qtyToAdd} und de ${cut} (${color} - ${size}) de ${supplier}.`);
+    }
+
+    function handleCreateEventSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-event-name').value;
+      const venue = document.getElementById('new-event-venue').value;
+      const date = document.getElementById('new-event-date').value;
+      
+      const capMap = { 'Estadio Nacional': 45000, 'Estadio San Marcos': 40000, 'Costa 21': 15000, 'Arena 1': 20000 };
+      const capacity = capMap[venue] || 35000;
+
+      ACTIVE_CONCERTS.push({ id: 'event-' + Date.now(), name, venue, capacity, rate: 0.004, date });
+      renderConcertsList();
+      syncAllDropdowns();
+      runPredictiveModel();
+      closeCreateEventModal();
+    }
+
+    function handleAddColorSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-color-name').value;
+      const hex = document.getElementById('new-color-hex').value;
+      TEXTILE_COLORS.push({ id: 'c-' + Date.now(), name, hex });
+      renderColors();
+      syncAllDropdowns();
+      closeAddColorModal();
+    }
+    function deleteColor(id) {
+      const idx = TEXTILE_COLORS.findIndex(c => c.id === id);
+      if (idx !== -1) { TEXTILE_COLORS.splice(idx, 1); renderColors(); syncAllDropdowns(); }
+    }
+
+    function handleAddCutSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-cut-name').value;
+      const desc = document.getElementById('new-cut-desc').value;
+      TEXTILE_CUTS.push({ id: 'cut-' + Date.now(), name, desc });
+      renderCuts();
+      syncAllDropdowns();
+      closeAddCutModal();
+    }
+    function deleteCut(id) {
+      const idx = TEXTILE_CUTS.findIndex(c => c.id === id);
+      if (idx !== -1) { TEXTILE_CUTS.splice(idx, 1); renderCuts(); syncAllDropdowns(); }
+    }
+
+    function handleAddSizeSubmit(e) {
+      e.preventDefault();
+      const label = document.getElementById('new-size-label').value.toUpperCase();
+      const height = document.getElementById('new-size-height').value;
+      const chest = parseInt(document.getElementById('new-size-chest').value, 10);
+      const length = parseInt(document.getElementById('new-size-length').value, 10);
+      const shoulder = parseInt(document.getElementById('new-size-shoulder').value, 10);
+      TEXTILE_SIZES.push({ id: 'sz-' + Date.now(), label, chest, length, shoulder, height });
+      renderSizes();
+      syncAllDropdowns();
+      closeAddSizeModal();
+    }
+    function deleteSize(id) {
+      const idx = TEXTILE_SIZES.findIndex(s => s.id === id);
+      if (idx !== -1) { TEXTILE_SIZES.splice(idx, 1); renderSizes(); syncAllDropdowns(); }
+    }
+
+    function deleteProductRow(prodId, btn) {
+      const idx = ACTIVE_PRODUCTS.findIndex(p => p.id === prodId);
+      if (idx !== -1) { ACTIVE_PRODUCTS.splice(idx, 1); btn.closest('.p-4').remove(); }
+    }
+
+    function openCreateProductModal() { syncAllDropdowns(); document.getElementById('create-product-modal').classList.remove('hidden'); }
+    function closeCreateProductModal() { document.getElementById('create-product-modal').classList.add('hidden'); }
+    function openAddStockModal() { syncAllDropdowns(); document.getElementById('add-stock-modal').classList.remove('hidden'); }
+    function closeAddStockModal() { document.getElementById('add-stock-modal').classList.add('hidden'); }
+    function openCreateEventModal() { document.getElementById('create-event-modal').classList.remove('hidden'); }
+    function closeCreateEventModal() { document.getElementById('create-event-modal').classList.add('hidden'); }
+    function openAddColorModal() { document.getElementById('add-color-modal').classList.remove('hidden'); }
+    function closeAddColorModal() { document.getElementById('add-color-modal').classList.add('hidden'); }
+    function openAddCutModal() { document.getElementById('add-cut-modal').classList.remove('hidden'); }
+    function closeAddCutModal() { document.getElementById('add-cut-modal').classList.add('hidden'); }
+    function openAddSizeModal() { document.getElementById('add-size-modal').classList.remove('hidden'); }
+    function closeAddSizeModal() { document.getElementById('add-size-modal').classList.add('hidden'); }
+
+    // Init
+    renderConcertsList();
+    renderProductsList();
+    renderStockGrid();
+    renderOrdersTable();
+    renderColors();
+    renderCuts();
+    renderSizes();
+    syncAllDropdowns();
+    runPredictiveModel();
+  </script>
+</body>
+</html>
