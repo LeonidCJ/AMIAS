@@ -12,6 +12,14 @@ enum Role {
   OPERARIO
 }
 
+enum OrderStatus {
+  PENDING
+  PAID
+  IN_PRODUCTION
+  COMPLETED
+  CANCELLED
+}
+
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -64,6 +72,7 @@ model TextileSize {
   heightRef    String?
   createdAt    DateTime      @default(now())
   productSizes ProductSize[]
+  orderItems   OrderItem[]
 
   @@map("textile_sizes")
 }
@@ -82,6 +91,7 @@ model Product {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   sizes          ProductSize[]
+  orderItems     OrderItem[]
 
   @@map("products")
 }
@@ -94,4 +104,45 @@ model ProductSize {
 
   @@id([productId, sizeId])
   @@map("product_sizes")
+}
+
+model Order {
+  id             String          @id @default(uuid())
+  orderNumber    String          @unique
+  customerName   String
+  customerPhone  String
+  totalAmount    Float
+  status         OrderStatus     @default(PENDING)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  items          OrderItem[]
+  paymentReceipt PaymentReceipt?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String      @id @default(uuid())
+  orderId   String
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product     @relation(fields: [productId], references: [id])
+  sizeId    String
+  size      TextileSize @relation(fields: [sizeId], references: [id])
+  quantity  Int
+  unitPrice Float
+
+  @@map("order_items")
+}
+
+model PaymentReceipt {
+  id            String   @id @default(uuid())
+  orderId       String   @unique
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  operationCode String   @unique
+  fileHash      String   @unique
+  receiptUrl    String
+  createdAt     DateTime @default(now())
+
+  @@map("payment_receipts")
 }
