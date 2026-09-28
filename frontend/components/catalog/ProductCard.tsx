@@ -20,11 +20,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
   return (
     <div
       onClick={() => onSelect && onSelect(product.id)}
-      className="catalog-item group cursor-pointer font-sans"
+      className="catalog-item group cursor-pointer font-sans bg-white p-2.5 rounded-2xl border border-[#e8e8e8] shadow-sm hover:shadow-md transition-all duration-200"
     >
-      <div className="relative bg-[#f7f7f7] aspect-[4/5] border border-[#e8e8e8] flex items-center justify-center overflow-hidden transition group-hover:border-neutral-400">
+      <div className="relative bg-[#f7f7f7] aspect-[4/5] border border-[#f0f0f0] rounded-xl flex items-center justify-center overflow-hidden transition group-hover:border-neutral-300">
         {/* Tour Badge */}
-        <span className="absolute top-2.5 left-2.5 bg-[#121212] text-white text-[9px] uppercase tracking-widest font-semibold px-2 py-0.5 z-10 flex items-center gap-1">
+        <span className="absolute top-2.5 left-2.5 bg-[#121212]/90 backdrop-blur-sm text-white text-[9px] uppercase tracking-widest font-semibold px-2.5 py-1 rounded-lg z-10 flex items-center gap-1 shadow-sm">
           <Sparkles className="w-2.5 h-2.5 text-amber-300" />
           <span>{product.concertEvent?.name || 'Gira Oficial'}</span>
         </span>
@@ -34,10 +34,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
           <img
             src={product.imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover transition transform group-hover:scale-105"
+            className="w-full h-full object-cover transition transform group-hover:scale-105 rounded-xl"
           />
         ) : (
-          <div className="w-28 h-36 bg-[#121212] text-white flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-sm">
+          <div className="w-28 h-36 bg-[#121212] text-white rounded-xl flex flex-col items-center justify-center p-3 text-center transition transform group-hover:scale-105 shadow-md">
             <span className="text-[9px] tracking-widest font-mono text-neutral-400 uppercase flex items-center gap-1">
               <Scissors className="w-2.5 h-2.5" />
               {product.cut?.name || '24/1 BOXY'}
@@ -49,7 +49,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
         )}
       </div>
 
-      <div className="pt-3 space-y-1">
+      <div className="pt-3 px-1 space-y-1">
         <h3 className="text-xs font-bold uppercase tracking-wider text-[#121212] group-hover:underline">
           {product.name}
         </h3>
@@ -62,11 +62,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
 
         {/* Size Chips */}
         {product.sizes && product.sizes.length > 0 && (
-          <div className="flex flex-wrap gap-1 pt-0.5">
+          <div className="flex flex-wrap gap-1 pt-1">
             {product.sizes.map((s, idx) => (
               <span
                 key={s.sizeId || idx}
-                className="text-[9px] font-mono border border-neutral-200 bg-neutral-50 px-1.5 py-0.5 rounded text-neutral-700 font-semibold"
+                className="text-[9px] font-mono border border-neutral-200 bg-neutral-50 px-2 py-0.5 rounded-md text-neutral-700 font-semibold"
               >
                 {s.label || 'Talla'}
               </span>
@@ -75,7 +75,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
         )}
 
         {/* Price Formatted in PEN */}
-        <p className="text-xs font-bold text-[#121212] pt-1">
+        <p className="text-xs font-extrabold text-[#121212] pt-1">
           {formatCurrencyPEN(product.basePrice)}
         </p>
       </div>

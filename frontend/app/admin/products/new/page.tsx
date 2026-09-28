@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
-  Sparkles,
   Check,
   AlertCircle,
   ShieldCheck,
@@ -192,7 +191,7 @@ export default function NewProductAdminPage() {
         </div>
 
         {/* Auth Token Helper */}
-        <div className="bg-neutral-50 border border-neutral-200 p-4 space-y-2 text-xs">
+        <div className="bg-neutral-50 border border-neutral-200 p-4 space-y-2 text-xs rounded-2xl shadow-sm">
           <label className="font-bold uppercase tracking-wider block text-neutral-700">
             Token JWT de Autenticación (ADMIN):
           </label>
@@ -204,14 +203,14 @@ export default function NewProductAdminPage() {
               localStorage.setItem('access_token', e.target.value);
             }}
             placeholder="Pega aquí el accessToken de /auth/login..."
-            className="w-full px-3 py-2 border border-neutral-300 font-mono text-[11px] focus:outline-none focus:border-[#121212]"
+            className="w-full px-3 py-2 border border-neutral-300 font-mono text-[11px] focus:outline-none focus:border-[#121212] rounded-xl"
           />
         </div>
 
         {/* Feedback Message */}
         {serverFeedback && (
           <div
-            className={`p-4 border text-xs font-semibold flex items-center gap-2 rounded ${
+            className={`p-4 border text-xs font-semibold flex items-center gap-2 rounded-2xl ${
               serverFeedback.type === 'success'
                 ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
                 : 'bg-red-50 border-red-300 text-red-800'
@@ -227,7 +226,7 @@ export default function NewProductAdminPage() {
         )}
 
         {/* Form managed with React Hook Form + Zod */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 border border-[#e8e8e8] p-8 rounded-2xl shadow-sm bg-white">
           {/* Garment Name & Price */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="sm:col-span-2 space-y-1.5">
@@ -239,7 +238,7 @@ export default function NewProductAdminPage() {
                 type="text"
                 {...register('name')}
                 placeholder="Ej. Polo Boxy Oversize Spheres Tour 2026"
-                className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212]"
+                className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] rounded-xl"
               />
               {errors.name && (
                 <p className="text-[11px] text-red-600 font-semibold">{errors.name.message}</p>
@@ -256,7 +255,7 @@ export default function NewProductAdminPage() {
                 min="0.01"
                 {...register('basePrice')}
                 placeholder="55.00"
-                className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212]"
+                className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] rounded-xl"
               />
               {errors.basePrice && (
                 <p className="text-[11px] text-red-600 font-semibold">{errors.basePrice.message}</p>
@@ -273,7 +272,7 @@ export default function NewProductAdminPage() {
               rows={2}
               {...register('description')}
               placeholder="Ej. Confeccionado en tejido peinado reactivo 24/1 de 240g de máxima densidad."
-              className="w-full px-3.5 py-2.5 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212]"
+              className="w-full px-3.5 py-2.5 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] rounded-xl"
             />
           </div>
 
@@ -286,7 +285,7 @@ export default function NewProductAdminPage() {
               </label>
               <select
                 {...register('concertEventId')}
-                className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] bg-white"
+                className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] bg-white rounded-xl"
               >
                 <option value="">-- Selecciona una Gira Maestro --</option>
                 {events.map((event) => (
@@ -308,7 +307,7 @@ export default function NewProductAdminPage() {
               </label>
               <select
                 {...register('cutId')}
-                className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] bg-white"
+                className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] bg-white rounded-xl"
               >
                 <option value="">-- Selecciona un Corte Maestro --</option>
                 {cuts.map((cut) => (
@@ -336,10 +335,10 @@ export default function NewProductAdminPage() {
                   <div
                     key={size.id}
                     onClick={() => handleSizeToggle(size.id)}
-                    className={`flex items-center gap-2.5 p-3 border text-xs cursor-pointer transition select-none ${
+                    className={`flex items-center gap-2.5 p-3 border text-xs cursor-pointer transition select-none rounded-xl ${
                       isSelected
                         ? 'border-[#121212] bg-[#121212] text-white font-bold'
-                        : 'border-[#e8e8e8] text-neutral-700 hover:border-neutral-400'
+                        : 'border-[#e8e8e8] text-neutral-700 hover:border-neutral-400 bg-neutral-50'
                     }`}
                   >
                     {isSelected ? (
@@ -369,7 +368,7 @@ export default function NewProductAdminPage() {
               type="text"
               {...register('imageUrl')}
               placeholder="https://..."
-              className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212]"
+              className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] rounded-xl"
             />
           </div>
 
@@ -377,7 +376,7 @@ export default function NewProductAdminPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-4 bg-[#121212] hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50"
+            className="btn-dawn-primary w-full py-4 text-xs font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50"
           >
             <span>{isSubmitting ? 'Publicando Prenda...' : 'Publicar Prenda en Catálogo'}</span>
             <ArrowRight className="w-4 h-4" />
