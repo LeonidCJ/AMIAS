@@ -11,18 +11,21 @@ body {
   background-color: #121212;
   color: #ffffff;
   border: 1px solid #121212;
+  border-radius: 0.75rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-dawn-primary:hover {
   background-color: #ffffff;
   color: #121212;
+  border-color: #121212;
 }
 
 .btn-dawn-secondary {
   background-color: #ffffff;
   color: #121212;
   border: 1px solid #121212;
+  border-radius: 0.75rem;
   transition: all 0.2s ease;
 }
 

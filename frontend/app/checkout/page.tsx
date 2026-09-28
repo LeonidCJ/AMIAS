@@ -197,7 +197,7 @@ export default function CheckoutPage() {
             <span className="text-2xl font-extrabold tracking-[-0.04em] uppercase block leading-none">AMIAS</span>
             <span className="text-[10px] tracking-[0.25em] text-neutral-400 uppercase font-sans mt-1 block">Textile Studio Lima</span>
           </div>
-          <div className="text-xs uppercase font-semibold text-neutral-600 flex items-center gap-2">
+          <div className="text-xs uppercase font-semibold text-neutral-600 flex items-center gap-2 px-3 py-1.5 bg-neutral-100 border border-neutral-200 rounded-full">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
             <span>Checkout Seguro (PEN S/)</span>
           </div>
@@ -207,9 +207,9 @@ export default function CheckoutPage() {
       <main className="max-w-7xl mx-auto px-6 lg:px-12 py-10">
         {/* Success Modal / Banner */}
         {successOrder ? (
-          <div className="max-w-2xl mx-auto bg-emerald-50 border border-emerald-300 p-8 space-y-6 text-center shadow-lg">
-            <div className="w-12 h-12 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto">
-              <Check className="w-6 h-6 stroke-[3]" />
+          <div className="max-w-2xl mx-auto bg-emerald-50 border border-emerald-300 rounded-3xl p-8 space-y-6 text-center shadow-lg">
+            <div className="w-14 h-14 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto shadow-md">
+              <Check className="w-7 h-7 stroke-[3]" />
             </div>
             <div className="space-y-2">
               <span className="text-xs font-mono font-bold text-emerald-800 uppercase tracking-widest block">
@@ -226,7 +226,7 @@ export default function CheckoutPage() {
               href={successOrder.waLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-widest rounded-full shadow-lg transition"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-widest rounded-full shadow-lg transition transform active:scale-95"
             >
               <span>Abrir WhatsApp AMIAS</span>
               <Send className="w-4 h-4" />
@@ -249,16 +249,16 @@ export default function CheckoutPage() {
               </div>
 
               {/* Payment Tabs */}
-              <div className="border border-[#e8e8e8] bg-white">
-                <div className="flex border-b border-[#e8e8e8] bg-[#fafafa]">
+              <div className="border border-[#e8e8e8] bg-white rounded-2xl overflow-hidden shadow-sm">
+                <div className="flex border-b border-[#e8e8e8] bg-[#fafafa] p-1 gap-1">
                   {(['yape', 'plin', 'bcp', 'bbva', 'interbank'] as const).map((method) => (
                     <button
                       key={method}
                       onClick={() => setActivePaymentTab(method)}
-                      className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider transition border-b-2 ${
+                      className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition rounded-xl ${
                         activePaymentTab === method
-                          ? 'border-[#121212] text-[#121212] bg-white'
-                          : 'border-transparent text-neutral-400 hover:text-neutral-900'
+                          ? 'bg-white text-[#121212] shadow-sm border border-neutral-200'
+                          : 'text-neutral-400 hover:text-neutral-900'
                       }`}
                     >
                       {method}
@@ -271,7 +271,7 @@ export default function CheckoutPage() {
                   {(activePaymentTab === 'yape' || activePaymentTab === 'plin') && (
                     <div className="flex flex-col sm:flex-row items-center gap-8">
                       {/* QR Mockup */}
-                      <div className="w-44 h-44 bg-neutral-900 text-white p-4 flex flex-col items-center justify-center border border-neutral-800 shadow-inner text-center relative group">
+                      <div className="w-44 h-44 bg-neutral-900 text-white p-4 rounded-2xl flex flex-col items-center justify-center border border-neutral-800 shadow-inner text-center relative group">
                         <QrCode className="w-24 h-24 text-amber-300" />
                         <span className="text-[10px] uppercase font-bold tracking-widest mt-2">
                           QR {activePaymentTab.toUpperCase()} AMIAS
@@ -294,7 +294,7 @@ export default function CheckoutPage() {
                             <span className="text-base font-mono font-bold text-[#121212]">999 999 999</span>
                             <button
                               onClick={() => copyToClipboard('999999999', 'phone')}
-                              className="px-2.5 py-1 text-[10px] uppercase font-bold border border-neutral-300 hover:border-neutral-900 flex items-center gap-1 transition"
+                              className="px-3 py-1.5 text-[10px] uppercase font-bold border border-neutral-300 rounded-lg hover:border-neutral-900 flex items-center gap-1 transition"
                             >
                               {copiedField === 'phone' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
                               <span>{copiedField === 'phone' ? 'Copiado' : 'Copiar'}</span>
@@ -302,7 +302,7 @@ export default function CheckoutPage() {
                           </div>
                         </div>
 
-                        <p className="text-[11px] text-neutral-500 bg-neutral-50 p-2.5 border border-neutral-200">
+                        <p className="text-[11px] text-neutral-500 bg-neutral-50 p-3 rounded-xl border border-neutral-200">
                           Al yapear o plinear, verifica que el nombre corresponda a **AMIAS STUDIO S.A.C.** y guarda tu captura.
                         </p>
                       </div>
@@ -317,7 +317,7 @@ export default function CheckoutPage() {
                         <span className="font-bold text-sm">Banco de Crédito del Perú (BCP)</span>
                       </div>
 
-                      <div className="bg-neutral-50 p-4 border border-neutral-200 space-y-3 font-mono">
+                      <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200 space-y-3 font-mono">
                         <div className="flex items-center justify-between">
                           <div>
                             <span className="text-[10px] text-neutral-400 block">Número de Cuenta Corriente:</span>
@@ -325,7 +325,7 @@ export default function CheckoutPage() {
                           </div>
                           <button
                             onClick={() => copyToClipboard('193-98765432-0-11', 'bcp_cta')}
-                            className="px-2.5 py-1 text-[10px] uppercase font-bold border border-neutral-300 bg-white hover:border-neutral-900"
+                            className="px-3 py-1 text-[10px] uppercase font-bold border border-neutral-300 rounded-lg bg-white hover:border-neutral-900"
                           >
                             {copiedField === 'bcp_cta' ? 'Copiado' : 'Copiar'}
                           </button>
@@ -338,7 +338,7 @@ export default function CheckoutPage() {
                           </div>
                           <button
                             onClick={() => copyToClipboard('00219300987654320111', 'bcp_cci')}
-                            className="px-2.5 py-1 text-[10px] uppercase font-bold border border-neutral-300 bg-white hover:border-neutral-900"
+                            className="px-3 py-1 text-[10px] uppercase font-bold border border-neutral-300 rounded-lg bg-white hover:border-neutral-900"
                           >
                             {copiedField === 'bcp_cci' ? 'Copiado' : 'Copiar CCI'}
                           </button>
@@ -354,7 +354,7 @@ export default function CheckoutPage() {
                         <span className="font-bold text-sm">BBVA Perú</span>
                       </div>
 
-                      <div className="bg-neutral-50 p-4 border border-neutral-200 space-y-3 font-mono">
+                      <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200 space-y-3 font-mono">
                         <div className="flex items-center justify-between">
                           <div>
                             <span className="text-[10px] text-neutral-400 block">Número de Cuenta:</span>
@@ -362,7 +362,7 @@ export default function CheckoutPage() {
                           </div>
                           <button
                             onClick={() => copyToClipboard('0011-0123-0100098765', 'bbva_cta')}
-                            className="px-2.5 py-1 text-[10px] uppercase font-bold border border-neutral-300 bg-white hover:border-neutral-900"
+                            className="px-3 py-1 text-[10px] uppercase font-bold border border-neutral-300 rounded-lg bg-white hover:border-neutral-900"
                           >
                             {copiedField === 'bbva_cta' ? 'Copiado' : 'Copiar'}
                           </button>
@@ -378,7 +378,7 @@ export default function CheckoutPage() {
                         <span className="font-bold text-sm">Interbank</span>
                       </div>
 
-                      <div className="bg-neutral-50 p-4 border border-neutral-200 space-y-3 font-mono">
+                      <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200 space-y-3 font-mono">
                         <div className="flex items-center justify-between">
                           <div>
                             <span className="text-[10px] text-neutral-400 block">Número de Cuenta:</span>
@@ -386,7 +386,7 @@ export default function CheckoutPage() {
                           </div>
                           <button
                             onClick={() => copyToClipboard('200-3001234567', 'ibk_cta')}
-                            className="px-2.5 py-1 text-[10px] uppercase font-bold border border-neutral-300 bg-white hover:border-neutral-900"
+                            className="px-3 py-1 text-[10px] uppercase font-bold border border-neutral-300 rounded-lg bg-white hover:border-neutral-900"
                           >
                             {copiedField === 'ibk_cta' ? 'Copiado' : 'Copiar'}
                           </button>
@@ -398,7 +398,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Form Section */}
-              <form onSubmit={handleSubmitCheckout} className="space-y-6 border border-[#e8e8e8] p-6 sm:p-8 bg-white">
+              <form onSubmit={handleSubmitCheckout} className="space-y-6 border border-[#e8e8e8] p-6 sm:p-8 bg-white rounded-2xl shadow-sm">
                 <div>
                   <span className="text-xs uppercase tracking-[0.2em] font-bold text-neutral-400 block">
                     PASO 2 DE 2 — REGISTRO Y VOUCHER
@@ -409,7 +409,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {errorMessage && (
-                  <div className="p-4 bg-red-50 border border-red-300 text-red-800 text-xs font-semibold flex items-center gap-2">
+                  <div className="p-4 bg-red-50 border border-red-300 text-red-800 text-xs font-semibold flex items-center gap-2 rounded-xl">
                     <AlertCircle className="w-4 h-4 text-red-600" />
                     <span>{errorMessage}</span>
                   </div>
@@ -426,7 +426,7 @@ export default function CheckoutPage() {
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
                       placeholder="Ej. Juan Pérez"
-                      className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212]"
+                      className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] rounded-xl"
                     />
                   </div>
 
@@ -440,7 +440,7 @@ export default function CheckoutPage() {
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value)}
                       placeholder="Ej. 987654321"
-                      className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212]"
+                      className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] rounded-xl"
                     />
                   </div>
                 </div>
@@ -455,9 +455,9 @@ export default function CheckoutPage() {
                     value={operationCode}
                     onChange={(e) => setOperationCode(e.target.value)}
                     placeholder="Ej. 089764"
-                    className="w-full px-3.5 py-3 border border-[#cccccc] text-xs font-mono focus:outline-none focus:border-[#121212]"
+                    className="w-full px-3.5 py-3 border border-[#cccccc] text-xs font-mono focus:outline-none focus:border-[#121212] rounded-xl"
                   />
-                  <p className="text-[10px] text-neutral-400">
+                  <p className="text-[10px] text-neutral-400 pt-0.5">
                     Se verificará la unicidad criptográfica de este código para prevenir duplicados.
                   </p>
                 </div>
@@ -466,7 +466,7 @@ export default function CheckoutPage() {
                   <label className="text-xs uppercase font-bold text-neutral-700 block">
                     Adjuntar Foto o PDF del Voucher *
                   </label>
-                  <div className="border border-dashed border-neutral-300 hover:border-neutral-900 bg-neutral-50 p-4 text-center cursor-pointer">
+                  <div className="border border-dashed border-neutral-300 hover:border-neutral-900 bg-neutral-50 p-5 rounded-xl text-center cursor-pointer transition">
                     <input
                       type="file"
                       id="voucher-file"
@@ -489,7 +489,7 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting || loadingItems || cartItems.length === 0}
-                  className="w-full py-4 bg-[#121212] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50"
+                  className="btn-dawn-primary w-full py-4 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50"
                 >
                   <span>{isSubmitting ? 'Verificando y Generando Pedido...' : 'Confirmar Pedido y Enviar a WhatsApp'}</span>
                   <ArrowRight className="w-4 h-4" />
@@ -499,7 +499,7 @@ export default function CheckoutPage() {
 
             {/* Right Column: Order Summary */}
             <div className="lg:col-span-5 space-y-6">
-              <div className="border border-[#e8e8e8] p-6 sm:p-8 bg-[#fafafa] space-y-6 sticky top-28">
+              <div className="border border-[#e8e8e8] p-6 sm:p-8 bg-[#fafafa] rounded-2xl space-y-6 sticky top-28 shadow-sm">
                 <div className="border-b border-[#e8e8e8] pb-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ShoppingBag className="w-5 h-5 text-neutral-800" />
