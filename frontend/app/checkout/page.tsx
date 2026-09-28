@@ -160,7 +160,7 @@ export default function CheckoutPage() {
       window.open(waLink, '_blank');
     } catch (err: any) {
       setErrorMessage(err.message || 'Error inesperado durante el checkout.');
-    } font-sans finally {
+    } finally {
       setIsSubmitting(false);
     }
   };
