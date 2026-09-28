@@ -20,21 +20,29 @@ export interface WhatsAppOrderData {
 export function generateWhatsAppOrderLink(data: WhatsAppOrderData): string {
   const phone = data.storePhoneNumber || '51999999999';
 
-  let message = `*¡Hola AMIAS Textile Studio!* 👋\n\n`;
-  message += `Acabo de realizar mi pedido a través de la plataforma y adjunto mi constancia de pago.\n\n`;
-  message += `📌 *Código de Pedido:* ${data.orderNumber}\n`;
-  message += `👤 *Cliente:* ${data.customerName}\n`;
-  message += `🔢 *Nº de Operación Vouché:* ${data.operationCode}\n\n`;
-  message += `🛍️ *Resumen de Prendas:*\n`;
+  const lines = [
+    `*¡Hola AMIAS!*`,
+    ``,
+    `Acabo de realizar un pedido en la plataforma y adjunto mi constancia de pago.`,
+    ``,
+    `*CÓDIGO DE PEDIDO:* ${data.orderNumber}`,
+    `*CLIENTE:* ${data.customerName}`,
+    `*Nº OPERACIÓN VOUCHER:* ${data.operationCode}`,
+    ``,
+    `*RESUMEN DEL PEDIDO:*`,
+  ];
 
   data.items.forEach((item, index) => {
     const subtotal = item.quantity * item.unitPrice;
-    message += `  ${index + 1}. ${item.productName} (Talla: ${item.sizeLabel}) x${item.quantity} - ${formatCurrencyPEN(subtotal)}\n`;
+    lines.push(`  ${index + 1}. ${item.productName} [Talla ${item.sizeLabel}] x${item.quantity} — ${formatCurrencyPEN(subtotal)}`);
   });
 
-  message += `\n💰 *Total Aprobado:* ${formatCurrencyPEN(data.totalAmount)}\n\n`;
-  message += `Quedo a la espera de la confirmación para la confección. ¡Muchas gracias!`;
+  lines.push(``);
+  lines.push(`*TOTAL ABONADO:* ${formatCurrencyPEN(data.totalAmount)}`);
+  lines.push(``);
+  lines.push(`Quedo a la espera de su confirmación para la confección. ¡Muchas gracias!`);
 
-  const encodedText = encodeURIComponent(message);
+  const fullMessage = lines.join('\n');
+  const encodedText = encodeURIComponent(fullMessage);
   return `https://wa.me/${phone}?text=${encodedText}`;
 }
