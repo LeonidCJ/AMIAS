@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   QrCode,
   CreditCard,
@@ -27,27 +27,8 @@ interface CartItem {
 }
 
 export default function CheckoutPage() {
-  // Demo cart items (or load from cart state)
-  const [cartItems] = useState<CartItem[]>([
-    {
-      productId: 'p-1',
-      productName: 'Polo Oversize Boxy Spheres Tour 2026',
-      sizeId: 's-l',
-      sizeLabel: 'L',
-      quantity: 1,
-      unitPrice: 55.0,
-    },
-    {
-      productId: 'p-2',
-      productName: 'Polo Boxy Revival Blink',
-      sizeId: 's-m',
-      sizeLabel: 'M',
-      quantity: 1,
-      unitPrice: 50.0,
-    },
-  ]);
-
-  const totalAmount = cartItems.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [loadingItems, setLoadingItems] = useState<boolean>(true);
 
   // Active Payment Tab: 'yape' | 'plin' | 'bcp' | 'bbva' | 'interbank'
   const [activePaymentTab, setActivePaymentTab] = useState<'yape' | 'plin' | 'bcp' | 'bbva' | 'interbank'>('yape');
@@ -65,6 +46,42 @@ export default function CheckoutPage() {
   const [successOrder, setSuccessOrder] = useState<{ orderNumber: string; waLink: string } | null>(null);
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+  // Load real active products from database to ensure valid product/size UUIDs
+  useEffect(() => {
+    async function loadRealCartItems() {
+      try {
+        setLoadingItems(true);
+        const res = await fetch(`${API_BASE}/products`);
+        if (res.ok) {
+          const products = await res.json();
+          if (products && products.length > 0) {
+            const realItems: CartItem[] = products.slice(0, 2).map((p: any) => {
+              const sizeObj = p.sizes?.[0];
+              const sizeId = sizeObj?.sizeId || sizeObj?.size?.id || sizeObj?.id || '';
+              return {
+                productId: p.id,
+                productName: p.name,
+                sizeId: sizeId,
+                sizeLabel: sizeObj?.label || 'L',
+                quantity: 1,
+                unitPrice: p.basePrice,
+              };
+            });
+            setCartItems(realItems);
+          }
+        }
+      } catch (e) {
+        console.error('Error al cargar productos reales para checkout:', e);
+      } finally {
+        setLoadingItems(false);
+      }
+    }
+
+    loadRealCartItems();
+  }, [API_BASE]);
+
+  const totalAmount = cartItems.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0);
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -190,7 +207,7 @@ export default function CheckoutPage() {
       <main className="max-w-7xl mx-auto px-6 lg:px-12 py-10">
         {/* Success Modal / Banner */}
         {successOrder ? (
-          <div className="max-w-2xl mx-auto bg-emerald-50 border border-emerald-300 p-8 space-y-6 text-center">
+          <div className="max-w-2xl mx-auto bg-emerald-50 border border-emerald-300 p-8 space-y-6 text-center shadow-lg">
             <div className="w-12 h-12 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto">
               <Check className="w-6 h-6 stroke-[3]" />
             </div>
@@ -471,7 +488,7 @@ export default function CheckoutPage() {
 
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || loadingItems || cartItems.length === 0}
                   className="w-full py-4 bg-[#121212] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50"
                 >
                   <span>{isSubmitting ? 'Verificando y Generando Pedido...' : 'Confirmar Pedido y Enviar a WhatsApp'}</span>
@@ -491,21 +508,27 @@ export default function CheckoutPage() {
                   <span className="text-xs font-mono text-neutral-400">PEN (S/)</span>
                 </div>
 
-                <div className="divide-y divide-neutral-200 text-xs font-sans space-y-3 pt-1">
-                  {cartItems.map((item, idx) => (
-                    <div key={idx} className="pt-3 flex items-start justify-between gap-4">
-                      <div>
-                        <h4 className="font-bold text-[#121212]">{item.productName}</h4>
-                        <span className="text-[11px] text-neutral-500 block">
-                          Talla: <strong className="text-neutral-800">{item.sizeLabel}</strong> • Cantidad: {item.quantity}
+                {loadingItems ? (
+                  <div className="py-8 text-center text-xs font-semibold uppercase tracking-widest text-neutral-400">
+                    Cargando prendas activas del catálogo...
+                  </div>
+                ) : (
+                  <div className="divide-y divide-neutral-200 text-xs font-sans space-y-3 pt-1">
+                    {cartItems.map((item, idx) => (
+                      <div key={idx} className="pt-3 flex items-start justify-between gap-4">
+                        <div>
+                          <h4 className="font-bold text-[#121212]">{item.productName}</h4>
+                          <span className="text-[11px] text-neutral-500 block">
+                            Talla: <strong className="text-neutral-800">{item.sizeLabel}</strong> • Cantidad: {item.quantity}
+                          </span>
+                        </div>
+                        <span className="font-mono font-bold text-[#121212]">
+                          {formatCurrencyPEN(item.unitPrice * item.quantity)}
                         </span>
                       </div>
-                      <span className="font-mono font-bold text-[#121212]">
-                        {formatCurrencyPEN(item.unitPrice * item.quantity)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
 
                 <div className="border-t-2 border-[#121212] pt-4 flex items-center justify-between text-sm">
                   <span className="font-extrabold uppercase text-[#121212]">Total A Pagar</span>
