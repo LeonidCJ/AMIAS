@@ -1,4 +1,4 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient, Role, OrderStatus } from '@prisma/client';
 import * as argon2 from 'argon2';
 
 const prisma = new PrismaClient();
@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log(' Starting AMIAS Database Seeding...');
 
-  // 1. Seed Initial Admin User
+  // 1. Seed Initial Admin User & Demo Customer
   const passwordHash = await argon2.hash('Admin123456');
   const admin = await prisma.user.upsert({
     where: { email: 'admin@amias.com' },
@@ -15,6 +15,11 @@ async function main() {
       email: 'admin@amias.com',
       passwordHash,
       role: Role.ADMIN,
+      customerName: 'Carlos Rivas',
+      customerPhone: '987654321',
+      deliveryAddress: 'Av. Petit Thouars 1850, Dpto 402',
+      deliveryDistrict: 'Lince',
+      deliveryReference: 'Frente al parque, portón negro',
     },
   });
   console.log(`Admin user seeded: ${admin.email}`);
@@ -52,6 +57,12 @@ async function main() {
   }
   console.log('Textile Cuts seeded');
 
+  // Set admin preferred cut
+  await prisma.user.update({
+    where: { id: admin.id },
+    data: { preferredCutId: cuts[0].id },
+  });
+
   // 4. Seed Master Textile Sizes
   const sizesData = [
     { label: 'S', chestCm: 56, lengthCm: 70, shoulderCm: 22, heightRef: '1.60m - 1.70m' },
@@ -70,10 +81,16 @@ async function main() {
   }
   console.log('Textile Sizes seeded');
 
+  // Set admin preferred size
+  await prisma.user.update({
+    where: { id: admin.id },
+    data: { preferredSizeId: sizes[2].id }, // Talla L
+  });
+
   // 5. Seed Master Concert Events / Tours (Giras 2026)
   const eventsData = [
-    { name: 'Coldplay - Spheres Tour 2026', venue: 'Estadio Nacional', capacity: 45000, rate: 0.004, eventDate: new Date('2026-11-20T20:00:00.000Z') },
-    { name: 'Blink-182 - World Revival Tour', venue: 'Estadio San Marcos', capacity: 35000, rate: 0.004, eventDate: new Date('2026-10-15T21:00:00.000Z') },
+    { name: 'Coldplay - Spheres Tour 2026', venue: 'Estadio Nacional', capacity: 45000, rate: 0.004, eventDate: new Date('2026-10-24T20:00:00.000Z') },
+    { name: 'Blink-182 - World Revival Tour', venue: 'Estadio San Marcos', capacity: 35000, rate: 0.004, eventDate: new Date('2026-11-15T21:00:00.000Z') },
     { name: 'The Weeknd - After Hours Tour', venue: 'Estadio Monumental', capacity: 50000, rate: 0.004, eventDate: new Date('2026-12-05T20:00:00.000Z') },
   ];
 
@@ -112,10 +129,11 @@ async function main() {
     },
   ];
 
+  const products = [];
   for (const p of productsData) {
-    const existing = await prisma.product.findFirst({ where: { name: p.name } });
+    let existing = await prisma.product.findFirst({ where: { name: p.name } });
     if (!existing) {
-      await prisma.product.create({
+      existing = await prisma.product.create({
         data: {
           ...p,
           isActive: true,
@@ -127,8 +145,39 @@ async function main() {
         },
       });
     }
+    products.push(existing);
   }
   console.log('Demo Catalog Products seeded');
+
+  // 7. Seed Demo Active Order (#ORD-1082 for Carlos Rivas)
+  const order1 = await prisma.order.create({
+    data: {
+      orderNumber: '#ORD-1082',
+      customerName: 'Carlos Rivas',
+      customerPhone: '987654321',
+      totalAmount: 55.0,
+      status: OrderStatus.IN_CUTTING,
+      userId: admin.id,
+      items: {
+        create: [
+          {
+            productId: products[0].id,
+            sizeId: sizes[2].id, // Talla L
+            quantity: 1,
+            unitPrice: 55.0,
+          },
+        ],
+      },
+      paymentReceipt: {
+        create: {
+          operationCode: '089764',
+          fileHash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+          receiptUrl: '/uploads/receipts/demo_voucher.jpg',
+        },
+      },
+    },
+  });
+  console.log(`Demo Active Order seeded: ${order1.orderNumber}`);
 
   console.log('Seeding completed successfully!');
 }

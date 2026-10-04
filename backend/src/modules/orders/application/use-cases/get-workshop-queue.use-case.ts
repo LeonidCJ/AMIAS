@@ -6,10 +6,10 @@ export class GetWorkshopQueueUseCase {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute() {
-    // 1. Fetch active manufacturing orders (excluding CANCELLED)
+    // 1. Fetch active manufacturing orders matching the new 4-stage OrderStatus enum
     const orders = await this.prisma.order.findMany({
       where: {
-        status: { in: ['PAID', 'IN_PRODUCTION', 'PENDING', 'COMPLETED'] },
+        status: { in: ['CONFIRMED', 'IN_CUTTING', 'DTF_PRINTING', 'READY'] },
       },
       include: {
         items: {
@@ -27,9 +27,9 @@ export class GetWorkshopQueueUseCase {
       },
     });
 
-    // 2. Flatten order items with concert event date for queue sorting
     const now = new Date().getTime();
 
+    // 2. Flatten order items with concert event date for queue sorting
     const queue = orders.flatMap((order) => {
       return order.items.map((item) => {
         const eventDate = item.product?.concertEvent?.eventDate
@@ -42,10 +42,10 @@ export class GetWorkshopQueueUseCase {
         return {
           orderId: order.id,
           orderNumber: order.orderNumber,
+          orderCreatedAt: order.createdAt,
           customerName: order.customerName,
           customerPhone: order.customerPhone,
           orderStatus: order.status,
-          orderCreatedAt: order.createdAt,
           itemId: item.id,
           productName: item.product?.name || 'Prenda Textil',
           concertEventName: item.product?.concertEvent?.name || 'Gira Oficial',
@@ -60,6 +60,7 @@ export class GetWorkshopQueueUseCase {
           shoulderCm: item.size?.shoulderCm,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
+          totalPrice: item.quantity * item.unitPrice,
           receiptOperationCode: order.paymentReceipt?.operationCode,
         };
       });

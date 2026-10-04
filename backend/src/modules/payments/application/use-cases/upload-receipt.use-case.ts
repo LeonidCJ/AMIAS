@@ -3,6 +3,7 @@ import * as crypto from 'crypto';
 import { PAYMENT_RECEIPT_REPOSITORY, PaymentReceiptRepository } from '../../domain/payment-receipt.repository';
 import { PaymentReceiptEntity } from '../../domain/payment-receipt.entity';
 import { PrismaService } from '../../../../prisma/prisma.service';
+import { OrderStatus } from '@prisma/client';
 
 @Injectable()
 export class UploadReceiptUseCase {
@@ -25,7 +26,7 @@ export class UploadReceiptUseCase {
     }
 
     // 2. TR-024: Calculate in-memory SHA-256 cryptographic hash from file buffer
-    const fileHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+    const fileHash = crypto.createHash('sha256').update(fileBuffer as unknown as Uint8Array).digest('hex');
 
     // 3. TR-025: Check duplicate operation code or file hash in DB
     const [existingCode, existingHash] = await Promise.all([
@@ -40,7 +41,7 @@ export class UploadReceiptUseCase {
     // 4. Simulated receipt storage URL (e.g. /uploads/receipts or Cloudinary)
     const receiptUrl = `/uploads/receipts/${Date.now()}_${fileName}`;
 
-    // 5. Persist receipt and update Order status to PAID
+    // 5. Persist receipt and update Order status to CONFIRMED
     const receiptEntity = new PaymentReceiptEntity(
       '',
       orderId,
@@ -52,10 +53,10 @@ export class UploadReceiptUseCase {
 
     const savedReceipt = await this.paymentReceiptRepository.save(receiptEntity);
 
-    // Update order status to PAID
+    // Update order status to CONFIRMED
     await this.prisma.order.update({
       where: { id: orderId },
-      data: { status: 'PAID' },
+      data: { status: OrderStatus.CONFIRMED },
     });
 
     return savedReceipt;

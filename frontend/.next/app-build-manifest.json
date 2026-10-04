@@ -16,15 +16,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/catalog/page.js"
     ],
-    "/admin/products/new/page": [
+    "/customer/history/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/products/new/page.js"
+      "static/chunks/app/customer/history/page.js"
     ],
-    "/checkout/page": [
+    "/admin/workshop/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/checkout/page.js"
+      "static/chunks/app/admin/workshop/page.js"
     ]
   }
 }
