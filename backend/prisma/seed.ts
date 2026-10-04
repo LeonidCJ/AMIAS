@@ -149,8 +149,9 @@ async function main() {
   }
   console.log('Demo Catalog Products seeded');
 
-  // 7. Seed Demo Active Order (#ORD-1082 for Carlos Rivas)
-  const order1 = await prisma.order.create({
+  // 7. Seed Demo Orders across all 3 Concert Events and Confection Stages
+  // Order 1: #ORD-1082 (Active IN_CUTTING for Carlos Rivas - Coldplay)
+  await prisma.order.create({
     data: {
       orderNumber: '#ORD-1082',
       customerName: 'Carlos Rivas',
@@ -171,14 +172,99 @@ async function main() {
       paymentReceipt: {
         create: {
           operationCode: '089764',
-          fileHash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-          receiptUrl: '/uploads/receipts/demo_voucher.jpg',
+          fileHash: 'sha256_demo_1082',
+          receiptUrl: '/uploads/receipts/demo_voucher_1082.jpg',
         },
       },
     },
   });
-  console.log(`Demo Active Order seeded: ${order1.orderNumber}`);
 
+  // Order 2: #ORD-1081 (Active CONFIRMED for Lucía Martínez - Blink-182)
+  await prisma.order.create({
+    data: {
+      orderNumber: '#ORD-1081',
+      customerName: 'Lucía Martínez',
+      customerPhone: '912345678',
+      totalAmount: 50.0,
+      status: OrderStatus.CONFIRMED,
+      items: {
+        create: [
+          {
+            productId: products[1].id,
+            sizeId: sizes[1].id, // Talla M
+            quantity: 1,
+            unitPrice: 50.0,
+          },
+        ],
+      },
+      paymentReceipt: {
+        create: {
+          operationCode: '089765',
+          fileHash: 'sha256_demo_1081',
+          receiptUrl: '/uploads/receipts/demo_voucher_1081.jpg',
+        },
+      },
+    },
+  });
+
+  // Order 3: #ORD-1083 (Active DTF_PRINTING for Mateo Castro - The Weeknd)
+  await prisma.order.create({
+    data: {
+      orderNumber: '#ORD-1083',
+      customerName: 'Mateo Castro',
+      customerPhone: '987111222',
+      totalAmount: 60.0,
+      status: OrderStatus.DTF_PRINTING,
+      items: {
+        create: [
+          {
+            productId: products[2].id,
+            sizeId: sizes[3].id, // Talla XL
+            quantity: 1,
+            unitPrice: 60.0,
+          },
+        ],
+      },
+      paymentReceipt: {
+        create: {
+          operationCode: '089766',
+          fileHash: 'sha256_demo_1083',
+          receiptUrl: '/uploads/receipts/demo_voucher_1083.jpg',
+        },
+      },
+    },
+  });
+
+  // Order 4: #ORD-1080 (Completed Delivered Order for Carlos Rivas)
+  await prisma.order.create({
+    data: {
+      orderNumber: '#ORD-1080',
+      customerName: 'Carlos Rivas',
+      customerPhone: '987654321',
+      totalAmount: 50.0,
+      status: OrderStatus.COMPLETED,
+      userId: admin.id,
+      items: {
+        create: [
+          {
+            productId: products[1].id,
+            sizeId: sizes[2].id, // Talla L
+            quantity: 1,
+            unitPrice: 50.0,
+          },
+        ],
+      },
+      paymentReceipt: {
+        create: {
+          operationCode: '089763',
+          fileHash: 'sha256_demo_1080',
+          receiptUrl: '/uploads/receipts/demo_voucher_1080.jpg',
+        },
+      },
+    },
+  });
+
+  console.log('Demo Orders seeded across all concert events and stages!');
   console.log('Seeding completed successfully!');
 }
 
