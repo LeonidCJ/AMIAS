@@ -173,23 +173,6 @@ export default function AdminProductionPage() {
           </div>
         </div>
 
-        {/* Auth Token Helper */}
-        <div className="bg-neutral-50 border border-neutral-200 p-4 space-y-1.5 text-xs rounded-2xl shadow-sm">
-          <label className="font-bold uppercase tracking-wider block text-neutral-700">
-            Token JWT de Operario / Admin:
-          </label>
-          <input
-            type="text"
-            value={authToken}
-            onChange={(e) => {
-              setAuthToken(e.target.value);
-              localStorage.setItem('access_token', e.target.value);
-            }}
-            placeholder="Pega aquí el accessToken de /auth/login para autenticar el taller..."
-            className="w-full px-3.5 py-2.5 border border-neutral-300 font-mono text-[11px] focus:outline-none focus:border-[#121212] rounded-xl bg-white"
-          />
-        </div>
-
         {/* Error Alert */}
         {error && (
           <div className="p-4 bg-red-50 border border-red-300 rounded-2xl text-red-800 text-xs font-semibold flex items-center gap-2">

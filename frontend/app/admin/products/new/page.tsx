@@ -190,23 +190,6 @@ export default function NewProductAdminPage() {
           </div>
         </div>
 
-        {/* Auth Token Helper */}
-        <div className="bg-neutral-50 border border-neutral-200 p-4 space-y-2 text-xs rounded-2xl shadow-sm">
-          <label className="font-bold uppercase tracking-wider block text-neutral-700">
-            Token JWT de Autenticación (ADMIN):
-          </label>
-          <input
-            type="text"
-            value={authToken}
-            onChange={(e) => {
-              setAuthToken(e.target.value);
-              localStorage.setItem('access_token', e.target.value);
-            }}
-            placeholder="Pega aquí el accessToken de /auth/login..."
-            className="w-full px-3 py-2 border border-neutral-300 font-mono text-[11px] focus:outline-none focus:border-[#121212] rounded-xl"
-          />
-        </div>
-
         {/* Feedback Message */}
         {serverFeedback && (
           <div
