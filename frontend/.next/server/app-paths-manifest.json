@@ -1,5 +1,5 @@
 {
   "/catalog/page": "app/catalog/page.js",
-  "/admin/products/new/page": "app/admin/products/new/page.js",
-  "/checkout/page": "app/checkout/page.js"
+  "/checkout/page": "app/checkout/page.js",
+  "/admin/products/new/page": "app/admin/products/new/page.js"
 }
