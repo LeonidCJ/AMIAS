@@ -67,7 +67,7 @@ export default function AdminProductionPage() {
       setQueue(data);
     } catch (err: any) {
       setError(err.message || 'Error al conectar con el servidor.');
-    } font-sans finally {
+    } finally {
       setLoading(false);
     }
   };
