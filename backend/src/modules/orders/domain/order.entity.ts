@@ -1,12 +1,5 @@
+import { OrderStatus } from '@prisma/client';
 import { DomainException } from '../../../core/exceptions/domain.exception';
-
-export enum OrderStatusEnum {
-  PENDING = 'PENDING',
-  PAID = 'PAID',
-  IN_PRODUCTION = 'IN_PRODUCTION',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
-}
 
 export interface OrderItemEntity {
   id?: string;
@@ -25,7 +18,7 @@ export class OrderEntity {
     public readonly customerName: string,
     public readonly customerPhone: string,
     public readonly totalAmount: number,
-    public readonly status: OrderStatusEnum,
+    public readonly status: OrderStatus,
     public readonly items: OrderItemEntity[],
     public readonly createdAt: Date,
     public readonly updatedAt: Date,

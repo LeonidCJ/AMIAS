@@ -2,7 +2,7 @@ import React from 'react';
 import { Check, Scissors, Printer, PackageCheck, Clock } from 'lucide-react';
 
 export interface OrderTrackerProps {
-  currentStatus: 'PENDING' | 'PAID' | 'IN_PRODUCTION' | 'COMPLETED' | 'CANCELLED' | string;
+  currentStatus: 'CONFIRMED' | 'IN_CUTTING' | 'DTF_PRINTING' | 'READY' | 'COMPLETED' | 'CANCELLED' | string;
   orderNumber?: string;
   updatedAt?: string | Date;
 }
@@ -12,18 +12,20 @@ export const OrderTracker: React.FC<OrderTrackerProps> = ({
   orderNumber,
   updatedAt,
 }) => {
-  // Determine step progress level (0 to 4)
-  // Stage 1: Pago Confirmado
-  // Stage 2: En Corte
-  // Stage 3: Estampado DTF
-  // Stage 4: Listo para Entrega
+  // Determine step progress level (1 to 4)
+  // Stage 1: Confirmado (CONFIRMED)
+  // Stage 2: En Corte (IN_CUTTING)
+  // Stage 3: DTF (DTF_PRINTING)
+  // Stage 4: Listo (READY / COMPLETED)
   let activeStep = 1;
 
-  if (currentStatus === 'PAID') {
+  if (currentStatus === 'CONFIRMED') {
     activeStep = 1;
-  } else if (currentStatus === 'IN_PRODUCTION') {
-    activeStep = 3; // In production covers both Corte & DTF
-  } else if (currentStatus === 'COMPLETED') {
+  } else if (currentStatus === 'IN_CUTTING') {
+    activeStep = 2;
+  } else if (currentStatus === 'DTF_PRINTING') {
+    activeStep = 3;
+  } else if (currentStatus === 'READY' || currentStatus === 'COMPLETED') {
     activeStep = 4;
   } else if (currentStatus === 'CANCELLED') {
     activeStep = 0;
@@ -32,37 +34,41 @@ export const OrderTracker: React.FC<OrderTrackerProps> = ({
   const stages = [
     {
       step: 1,
-      title: 'Pago Confirmado',
-      description: 'Voucher validado con SHA-256',
+      code: 'CONFIRMED',
+      title: '1. Confirmado',
+      description: 'Voucher validado',
       icon: Check,
     },
     {
       step: 2,
-      title: 'En Corte',
-      description: 'Patronaje 20/1 y corte de tela',
+      code: 'IN_CUTTING',
+      title: '2. En Corte',
+      description: 'Patronaje 20/1 y mesa de corte',
       icon: Scissors,
     },
     {
       step: 3,
-      title: 'Estampado DTF',
+      code: 'DTF_PRINTING',
+      title: '3. DTF',
       description: 'Curado térmico 300 DPI',
       icon: Printer,
     },
     {
       step: 4,
-      title: 'Listo para Entrega',
-      description: 'Control de calidad y empaque',
+      code: 'READY',
+      title: '4. Listo',
+      description: 'Control de calidad y entrega',
       icon: PackageCheck,
     },
   ];
 
   return (
-    <div className="bg-white border border-[#e8e8e8] rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm font-sans">
+    <div className="bg-white border border-[#e8e8e8] rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm font-sans">
       {/* Header Info */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#e8e8e8] pb-4">
         <div>
-          <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest block">
-            TRACKER DE CONFECCIÓN EN TIEMPO REAL
+          <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest block font-bold">
+            LÍNEA DE CONFECCIÓN EN TALLER AMIAS
           </span>
           <h3 className="text-lg font-bold uppercase text-[#121212] mt-0.5">
             Estado del Pedido {orderNumber || ''}
@@ -70,71 +76,73 @@ export const OrderTracker: React.FC<OrderTrackerProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-neutral-100 text-neutral-800 border border-neutral-200">
-            <Clock className="w-3.5 h-3.5 text-amber-600" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300">
+            <Clock className="w-3.5 h-3.5 text-amber-700" />
             <span>
-              {currentStatus === 'COMPLETED'
-                ? 'Listo para Retiro/Delivery'
-                : currentStatus === 'CANCELLED'
-                ? 'Cancelado'
-                : 'En Proceso de Taller'}
+              {currentStatus === 'CONFIRMED'
+                ? 'Pago Confirmado'
+                : currentStatus === 'IN_CUTTING'
+                ? 'En Mesa de Corte'
+                : currentStatus === 'DTF_PRINTING'
+                ? 'Estampado DTF'
+                : currentStatus === 'READY' || currentStatus === 'COMPLETED'
+                ? 'Listo para Entrega'
+                : 'Procesando'}
             </span>
           </span>
         </div>
       </div>
 
-      {/* 4-Stage Progress Bar (TR-026) */}
-      <div className="relative py-4">
-        {/* Connecting Line */}
-        <div className="absolute top-1/2 left-6 right-6 -translate-y-1/2 h-1.5 bg-neutral-100 rounded-full z-0 hidden sm:block" />
-
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 relative z-10">
+      {/* 4-Stage Confection Tracker (TR-026) */}
+      <div className="py-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-xs">
           {stages.map((st) => {
             const isDone = activeStep > st.step;
             const isCurrent = activeStep === st.step;
             const Icon = st.icon;
 
             return (
-              <div key={st.step} className="flex sm:flex-col items-center gap-3 sm:text-center">
-                {/* Numbered Step Circle */}
+              <div
+                key={st.step}
+                className={`p-4 rounded-2xl border transition-all ${
+                  isCurrent
+                    ? 'bg-neutral-900 text-white border-neutral-900 shadow-md ring-2 ring-neutral-300'
+                    : isDone
+                    ? 'bg-emerald-50 text-emerald-900 border-emerald-300'
+                    : 'bg-neutral-50 text-neutral-400 border-neutral-200 opacity-50'
+                }`}
+              >
                 <div
-                  className={`w-12 h-12 rounded-2xl flex items-center justify-center font-extrabold text-sm transition-all duration-300 shadow-sm ${
-                    isDone
+                  className={`w-9 h-9 mx-auto rounded-full flex items-center justify-center font-bold text-xs mb-2 ${
+                    isCurrent
+                      ? 'bg-amber-400 text-neutral-950 animate-pulse'
+                      : isDone
                       ? 'bg-emerald-600 text-white'
-                      : isCurrent
-                      ? 'bg-[#121212] text-white ring-4 ring-neutral-200 scale-105'
-                      : 'bg-neutral-100 text-neutral-400 border border-neutral-200'
+                      : 'border border-neutral-300 text-neutral-400'
                   }`}
                 >
-                  {isDone ? <Check className="w-6 h-6 stroke-[3]" /> : <Icon className="w-5 h-5" />}
+                  {isDone ? <Check className="w-5 h-5 stroke-[3]" /> : st.step}
                 </div>
 
-                {/* Stage Title & Description */}
-                <div className="space-y-0.5">
-                  <h4
-                    className={`text-xs uppercase font-bold tracking-wider ${
-                      isCurrent || isDone ? 'text-[#121212]' : 'text-neutral-400'
-                    }`}
-                  >
-                    0{st.step}. {st.title}
-                  </h4>
-                  <p className="text-[10px] text-neutral-400 leading-tight">
-                    {st.description}
-                  </p>
-                </div>
+                <strong className="block font-bold uppercase tracking-wider text-xs mb-0.5">
+                  {st.title}
+                </strong>
+                <span className="text-[10px] block opacity-80 leading-tight">
+                  {st.description}
+                </span>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Footer Info Badge */}
-      <div className="bg-[#fafafa] border border-neutral-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+      {/* Technical Spec Summary Footer */}
+      <div className="bg-[#fafafa] border border-neutral-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
         <span className="text-neutral-600 font-medium">
-          🧵 Taller Lima: Confección en algodón reactivo 24/1 pesado (240g).
+          🧵 Algodón Reactivo 24/1 Pesado (240g) • Trazabilidad Industrial AMIAS
         </span>
         <span className="text-neutral-400 font-mono text-[11px]">
-          Última actualización: {updatedAt ? new Date(updatedAt).toLocaleDateString('es-PE') : 'Hoy'}
+          Actualizado: {updatedAt ? new Date(updatedAt).toLocaleDateString('es-PE') : 'Hoy'}
         </span>
       </div>
     </div>

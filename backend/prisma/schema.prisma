@@ -13,19 +13,30 @@ enum Role {
 }
 
 enum OrderStatus {
-  PENDING
-  PAID
-  IN_PRODUCTION
+  CONFIRMED
+  IN_CUTTING
+  DTF_PRINTING
+  READY
   COMPLETED
   CANCELLED
 }
 
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  passwordHash String
-  role         Role     @default(OPERARIO)
-  createdAt    DateTime @default(now())
+  id                String       @id @default(uuid())
+  email             String       @unique
+  passwordHash      String
+  role              Role         @default(OPERARIO)
+  customerName      String?
+  customerPhone     String?
+  preferredCutId    String?
+  preferredCut      TextileCut?  @relation(fields: [preferredCutId], references: [id])
+  preferredSizeId   String?
+  preferredSize     TextileSize? @relation(fields: [preferredSizeId], references: [id])
+  deliveryAddress   String?
+  deliveryDistrict  String?
+  deliveryReference String?
+  createdAt         DateTime     @default(now())
+  orders            Order[]
 
   @@map("users")
 }
@@ -44,12 +55,13 @@ model ConcertEvent {
 }
 
 model TextileCut {
-  id          String    @id @default(uuid())
-  name        String
-  grammageGsm Int       @default(240)
-  description String?
-  createdAt   DateTime  @default(now())
-  products    Product[]
+  id               String    @id @default(uuid())
+  name             String
+  grammageGsm      Int       @default(240)
+  description      String?
+  createdAt        DateTime  @default(now())
+  products         Product[]
+  preferredByUsers User[]
 
   @@map("textile_cuts")
 }
@@ -64,15 +76,16 @@ model TextileColor {
 }
 
 model TextileSize {
-  id           String        @id @default(uuid())
-  label        String
-  chestCm      Int
-  lengthCm     Int
-  shoulderCm   Int
-  heightRef    String?
-  createdAt    DateTime      @default(now())
-  productSizes ProductSize[]
-  orderItems   OrderItem[]
+  id               String        @id @default(uuid())
+  label            String
+  chestCm          Int
+  lengthCm         Int
+  shoulderCm       Int
+  heightRef        String?
+  createdAt        DateTime      @default(now())
+  productSizes     ProductSize[]
+  orderItems       OrderItem[]
+  preferredByUsers User[]
 
   @@map("textile_sizes")
 }
@@ -112,7 +125,9 @@ model Order {
   customerName   String
   customerPhone  String
   totalAmount    Float
-  status         OrderStatus     @default(PENDING)
+  status         OrderStatus     @default(CONFIRMED)
+  userId         String?
+  user           User?           @relation(fields: [userId], references: [id])
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   items          OrderItem[]

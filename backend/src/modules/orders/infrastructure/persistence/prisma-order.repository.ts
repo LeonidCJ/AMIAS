@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OrderRepository } from '../../domain/order.repository';
-import { OrderEntity, OrderStatusEnum, OrderItemEntity } from '../../domain/order.entity';
+import { OrderEntity, OrderItemEntity } from '../../domain/order.entity';
+import { OrderStatus } from '@prisma/client';
 import { PrismaService } from '../../../../prisma/prisma.service';
 
 @Injectable()
@@ -20,14 +21,14 @@ export class PrismaOrderRepository implements OrderRepository {
       const paddedNumber = String(nextSequence).padStart(4, '0');
       const orderNumber = `#ORD-${paddedNumber}`;
 
-      // 2. Create order record
+      // 2. Create order record with OrderStatus.CONFIRMED
       const record = await tx.order.create({
         data: {
           orderNumber,
           customerName: orderData.customerName,
           customerPhone: orderData.customerPhone,
           totalAmount: orderData.totalAmount,
-          status: OrderStatusEnum.PENDING,
+          status: OrderStatus.CONFIRMED,
           items: {
             create: orderData.items.map((item) => ({
               productId: item.productId,
@@ -102,7 +103,7 @@ export class PrismaOrderRepository implements OrderRepository {
       record.customerName,
       record.customerPhone,
       record.totalAmount,
-      record.status as OrderStatusEnum,
+      record.status as OrderStatus,
       items,
       record.createdAt,
       record.updatedAt,
