@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Header } from '../../components/layout/Header';
 import { ProductCard } from '../../components/catalog/ProductCard';
-import { Sparkles, Filter, ShoppingBag } from 'lucide-react';
+import { Sparkles, Filter } from 'lucide-react';
 
 interface ConcertEvent {
   id: string;
@@ -24,6 +26,7 @@ interface Product {
 }
 
 export default function CatalogPage() {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [tours, setTours] = useState<ConcertEvent[]>([]);
   const [activeTourId, setActiveTourId] = useState<string>('all');
@@ -65,30 +68,17 @@ export default function CatalogPage() {
     : products.filter((p: Product) => p.concertEventId === activeTourId);
 
   return (
-    <div className="min-h-screen bg-white text-[#121212] font-sans selection:bg-neutral-900 selection:text-white">
+    <div className="min-h-screen bg-white text-[#121212] font-sans selection:bg-neutral-900 selection:text-white flex flex-col justify-between">
       {/* Top Announcement Bar */}
       <div className="bg-[#121212] text-white text-[11px] tracking-[0.15em] uppercase text-center py-2.5 px-4 font-semibold flex items-center justify-center gap-2">
         <Sparkles className="w-3.5 h-3.5 text-amber-300" />
         <span>Envíos garantizados antes del show • Lima 2026 • Algodón 24/1 Reactivo</span>
       </div>
 
-      {/* Header */}
-      <header className="border-b border-[#e8e8e8] bg-white sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
-          <div>
-            <span className="text-2xl font-extrabold tracking-[-0.04em] uppercase block leading-none">AMIAS</span>
-            <span className="text-[10px] tracking-[0.25em] text-neutral-400 uppercase font-sans mt-1 block">Textile Studio Lima</span>
-          </div>
-          <nav className="flex items-center gap-6 text-xs uppercase tracking-[0.14em] font-semibold text-neutral-700">
-            <span className="py-1.5 px-4 bg-neutral-100 rounded-full border border-neutral-200 text-[#121212] flex items-center gap-1.5">
-              <ShoppingBag className="w-3.5 h-3.5 text-neutral-900" />
-              Catálogo Público
-            </span>
-          </nav>
-        </div>
-      </header>
+      {/* Global Header with Auth Session & Logout */}
+      <Header />
 
-      <main className="max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-10">
+      <main className="max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-10 flex-1 w-full">
         {/* Banner */}
         <section className="bg-[#f6f6f6] border border-[#e8e8e8] rounded-3xl p-8 sm:p-12 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
           <div className="space-y-2 max-w-xl">
@@ -99,7 +89,7 @@ export default function CatalogPage() {
               Catálogo de Conciertos
             </h1>
             <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
-              Selecciona cualquier prenda confeccionada en algodón reactivo 24/1 de alta densidad para eventos oficiales.
+              Selecciona cualquier polo para abrir la vista técnica de detalle, personalizar color/talla y continuar al checkout directo.
             </p>
           </div>
         </section>
@@ -162,7 +152,11 @@ export default function CatalogPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
                 {filteredProducts.map((product: Product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onSelect={(id) => router.push(`/catalog/${id}`)}
+                  />
                 ))}
               </div>
             )
@@ -171,7 +165,7 @@ export default function CatalogPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#e8e8e8] bg-[#fbfbfb] mt-16 py-8 text-center text-[11px] text-neutral-400">
+      <footer className="border-t border-[#e8e8e8] bg-[#fbfbfb] py-8 text-center text-[11px] text-neutral-400">
         © 2026 AMIAS. Todos los derechos reservados. Lima, Perú.
       </footer>
     </div>
