@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Sparkles,
   LogOut,
+  Plus,
 } from 'lucide-react';
 import { formatCurrencyPEN } from '../../../lib/utils/format-currency';
 
@@ -113,6 +114,8 @@ export default function AdminProductionPage() {
 
   const handleLogoutAdmin = () => {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('user_role');
+    localStorage.removeItem('user_name');
     router.push('/login');
   };
 
@@ -173,10 +176,18 @@ export default function AdminProductionPage() {
             </h1>
           </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+            <button
+              onClick={() => router.push('/admin/products/new')}
+              className="btn-dawn-primary px-4 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>+ Publicar Nueva Prenda</span>
+            </button>
+
             <button
               onClick={() => loadPriorityQueue(authToken)}
-              className="btn-dawn-secondary px-4 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5"
+              className="btn-dawn-secondary px-4 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Actualizar Cola</span>
@@ -184,7 +195,7 @@ export default function AdminProductionPage() {
 
             <button
               onClick={exportSalesDatasetJSON}
-              className="btn-dawn-primary px-4 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5"
+              className="btn-dawn-secondary px-4 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Exportar Dataset (JSON)</span>
@@ -332,7 +343,7 @@ export default function AdminProductionPage() {
                               <button
                                 onClick={() => handleAdvanceStatus(item.orderId, item.orderStatus)}
                                 disabled={updatingOrderId === item.orderId}
-                                className="btn-dawn-primary px-3 py-1.5 text-[10px] uppercase font-bold tracking-wider inline-flex items-center gap-1 active:scale-95 disabled:opacity-50"
+                                className="btn-dawn-primary px-3 py-1.5 text-[10px] uppercase tracking-wider font-bold inline-flex items-center gap-1 active:scale-95 disabled:opacity-50 cursor-pointer"
                               >
                                 <span>Avanzar Etapa</span>
                                 <ArrowRight className="w-3 h-3" />

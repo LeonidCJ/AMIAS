@@ -16,6 +16,7 @@ import {
   CheckSquare,
   Square,
   ArrowRight,
+  ArrowLeft,
   LogOut,
 } from 'lucide-react';
 
@@ -130,6 +131,8 @@ export default function NewProductAdminPage() {
 
   const handleLogoutAdmin = () => {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('user_role');
+    localStorage.removeItem('user_name');
     router.push('/login');
   };
 
@@ -203,10 +206,19 @@ export default function NewProductAdminPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-6 py-10 space-y-8">
+        {/* Back Link */}
+        <button
+          onClick={() => router.push('/admin/production')}
+          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-600 hover:text-neutral-950 transition cursor-pointer"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Volver a Consola de Taller</span>
+        </button>
+
         <div className="border-b border-[#e8e8e8] pb-4 flex items-center justify-between">
           <div>
             <span className="text-[11px] uppercase tracking-widest font-bold text-neutral-400 block">
-              TR-018 / TR-019
+              MÓDULO 2 — PUBLICACIÓN DE PRENDAS
             </span>
             <h1 className="text-2xl font-bold uppercase tracking-tight text-[#121212] flex items-center gap-2 mt-1">
               <Package className="w-6 h-6 text-neutral-800" />
@@ -384,7 +396,7 @@ export default function NewProductAdminPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn-dawn-primary w-full py-4 text-xs font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50"
+            className="btn-dawn-primary w-full py-4 text-xs font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             <span>{isSubmitting ? 'Publicando Prenda...' : 'Publicar Prenda en Catálogo'}</span>
             <ArrowRight className="w-4 h-4" />
