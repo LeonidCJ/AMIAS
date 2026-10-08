@@ -56,6 +56,8 @@ export default function LoginPage() {
 
       if (data.accessToken) {
         localStorage.setItem('access_token', data.accessToken);
+        localStorage.setItem('user_role', data.user?.role || 'CLIENT');
+        localStorage.setItem('user_name', data.user?.role === 'ADMIN' ? 'Admin Taller' : 'Carlos Rivas');
       }
 
       setFeedback({
@@ -64,7 +66,7 @@ export default function LoginPage() {
       });
 
       setTimeout(() => {
-        if (data.user?.role === 'ADMIN') {
+        if (data.user?.role === 'ADMIN' || data.user?.role === 'OPERARIO') {
           router.push('/admin/production');
         } else {
           router.push('/profile');
@@ -126,6 +128,8 @@ export default function LoginPage() {
 
       if (resLogin.ok && dataLogin.accessToken) {
         localStorage.setItem('access_token', dataLogin.accessToken);
+        localStorage.setItem('user_role', 'CLIENT');
+        localStorage.setItem('user_name', 'Carlos Rivas');
       }
 
       setFeedback({
@@ -284,14 +288,14 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={handleQuickDemoCustomer}
-                  className="text-[11px] font-mono text-neutral-600 hover:text-neutral-900 underline block mx-auto"
+                  className="text-[11px] font-mono text-neutral-600 hover:text-neutral-900 underline block mx-auto cursor-pointer"
                 >
                   ⚡ Demo Comprador (carlos.rivas@gmail.com)
                 </button>
                 <button
                   type="button"
                   onClick={handleQuickDemoAdmin}
-                  className="text-[11px] font-mono text-neutral-600 hover:text-neutral-900 underline block mx-auto"
+                  className="text-[11px] font-mono text-neutral-600 hover:text-neutral-900 underline block mx-auto cursor-pointer"
                 >
                   ⚡ Demo Admin Taller (admin@amias.com)
                 </button>
