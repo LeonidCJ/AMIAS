@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  ShieldCheck,
   Lock,
   Mail,
   ArrowRight,
@@ -168,18 +167,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleQuickDemoCustomer = () => {
-    setEmail('carlos.rivas@gmail.com');
-    setPassword('Admin123456');
-    setActiveTab('login');
-  };
-
-  const handleQuickDemoAdmin = () => {
-    setEmail('admin@amias.com');
-    setPassword('Admin123456');
-    setActiveTab('login');
-  };
-
   return (
     <div className="min-h-screen bg-white text-[#121212] font-sans selection:bg-neutral-900 selection:text-white flex flex-col justify-between">
       {/* Top Banner */}
@@ -300,24 +287,6 @@ export default function LoginPage() {
                 <span>{isSubmitting ? 'Verificando...' : 'Ingresar a Mi Cuenta'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
-
-              {/* Demo Helper Links */}
-              <div className="pt-2 text-center space-y-1">
-                <button
-                  type="button"
-                  onClick={handleQuickDemoCustomer}
-                  className="text-[11px] font-mono text-neutral-600 hover:text-neutral-900 underline block mx-auto cursor-pointer"
-                >
-                  ⚡ Demo Comprador (carlos.rivas@gmail.com)
-                </button>
-                <button
-                  type="button"
-                  onClick={handleQuickDemoAdmin}
-                  className="text-[11px] font-mono text-neutral-600 hover:text-neutral-900 underline block mx-auto cursor-pointer"
-                >
-                  ⚡ Demo Admin Taller (admin@amias.com)
-                </button>
-              </div>
             </form>
           ) : (
             /* REGISTER FORM */
@@ -400,12 +369,6 @@ export default function LoginPage() {
               </button>
             </form>
           )}
-
-          {/* Security Badge */}
-          <div className="text-center text-[11px] text-neutral-400 font-sans flex items-center justify-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Autenticación protegida con Argon2id + JWT HttpOnly</span>
-          </div>
         </div>
       </main>
 
