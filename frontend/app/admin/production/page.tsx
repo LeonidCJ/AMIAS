@@ -16,10 +16,12 @@ import {
   Plus,
   Calendar,
   Package,
-  Layers,
-  ShoppingBag,
-  Check,
+  Trash2,
+  MapPin,
+  Users,
+  Tag,
   X,
+  AlertCircle,
 } from 'lucide-react';
 import { formatCurrencyPEN } from '../../../lib/utils/format-currency';
 
@@ -78,6 +80,7 @@ export default function AdminProductionPage() {
   // UI States
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [authToken, setAuthToken] = useState('');
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
 
@@ -88,6 +91,13 @@ export default function AdminProductionPage() {
   const [newEventDate, setNewEventDate] = useState('');
   const [newEventCapacity, setNewEventCapacity] = useState(45000);
   const [creatingEvent, setCreatingEvent] = useState(false);
+
+  // Delete Confirmation Modal States
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const [deletingProduct, setDeletingProduct] = useState(false);
+
+  const [eventToDelete, setEventToDelete] = useState<ConcertEvent | null>(null);
+  const [deletingEvent, setDeletingEvent] = useState(false);
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -160,11 +170,84 @@ export default function AdminProductionPage() {
       setShowEventModal(false);
       setNewEventName('');
       setNewEventDate('');
+      setFeedback({ type: 'success', text: 'Concierto registrado exitosamente.' });
       await loadAllAdminData(authToken);
     } catch (err: any) {
       alert(err.message || 'Error al crear evento.');
     } finally {
       setCreatingEvent(false);
+    }
+  };
+
+  const handleDeleteEvent = async () => {
+    if (!eventToDelete) return;
+
+    try {
+      setDeletingEvent(true);
+      setFeedback(null);
+
+      const res = await fetch(`${API_BASE}/concert-events/${eventToDelete.id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Error al eliminar el concierto.');
+      }
+
+      setFeedback({
+        type: 'success',
+        text: `¡Concierto '${eventToDelete.name}' eliminado correctamente!`,
+      });
+
+      setEventToDelete(null);
+      await loadAllAdminData(authToken);
+    } catch (err: any) {
+      setFeedback({
+        type: 'error',
+        text: err.message || 'No se pudo eliminar el concierto.',
+      });
+    } finally {
+      setDeletingEvent(false);
+    }
+  };
+
+  const handleDeleteProduct = async () => {
+    if (!productToDelete) return;
+
+    try {
+      setDeletingProduct(true);
+      setFeedback(null);
+
+      const res = await fetch(`${API_BASE}/products/${productToDelete.id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Error al quitar la prenda del catálogo.');
+      }
+
+      setFeedback({
+        type: 'success',
+        text: `¡Prenda '${productToDelete.name}' eliminada correctamente del catálogo!`,
+      });
+
+      setProductToDelete(null);
+      await loadAllAdminData(authToken);
+    } catch (err: any) {
+      setFeedback({
+        type: 'error',
+        text: err.message || 'No se pudo eliminar la prenda.',
+      });
+    } finally {
+      setDeletingProduct(false);
     }
   };
 
@@ -226,7 +309,7 @@ export default function AdminProductionPage() {
       {/* Top Banner */}
       <div className="bg-[#121212] text-white text-[11px] tracking-[0.15em] uppercase text-center py-2.5 px-4 font-semibold flex items-center justify-center gap-2 border-b border-neutral-800">
         <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-        <span>CONSOLA OPERATIVA TALLER AMIAS • GESTIÓN DE PRODUCCIÓN & CONCIERTOS</span>
+        <span>CONSOLA OPERATIVA TALLER AMIAS • ORDENAMIENTO POR URGENCIA DE SHOW</span>
       </div>
 
       {/* Header Superior matching login_admin_predictivo.html */}
@@ -262,7 +345,10 @@ export default function AdminProductionPage() {
           <div className="flex items-center gap-2 overflow-x-auto text-xs uppercase tracking-wider font-semibold p-1 bg-neutral-100 rounded-2xl border border-[#e8e8e8]">
             {/* TAB 1: GIRAS & CONCIERTOS */}
             <button
-              onClick={() => setActiveTab('events')}
+              onClick={() => {
+                setActiveTab('events');
+                setFeedback(null);
+              }}
               className={`px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer ${
                 activeTab === 'events'
                   ? 'bg-[#121212] text-white shadow-sm font-bold'
@@ -278,7 +364,10 @@ export default function AdminProductionPage() {
 
             {/* TAB 2: CATÁLOGO */}
             <button
-              onClick={() => setActiveTab('catalog')}
+              onClick={() => {
+                setActiveTab('catalog');
+                setFeedback(null);
+              }}
               className={`px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer ${
                 activeTab === 'catalog'
                   ? 'bg-[#121212] text-white shadow-sm font-bold'
@@ -294,7 +383,10 @@ export default function AdminProductionPage() {
 
             {/* TAB 3: PRODUCCIÓN & VENTAS */}
             <button
-              onClick={() => setActiveTab('production')}
+              onClick={() => {
+                setActiveTab('production');
+                setFeedback(null);
+              }}
               className={`px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer ${
                 activeTab === 'production'
                   ? 'bg-[#121212] text-white shadow-sm font-bold'
@@ -318,6 +410,24 @@ export default function AdminProductionPage() {
           </button>
         </div>
 
+        {/* Global Feedback Banner */}
+        {feedback && (
+          <div
+            className={`p-4 border text-xs font-semibold flex items-center gap-2 rounded-2xl ${
+              feedback.type === 'success'
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                : 'bg-red-50 border-red-300 text-red-800'
+            }`}
+          >
+            {feedback.type === 'success' ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-red-600" />
+            )}
+            <span>{feedback.text}</span>
+          </div>
+        )}
+
         {/* Error Alert */}
         {error && (
           <div className="p-4 bg-red-50 border border-red-300 rounded-2xl text-red-800 text-xs font-semibold flex items-center gap-2">
@@ -336,7 +446,7 @@ export default function AdminProductionPage() {
         {!loading && (
           <>
             {/* ======================================================= */}
-            {/* TAB 1: GIRAS & CONCIERTOS                               */}
+            {/* TAB 1: GIRAS & CONCIERTOS (CON OPCIÓN DE QUITAR TRASH)  */}
             {/* ======================================================= */}
             {activeTab === 'events' && (
               <div className="space-y-6">
@@ -363,26 +473,47 @@ export default function AdminProductionPage() {
                     </button>
                   </div>
 
-                  {/* Concert Events List */}
+                  {/* Concert Events List with Trash Delete Icon */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {events.map((event) => (
                       <div
                         key={event.id}
-                        className="p-5 border border-[#e8e8e8] bg-[#fafafa] rounded-2xl space-y-3 hover:border-neutral-900 transition"
+                        className="p-5 border border-[#e8e8e8] bg-[#fafafa] rounded-2xl space-y-3 hover:border-neutral-900 transition flex flex-col justify-between"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <strong className="text-sm font-bold text-[#121212] block">
                             {event.name}
                           </strong>
-                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold uppercase rounded-full">
-                            Activo
-                          </span>
+
+                          <div className="flex items-center gap-2">
+                            <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold uppercase rounded-full border border-emerald-300">
+                              Activo
+                            </span>
+
+                            {/* Trash Delete Action Button matching prototype */}
+                            <button
+                              onClick={() => setEventToDelete(event)}
+                              title="Quitar Concierto"
+                              className="p-1 text-neutral-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
 
-                        <div className="text-xs font-mono text-neutral-600 space-y-1">
-                          <p>📍 Recinto: <strong className="text-neutral-900">{event.venue}</strong></p>
-                          <p>📅 Fecha Show: <strong className="text-neutral-900">{new Date(event.eventDate).toLocaleDateString('es-PE')}</strong></p>
-                          <p>👥 Aforo Proyectado: <strong className="text-neutral-900">{event.capacity.toLocaleString()} personas</strong></p>
+                        <div className="text-xs font-mono text-neutral-600 space-y-1.5 pt-1">
+                          <p className="flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-neutral-400" />
+                            <span>Recinto: <strong className="text-neutral-900">{event.venue}</strong></span>
+                          </p>
+                          <p className="flex items-center gap-1.5">
+                            <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+                            <span>Fecha Show: <strong className="text-neutral-900">{new Date(event.eventDate).toLocaleDateString('es-PE')}</strong></span>
+                          </p>
+                          <p className="flex items-center gap-1.5">
+                            <Users className="w-3.5 h-3.5 text-neutral-400" />
+                            <span>Aforo Proyectado: <strong className="text-neutral-900">{event.capacity.toLocaleString()} personas</strong></span>
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -392,7 +523,7 @@ export default function AdminProductionPage() {
             )}
 
             {/* ======================================================= */}
-            {/* TAB 2: CATÁLOGO                                         */}
+            {/* TAB 2: CATÁLOGO DE PRENDAS (CON OPCIÓN DE QUITAR TRASH)  */}
             {/* ======================================================= */}
             {activeTab === 'catalog' && (
               <div className="space-y-6">
@@ -406,7 +537,7 @@ export default function AdminProductionPage() {
                         Prendas de Concierto en Tienda
                       </h2>
                       <p className="text-xs text-neutral-500 mt-0.5">
-                        Publicación restringida asociada a giras oficiales y cortes textiles autorizados.
+                        Publicación y retiro de prendas del catálogo oficial de AMIAS.
                       </p>
                     </div>
 
@@ -419,17 +550,30 @@ export default function AdminProductionPage() {
                     </button>
                   </div>
 
-                  {/* Product Cards List */}
+                  {/* Product Cards List with Delete Trash Option matching login_admin_predictivo.html */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {products.map((product) => (
                       <div
                         key={product.id}
-                        className="p-5 border border-[#e8e8e8] bg-[#fafafa] rounded-2xl space-y-3 hover:border-neutral-900 transition flex flex-col justify-between"
+                        className="p-5 border border-[#e8e8e8] bg-[#fafafa] rounded-2xl space-y-4 hover:border-neutral-900 transition flex flex-col justify-between shadow-xs"
                       >
                         <div className="space-y-2">
-                          <span className="text-[10px] font-mono uppercase font-bold text-neutral-400 block">
-                            {product.concertEvent?.name || 'Gira Oficial'}
-                          </span>
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[10px] font-mono uppercase font-bold text-neutral-400 block flex items-center gap-1">
+                              <Tag className="w-3 h-3 text-neutral-400" />
+                              {product.concertEvent?.name || 'Gira Oficial'}
+                            </span>
+
+                            {/* Delete Trash Action Button matching prototype */}
+                            <button
+                              onClick={() => setProductToDelete(product)}
+                              title="Quitar Prenda del Catálogo"
+                              className="p-1.5 text-neutral-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+
                           <strong className="text-sm font-bold text-[#121212] block">
                             {product.name}
                           </strong>
@@ -442,7 +586,7 @@ export default function AdminProductionPage() {
                           <span className="text-xs font-extrabold text-[#121212] font-mono">
                             {formatCurrencyPEN(product.basePrice)}
                           </span>
-                          <span className="text-[10px] text-emerald-700 font-bold uppercase bg-emerald-50 px-2 py-0.5 rounded">
+                          <span className="text-[10px] text-emerald-700 font-bold uppercase bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
                             En Tienda
                           </span>
                         </div>
@@ -628,6 +772,98 @@ export default function AdminProductionPage() {
           </>
         )}
       </main>
+
+      {/* PRODUCT DELETE CONFIRMATION MODAL */}
+      {productToDelete && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-[#121212] rounded-3xl w-full max-w-md p-6 sm:p-8 relative space-y-6 shadow-2xl">
+            <button
+              onClick={() => setProductToDelete(null)}
+              className="absolute top-6 right-6 text-neutral-400 hover:text-neutral-950 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="space-y-2 text-center">
+              <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <h2 className="text-xl font-bold uppercase text-[#121212]">
+                ¿Quitar Prenda del Catálogo?
+              </h2>
+              <p className="text-xs text-neutral-600 leading-relaxed">
+                ¿Estás seguro de que deseas eliminar la prenda{' '}
+                <strong className="text-[#121212] font-bold">{productToDelete.name}</strong>? Esta
+                acción la removerá inmediatamente del catálogo público.
+              </p>
+            </div>
+
+            <div className="pt-2 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setProductToDelete(null)}
+                className="btn-dawn-secondary flex-1 py-3 text-xs font-bold uppercase tracking-wider cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={deletingProduct}
+                onClick={handleDeleteProduct}
+                className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition cursor-pointer active:scale-95 disabled:opacity-50"
+              >
+                {deletingProduct ? 'Eliminando...' : 'Sí, Quitar Prenda'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* EVENT DELETE CONFIRMATION MODAL */}
+      {eventToDelete && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-[#121212] rounded-3xl w-full max-w-md p-6 sm:p-8 relative space-y-6 shadow-2xl">
+            <button
+              onClick={() => setEventToDelete(null)}
+              className="absolute top-6 right-6 text-neutral-400 hover:text-neutral-950 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="space-y-2 text-center">
+              <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <h2 className="text-xl font-bold uppercase text-[#121212]">
+                ¿Quitar Concierto del Sistema?
+              </h2>
+              <p className="text-xs text-neutral-600 leading-relaxed">
+                ¿Estás seguro de que deseas eliminar el evento{' '}
+                <strong className="text-[#121212] font-bold">{eventToDelete.name}</strong>? Esta
+                acción eliminará también las prendas y datos asociados a esta gira.
+              </p>
+            </div>
+
+            <div className="pt-2 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setEventToDelete(null)}
+                className="btn-dawn-secondary flex-1 py-3 text-xs font-bold uppercase tracking-wider cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={deletingEvent}
+                onClick={handleDeleteEvent}
+                className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition cursor-pointer active:scale-95 disabled:opacity-50"
+              >
+                {deletingEvent ? 'Eliminando...' : 'Sí, Quitar Concierto'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* CREATE EVENT MODAL */}
       {showEventModal && (
