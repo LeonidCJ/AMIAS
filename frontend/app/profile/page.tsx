@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { Header } from '../../components/layout/Header';
 import {
   ShoppingBag,
   Ruler,
@@ -94,7 +95,6 @@ export default function ProfilePage() {
   const loadMasterDataAndProfile = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('access_token') || '';
 
       // Load master data
       const resMaster = await fetch(`${API_BASE}/master-data`);
@@ -176,33 +176,17 @@ export default function ProfilePage() {
   const currentSelectedSizeObj = sizes.find((s) => s.id === selectedSizeId) || profile.preferredSize || sizes[2];
 
   return (
-    <div className="min-h-screen bg-white text-[#121212] font-sans selection:bg-neutral-900 selection:text-white">
+    <div className="min-h-screen bg-white text-[#121212] font-sans selection:bg-neutral-900 selection:text-white flex flex-col justify-between">
       {/* Top Banner */}
       <div className="bg-[#121212] text-white text-[11px] tracking-[0.15em] uppercase text-center py-2.5 px-4 font-semibold flex items-center justify-center gap-2">
         <Sparkles className="w-3.5 h-3.5 text-amber-300" />
         <span>Envíos garantizados antes del show • Lima 2026 • Algodón 24/1 Reactivo</span>
       </div>
 
-      {/* Header */}
-      <header className="border-b border-[#e8e8e8] bg-white sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
-          <div>
-            <span className="text-2xl font-extrabold tracking-[-0.04em] uppercase block leading-none">AMIAS</span>
-            <span className="text-[10px] tracking-[0.25em] text-neutral-400 uppercase font-sans mt-1 block">Textile Studio Lima</span>
-          </div>
+      {/* Global Header */}
+      <Header />
 
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-8 rounded-full bg-[#121212] text-white flex items-center justify-center text-xs font-bold font-mono">
-              CR
-            </span>
-            <span className="text-xs font-bold uppercase tracking-wider text-neutral-900">
-              {profile.customerName || 'Carlos Rivas'}
-            </span>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-10">
+      <main className="max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-10 flex-1 w-full">
         {/* Banner Title */}
         <div className="border-b border-[#e8e8e8] pb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
@@ -236,7 +220,7 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Main Grid: Sidebar Navigation + Content Tabs matching login_user_normal.html */}
+        {/* Main Grid: Sidebar Navigation + Content Tabs */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Sidebar Navigation */}
           <aside className="lg:col-span-3 space-y-4">
@@ -353,7 +337,7 @@ export default function ProfilePage() {
                       updatedAt={activeOrder.createdAt}
                     />
 
-                    {/* 3 Technical Spec Cards matching login_user_normal.html */}
+                    {/* 3 Technical Spec Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs font-sans">
                       <div className="p-4 bg-[#fbfbfb] border border-[#e8e8e8] rounded-2xl space-y-1">
                         <span className="text-neutral-400 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
@@ -425,7 +409,7 @@ export default function ProfilePage() {
               </div>
             )}
 
-            {/* SUBTAB 2: TALLAS & PATRONAJE COMPLETO (TR-027) */}
+            {/* SUBTAB 2: TALLAS & PATRONAJE COMPLETO */}
             {activeTab === 'sizing' && (
               <div className="border border-[#e8e8e8] p-6 lg:p-8 bg-white rounded-3xl space-y-6 shadow-sm">
                 <div>
@@ -433,7 +417,7 @@ export default function ProfilePage() {
                     PATRONAJE TEXTIL ANATÓMICO
                   </span>
                   <h2 className="text-xl font-bold uppercase text-[#121212] mt-0.5">Medidas Guardadas</h2>
-                  <p class="text-xs text-neutral-500 mt-1">
+                  <p className="text-xs text-neutral-500 mt-1">
                     El personalizador aplicará estas medidas automáticamente al abrir o configurar un nuevo diseño.
                   </p>
                 </div>
@@ -476,7 +460,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* 3-Column Reference Measurement Grid matching login_user_normal.html */}
+                {/* 3-Column Reference Measurement Grid */}
                 {currentSelectedSizeObj && (
                   <div className="p-5 bg-[#fafafa] border border-[#e8e8e8] rounded-2xl space-y-3 text-xs">
                     <span className="font-bold uppercase tracking-wider text-neutral-900 block">
@@ -597,6 +581,11 @@ export default function ProfilePage() {
           </section>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-[#e8e8e8] bg-[#fbfbfb] py-8 text-center text-[11px] text-neutral-400">
+        © 2026 AMIAS. Todos los derechos reservados. Lima, Perú.
+      </footer>
     </div>
   );
 }
