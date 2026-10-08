@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Scissors,
   Download,
@@ -11,6 +12,7 @@ import {
   ArrowRight,
   ShieldCheck,
   Sparkles,
+  LogOut,
 } from 'lucide-react';
 import { formatCurrencyPEN } from '../../../lib/utils/format-currency';
 
@@ -36,6 +38,7 @@ interface PriorityQueueItem {
 }
 
 export default function AdminProductionPage() {
+  const router = useRouter();
   const [queue, setQueue] = useState<PriorityQueueItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -108,6 +111,11 @@ export default function AdminProductionPage() {
     }
   };
 
+  const handleLogoutAdmin = () => {
+    localStorage.removeItem('access_token');
+    router.push('/login');
+  };
+
   const exportSalesDatasetJSON = () => {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(queue, null, 2));
     const downloadAnchor = document.createElement('a');
@@ -126,17 +134,28 @@ export default function AdminProductionPage() {
         <span>CONSOLA OPERATIVA TALLER AMIAS • ORDENAMIENTO POR URGENCIA DE SHOW</span>
       </div>
 
-      {/* Header Superior */}
+      {/* Header Superior matching login_admin_predictivo.html */}
       <header className="border-b border-[#e8e8e8] bg-white sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
-          <div>
+          <button onClick={() => router.push('/catalog')} className="text-left cursor-pointer">
             <span className="text-2xl font-extrabold tracking-[-0.04em] uppercase block leading-none">AMIAS</span>
             <span className="text-[10px] tracking-[0.25em] text-neutral-400 uppercase font-sans mt-1 block">Textile Studio Lima</span>
-          </div>
+          </button>
 
-          <div className="text-xs uppercase font-semibold text-neutral-600 flex items-center gap-2 px-3 py-1.5 bg-neutral-100 border border-neutral-200 rounded-full">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Módulo 3: Producción & Dataset</span>
+          <div className="flex items-center gap-6">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-neutral-100 border border-neutral-200 rounded-full text-xs font-semibold text-neutral-600 uppercase">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span>Panel Operativo Taller</span>
+            </div>
+
+            {/* Logout Button matching login_admin_predictivo.html */}
+            <button
+              onClick={handleLogoutAdmin}
+              className="text-xs uppercase tracking-wider font-bold text-neutral-500 hover:text-red-600 transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Cerrar Sesión</span>
+            </button>
           </div>
         </div>
       </header>

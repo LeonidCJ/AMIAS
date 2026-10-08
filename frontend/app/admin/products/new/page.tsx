@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -15,6 +16,7 @@ import {
   CheckSquare,
   Square,
   ArrowRight,
+  LogOut,
 } from 'lucide-react';
 
 interface ConcertEvent {
@@ -53,6 +55,7 @@ const productSchema = z.object({
 type ProductFormData = z.infer<typeof productSchema>;
 
 export default function NewProductAdminPage() {
+  const router = useRouter();
   const [events, setEvents] = useState<ConcertEvent[]>([]);
   const [cuts, setCuts] = useState<TextileCut[]>([]);
   const [sizes, setSizes] = useState<TextileSize[]>([]);
@@ -125,6 +128,11 @@ export default function NewProductAdminPage() {
     setValue('sizeIds', updated, { shouldValidate: true });
   };
 
+  const handleLogoutAdmin = () => {
+    localStorage.removeItem('access_token');
+    router.push('/login');
+  };
+
   const onSubmit = async (data: ProductFormData) => {
     setServerFeedback(null);
 
@@ -169,13 +177,30 @@ export default function NewProductAdminPage() {
   return (
     <div className="min-h-screen bg-white text-[#121212] font-sans selection:bg-neutral-900 selection:text-white">
       {/* Top Admin Header */}
-      <div className="bg-[#121212] text-white text-xs uppercase tracking-widest py-3 px-6 flex items-center justify-between font-semibold border-b border-neutral-800">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>PANEL ADMIN AMIAS — Publicación Restringida de Prendas (US-03)</span>
+      <header className="border-b border-[#e8e8e8] bg-white sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+          <button onClick={() => router.push('/catalog')} className="text-left cursor-pointer">
+            <span className="text-2xl font-extrabold tracking-[-0.04em] uppercase block leading-none">AMIAS</span>
+            <span className="text-[10px] tracking-[0.25em] text-neutral-400 uppercase font-sans mt-1 block">Textile Studio Lima</span>
+          </button>
+
+          <div className="flex items-center gap-6">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-neutral-100 border border-neutral-200 rounded-full text-xs font-semibold text-neutral-600 uppercase">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span>Alta de Prendas (ADMIN)</span>
+            </div>
+
+            {/* Logout Button matching login_admin_predictivo.html */}
+            <button
+              onClick={handleLogoutAdmin}
+              className="text-xs uppercase tracking-wider font-bold text-neutral-500 hover:text-red-600 transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Cerrar Sesión</span>
+            </button>
+          </div>
         </div>
-        <span className="text-[10px] text-neutral-400 font-mono">Rol: ADMIN</span>
-      </div>
+      </header>
 
       <main className="max-w-4xl mx-auto px-6 py-10 space-y-8">
         <div className="border-b border-[#e8e8e8] pb-4 flex items-center justify-between">
