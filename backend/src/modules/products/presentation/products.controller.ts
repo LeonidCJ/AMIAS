@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CreateProductDto } from '../application/dtos/create-product.dto';
 import { CreateProductUseCase } from '../application/use-cases/create-product.use-case';
 import { ListActiveProductsUseCase } from '../application/use-cases/list-active-products.use-case';
@@ -6,12 +6,14 @@ import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/infrastructure/guards/roles.guard';
 import { Roles } from '../../auth/infrastructure/decorators/roles.decorator';
 import { UserRole } from '../../auth/domain/user.entity';
+import { PrismaService } from '../../../prisma/prisma.service';
 
 @Controller('products')
 export class ProductsController {
   constructor(
     private readonly createProductUseCase: CreateProductUseCase,
     private readonly listActiveProductsUseCase: ListActiveProductsUseCase,
+    private readonly prisma: PrismaService,
   ) {}
 
   @Post()
@@ -55,5 +57,20 @@ export class ProductsController {
       cut: product.cut,
       sizes: product.sizes,
     }));
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async delete(@Param('id') id: string) {
+    // Delete product sizes first, then product
+    await this.prisma.$transaction([
+      this.prisma.productSize.deleteMany({ where: { productId: id } }),
+      this.prisma.product.delete({ where: { id } }),
+    ]);
+
+    return {
+      message: 'Prenda eliminada exitosamente del catálogo.',
+    };
   }
 }

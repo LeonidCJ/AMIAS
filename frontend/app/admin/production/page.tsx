@@ -359,7 +359,7 @@ export default function AdminProductionPage() {
                       className="btn-dawn-primary px-5 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
-                      <span>+ Crear Nuevo Concierto</span>
+                      <span>Crear Nuevo Concierto</span>
                     </button>
                   </div>
 
@@ -415,7 +415,7 @@ export default function AdminProductionPage() {
                       className="btn-dawn-primary px-5 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
-                      <span>+ Publicar Nueva Prenda</span>
+                      <span>Publicar Nueva Prenda</span>
                     </button>
                   </div>
 
