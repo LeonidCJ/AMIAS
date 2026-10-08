@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CreateConcertEventDto } from '../application/dtos/create-concert-event.dto';
 import { CreateConcertEventUseCase } from '../application/use-cases/create-concert-event.use-case';
 import { ListActiveEventsUseCase } from '../application/use-cases/list-active-events.use-case';
@@ -6,12 +6,14 @@ import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/infrastructure/guards/roles.guard';
 import { Roles } from '../../auth/infrastructure/decorators/roles.decorator';
 import { UserRole } from '../../auth/domain/user.entity';
+import { PrismaService } from '../../../prisma/prisma.service';
 
 @Controller('concert-events')
 export class ConcertEventsController {
   constructor(
     private readonly createConcertEventUseCase: CreateConcertEventUseCase,
     private readonly listActiveEventsUseCase: ListActiveEventsUseCase,
+    private readonly prisma: PrismaService,
   ) {}
 
   @Post()
@@ -51,5 +53,20 @@ export class ConcertEventsController {
       eventDate: event.eventDate,
       createdAt: event.createdAt,
     }));
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async delete(@Param('id') id: string) {
+    await this.prisma.$transaction([
+      this.prisma.productSize.deleteMany({ where: { product: { concertEventId: id } } }),
+      this.prisma.product.deleteMany({ where: { concertEventId: id } }),
+      this.prisma.concertEvent.delete({ where: { id } }),
+    ]);
+
+    return {
+      message: 'Concierto/Gira eliminada correctamente del sistema.',
+    };
   }
 }
