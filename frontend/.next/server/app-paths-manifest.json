@@ -1,4 +1,6 @@
 {
+  "/admin/production/page": "app/admin/production/page.js",
+  "/profile/page": "app/profile/page.js",
   "/login/page": "app/login/page.js",
-  "/profile/page": "app/profile/page.js"
+  "/checkout/page": "app/checkout/page.js"
 }

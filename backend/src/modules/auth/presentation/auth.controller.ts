@@ -4,17 +4,25 @@ import { RegisterDto } from '../application/dtos/register.dto';
 import { LoginDto } from '../application/dtos/login.dto';
 import { RegisterUserUseCase } from '../application/use-cases/register-user.use-case';
 import { LoginUserUseCase } from '../application/use-cases/login-user.use-case';
+import { PrismaService } from '../../../prisma/prisma.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
+    private readonly prisma: PrismaService,
   ) {}
 
   @Post('register')
   async register(@Body() dto: RegisterDto) {
-    const user = await this.registerUserUseCase.execute(dto.email, dto.password, dto.role);
+    const user = await this.registerUserUseCase.execute(
+      dto.email,
+      dto.password,
+      dto.customerName,
+      dto.customerPhone,
+      dto.role,
+    );
     return {
       message: 'User registered successfully',
       userId: user.id,
@@ -34,6 +42,10 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
+    const userProfile = await this.prisma.user.findUnique({
+      where: { id: user.id },
+    });
+
     return {
       message: 'Login successful',
       accessToken,
@@ -41,6 +53,8 @@ export class AuthController {
         id: user.id,
         email: user.email,
         role: user.role,
+        customerName: userProfile?.customerName || user.email.split('@')[0],
+        customerPhone: userProfile?.customerPhone || '',
       },
     };
   }

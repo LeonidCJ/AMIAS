@@ -12,15 +12,23 @@ import {
   Sparkles,
   UserPlus,
   LogIn,
+  User as UserIcon,
+  Phone,
 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
 
-  // Form Fields
+  // Login Form Fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // Register Form Fields
+  const [regName, setRegName] = useState('');
+  const [regPhone, setRegPhone] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPassword, setRegPassword] = useState('');
 
   // UI States
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,9 +63,13 @@ export default function LoginPage() {
       }
 
       if (data.accessToken) {
+        const userName = data.user?.customerName || data.user?.email?.split('@')[0] || 'Mi Cuenta';
         localStorage.setItem('access_token', data.accessToken);
         localStorage.setItem('user_role', data.user?.role || 'CLIENT');
-        localStorage.setItem('user_name', data.user?.role === 'ADMIN' ? 'Admin Taller' : 'Carlos Rivas');
+        localStorage.setItem('user_name', userName);
+        localStorage.setItem('user_email', data.user?.email || email.trim());
+        localStorage.setItem('user_phone', data.user?.customerPhone || '');
+        localStorage.setItem('user_id', data.user?.id || '');
       }
 
       setFeedback({
@@ -86,12 +98,12 @@ export default function LoginPage() {
     e.preventDefault();
     setFeedback(null);
 
-    if (!email.trim() || !password.trim()) {
-      setFeedback({ type: 'error', text: 'Debes ingresar un correo y una contraseña.' });
+    if (!regEmail.trim() || !regPassword.trim()) {
+      setFeedback({ type: 'error', text: 'Debes ingresar correo y contraseña.' });
       return;
     }
 
-    if (password.length < 6) {
+    if (regPassword.length < 6) {
       setFeedback({ type: 'error', text: 'La contraseña debe tener al menos 6 caracteres.' });
       return;
     }
@@ -103,8 +115,10 @@ export default function LoginPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: email.trim(),
-          password: password.trim(),
+          email: regEmail.trim(),
+          password: regPassword.trim(),
+          customerName: regName.trim() || regEmail.trim().split('@')[0],
+          customerPhone: regPhone.trim(),
         }),
       });
 
@@ -119,17 +133,21 @@ export default function LoginPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: email.trim(),
-          password: password.trim(),
+          email: regEmail.trim(),
+          password: regPassword.trim(),
         }),
       });
 
       const dataLogin = await resLogin.json();
 
       if (resLogin.ok && dataLogin.accessToken) {
+        const userName = regName.trim() || dataLogin.user?.customerName || regEmail.trim().split('@')[0];
         localStorage.setItem('access_token', dataLogin.accessToken);
         localStorage.setItem('user_role', 'CLIENT');
-        localStorage.setItem('user_name', 'Carlos Rivas');
+        localStorage.setItem('user_name', userName);
+        localStorage.setItem('user_email', regEmail.trim());
+        localStorage.setItem('user_phone', regPhone.trim());
+        localStorage.setItem('user_id', dataLogin.user?.id || '');
       }
 
       setFeedback({
@@ -190,7 +208,7 @@ export default function LoginPage() {
                 setActiveTab('login');
                 setFeedback(null);
               }}
-              className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition rounded-xl flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition rounded-xl flex items-center justify-center gap-1.5 cursor-pointer ${
                 activeTab === 'login'
                   ? 'bg-white text-[#121212] shadow-sm border border-neutral-200'
                   : 'text-neutral-500 hover:text-neutral-900'
@@ -205,7 +223,7 @@ export default function LoginPage() {
                 setActiveTab('register');
                 setFeedback(null);
               }}
-              className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition rounded-xl flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition rounded-xl flex items-center justify-center gap-1.5 cursor-pointer ${
                 activeTab === 'register'
                   ? 'bg-white text-[#121212] shadow-sm border border-neutral-200'
                   : 'text-neutral-500 hover:text-neutral-900'
@@ -277,7 +295,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="btn-dawn-primary w-full py-4 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50"
+                className="btn-dawn-primary w-full py-4 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 <span>{isSubmitting ? 'Verificando...' : 'Ingresar a Mi Cuenta'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -313,14 +331,44 @@ export default function LoginPage() {
 
               <div className="space-y-1.5">
                 <label className="text-xs uppercase font-bold text-neutral-700 flex items-center gap-1.5">
+                  <UserIcon className="w-3.5 h-3.5 text-neutral-500" />
+                  Nombre Completo *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={regName}
+                  onChange={(e) => setRegName(e.target.value)}
+                  placeholder="Ej. Juan Pérez"
+                  className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] rounded-xl font-sans"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs uppercase font-bold text-neutral-700 flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-neutral-500" />
+                  Teléfono WhatsApp *
+                </label>
+                <input
+                  type="tel"
+                  required
+                  value={regPhone}
+                  onChange={(e) => setRegPhone(e.target.value)}
+                  placeholder="Ej. 987654321"
+                  className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] rounded-xl font-mono"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs uppercase font-bold text-neutral-700 flex items-center gap-1.5">
                   <Mail className="w-3.5 h-3.5 text-neutral-500" />
                   Correo Electrónico *
                 </label>
                 <input
                   type="email"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={regEmail}
+                  onChange={(e) => setRegEmail(e.target.value)}
                   placeholder="tu.correo@gmail.com"
                   className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] rounded-xl font-sans"
                 />
@@ -335,8 +383,8 @@ export default function LoginPage() {
                   type="password"
                   required
                   minLength={6}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={regPassword}
+                  onChange={(e) => setRegPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full px-3.5 py-3 border border-[#cccccc] text-xs focus:outline-none focus:border-[#121212] rounded-xl font-sans"
                 />
@@ -345,7 +393,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="btn-dawn-primary w-full py-4 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50"
+                className="btn-dawn-primary w-full py-4 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 <span>{isSubmitting ? 'Creando Cuenta...' : 'Registrarme y Acceder'}</span>
                 <ArrowRight className="w-4 h-4" />
