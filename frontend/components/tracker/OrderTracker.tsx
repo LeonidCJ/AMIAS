@@ -138,8 +138,9 @@ export const OrderTracker: React.FC<OrderTrackerProps> = ({
 
       {/* Technical Spec Summary Footer */}
       <div className="bg-[#fafafa] border border-neutral-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-        <span className="text-neutral-600 font-medium">
-          🧵 Algodón Reactivo 24/1 Pesado (240g) • Trazabilidad Industrial AMIAS
+        <span className="text-neutral-600 font-medium flex items-center gap-1.5">
+          <Scissors className="w-3.5 h-3.5 text-neutral-500" />
+          <span>Taller Lima: Confección en algodón reactivo 24/1 pesado (240g) • Trazabilidad Industrial AMIAS</span>
         </span>
         <span className="text-neutral-400 font-mono text-[11px]">
           Actualizado: {updatedAt ? new Date(updatedAt).toLocaleDateString('es-PE') : 'Hoy'}
