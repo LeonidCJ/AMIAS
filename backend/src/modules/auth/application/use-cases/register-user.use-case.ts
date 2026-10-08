@@ -26,7 +26,7 @@ export class RegisterUserUseCase {
     }
 
     const passwordHash = await argon2.hash(password);
-    const assignedRole = role || UserRole.OPERARIO;
+    const assignedRole = role || UserRole.CLIENT;
 
     const newUser = new UserEntity(
       '',

@@ -6,7 +6,6 @@ import {
   LogOut,
   LogIn,
   Scissors,
-  Ruler,
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
@@ -71,7 +70,7 @@ export const Header: React.FC = () => {
           </span>
         </button>
 
-        {/* Main Navigation Links */}
+        {/* Main Navigation Links matching login_user_normal.html prototype */}
         <nav className="hidden md:flex items-center gap-8 text-xs uppercase tracking-[0.14em] font-semibold text-neutral-700">
           <button
             onClick={() => router.push('/catalog')}
@@ -83,20 +82,6 @@ export const Header: React.FC = () => {
           >
             Catálogo
           </button>
-
-          {isLoggedIn && (
-            <button
-              onClick={() => router.push('/profile')}
-              className={`py-1 border-b-2 transition flex items-center gap-1.5 cursor-pointer ${
-                pathname === '/profile'
-                  ? 'border-[#121212] text-[#121212] font-bold'
-                  : 'border-transparent hover:text-neutral-950'
-              }`}
-            >
-              <Ruler className="w-3.5 h-3.5" />
-              <span>Mi Perfil & Medidas</span>
-            </button>
-          )}
 
           {/* Admin / Operator Only Link */}
           {isLoggedIn && isAdminOrOperator && (
@@ -114,13 +99,14 @@ export const Header: React.FC = () => {
           )}
         </nav>
 
-        {/* Session User Controls & Logout Button */}
+        {/* Session User Controls & Logout Button matching login_user_normal.html prototype */}
         <div className="flex items-center gap-4">
           {isLoggedIn ? (
             <div className="flex items-center gap-3">
               <button
                 onClick={() => router.push(isAdminOrOperator ? '/admin/production' : '/profile')}
-                className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 border border-neutral-200 rounded-full hover:bg-neutral-200 transition cursor-pointer"
+                title="Ir a Mi Perfil & Medidas"
+                className="flex items-center gap-2 px-3.5 py-1.5 bg-neutral-100 border border-neutral-200 rounded-full hover:bg-neutral-200 transition cursor-pointer"
               >
                 <span className="w-6 h-6 rounded-full bg-[#121212] text-white flex items-center justify-center text-[10px] font-bold font-mono">
                   {getInitials(userName)}

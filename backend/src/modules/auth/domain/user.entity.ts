@@ -1,6 +1,7 @@
 export enum UserRole {
   ADMIN = 'ADMIN',
   OPERARIO = 'OPERARIO',
+  CLIENT = 'CLIENT',
 }
 
 export class UserEntity {
