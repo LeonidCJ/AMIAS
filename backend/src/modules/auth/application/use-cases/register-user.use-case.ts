@@ -11,19 +11,20 @@ export class RegisterUserUseCase {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async execute(email: string, password: string, role: UserRole): Promise<UserEntity> {
+  async execute(email: string, password: string, role?: UserRole): Promise<UserEntity> {
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) {
-      throw new DomainException(`User with email '${email}' already exists.`);
+      throw new DomainException(`El correo electrónico '${email}' ya se encuentra registrado.`);
     }
 
     const passwordHash = await argon2.hash(password);
+    const assignedRole = role || UserRole.OPERARIO;
 
     const newUser = new UserEntity(
       '',
       email,
       passwordHash,
-      role,
+      assignedRole,
       new Date(),
     );
 

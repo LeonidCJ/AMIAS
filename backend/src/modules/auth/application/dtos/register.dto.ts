@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { UserRole } from '../../domain/user.entity';
 
 export class RegisterDto {
@@ -12,5 +12,6 @@ export class RegisterDto {
   password!: string;
 
   @IsEnum(UserRole, { message: 'El rol debe ser ADMIN u OPERARIO.' })
-  role!: UserRole;
+  @IsOptional()
+  role?: UserRole;
 }
