@@ -10,6 +10,7 @@ generator client {
 enum Role {
   ADMIN
   OPERARIO
+  CLIENT
 }
 
 enum OrderStatus {
@@ -25,7 +26,7 @@ model User {
   id                String       @id @default(uuid())
   email             String       @unique
   passwordHash      String
-  role              Role         @default(OPERARIO)
+  role              Role         @default(CLIENT)
   customerName      String?
   customerPhone     String?
   preferredCutId    String?
