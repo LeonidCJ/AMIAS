@@ -11,6 +11,14 @@ export class RegisterDto {
   @MinLength(6, { message: 'La contraseña debe tener al menos 6 caracteres.' })
   password!: string;
 
+  @IsString({ message: 'El nombre completo debe ser una cadena de texto.' })
+  @IsOptional()
+  customerName?: string;
+
+  @IsString({ message: 'El teléfono debe ser una cadena de texto.' })
+  @IsOptional()
+  customerPhone?: string;
+
   @IsEnum(UserRole, { message: 'El rol debe ser ADMIN u OPERARIO.' })
   @IsOptional()
   role?: UserRole;

@@ -61,14 +61,14 @@ export default function ProfilePage() {
   // Profile & Order Data
   const [profile, setProfile] = useState<UserProfileData>({
     id: null,
-    customerName: 'Carlos Rivas',
-    customerPhone: '987654321',
-    email: 'carlos.rivas@gmail.com',
+    customerName: 'Cliente AMIAS',
+    customerPhone: '',
+    email: '',
     preferredCut: null,
     preferredSize: null,
-    deliveryAddress: 'Av. Petit Thouars 1850, Dpto 402',
-    deliveryDistrict: 'Lince',
-    deliveryReference: 'Frente al parque, portón negro',
+    deliveryAddress: '',
+    deliveryDistrict: '',
+    deliveryReference: '',
   });
 
   const [activeOrder, setActiveOrder] = useState<ActiveOrderData | null>(null);
@@ -104,21 +104,29 @@ export default function ProfilePage() {
         setSizes(mData.sizes || []);
       }
 
-      // Load profile & pattern history for default customer "987654321" or authenticated user
-      const identifier = '987654321';
+      // Read authenticated user identifier from localStorage
+      const savedPhone = localStorage.getItem('user_phone') || '';
+      const savedEmail = localStorage.getItem('user_email') || '';
+      const savedName = localStorage.getItem('user_name') || '';
+      const identifier = savedPhone || savedEmail || '987654321';
+
       const resProfile = await fetch(`${API_BASE}/customers/${identifier}/profile-and-pattern`);
       if (resProfile.ok) {
         const pData = await resProfile.json();
-        setProfile(pData.profile);
+        setProfile({
+          ...pData.profile,
+          customerName: pData.profile.customerName || savedName || 'Cliente AMIAS',
+          email: pData.profile.email || savedEmail || '',
+        });
         setActiveOrder(pData.activeOrder);
         setCompletedOrders(pData.completedOrdersHistory || []);
 
         // Sync forms
-        setFormName(pData.profile.customerName || 'Carlos Rivas');
-        setFormPhone(pData.profile.customerPhone || '987654321');
-        setFormAddress(pData.profile.deliveryAddress || 'Av. Petit Thouars 1850, Dpto 402');
-        setFormDistrict(pData.profile.deliveryDistrict || 'Lince');
-        setFormReference(pData.profile.deliveryReference || 'Frente al parque, portón negro');
+        setFormName(pData.profile.customerName || savedName || 'Cliente AMIAS');
+        setFormPhone(pData.profile.customerPhone || savedPhone || '');
+        setFormAddress(pData.profile.deliveryAddress || '');
+        setFormDistrict(pData.profile.deliveryDistrict || '');
+        setFormReference(pData.profile.deliveryReference || '');
 
         if (pData.profile.preferredCut) setSelectedCutId(pData.profile.preferredCut.id);
         if (pData.profile.preferredSize) setSelectedSizeId(pData.profile.preferredSize.id);
@@ -133,7 +141,7 @@ export default function ProfilePage() {
   const handleSavePreferences = async (type: 'sizing' | 'personal' | 'address') => {
     setServerFeedback(null);
     try {
-      const identifier = profile.customerPhone || '987654321';
+      const identifier = profile.customerPhone || profile.email || '987654321';
 
       let bodyPayload: any = {};
       if (type === 'sizing') {
@@ -164,6 +172,11 @@ export default function ProfilePage() {
         text: '¡Preferencias actualizadas correctamente en tu perfil!',
       });
 
+      // Update localStorage name if updated
+      if (formName) {
+        localStorage.setItem('user_name', formName.trim());
+      }
+
       await loadMasterDataAndProfile();
     } catch (err: any) {
       setServerFeedback({
@@ -174,6 +187,15 @@ export default function ProfilePage() {
   };
 
   const currentSelectedSizeObj = sizes.find((s) => s.id === selectedSizeId) || profile.preferredSize || sizes[2];
+
+  const getInitials = (name: string | null) => {
+    if (!name) return 'US';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
 
   return (
     <div className="min-h-screen bg-white text-[#121212] font-sans selection:bg-neutral-900 selection:text-white flex flex-col justify-between">
@@ -228,15 +250,22 @@ export default function ProfilePage() {
               <span className="text-[10px] font-mono uppercase text-neutral-400 block font-bold">
                 CLIENTE AUTENTICADO
               </span>
-              <strong className="text-sm font-bold text-neutral-900 block">{profile.customerName}</strong>
+              <div className="flex items-center gap-2">
+                <span className="w-7 h-7 rounded-full bg-[#121212] text-white flex items-center justify-center text-[10px] font-bold font-mono">
+                  {getInitials(profile.customerName)}
+                </span>
+                <strong className="text-sm font-bold text-neutral-900 block">{profile.customerName}</strong>
+              </div>
               <span className="text-xs text-neutral-500 block font-mono">{profile.email}</span>
-              <span className="text-[11px] font-mono text-neutral-400 block">{profile.customerPhone}</span>
+              {profile.customerPhone && (
+                <span className="text-[11px] font-mono text-neutral-400 block">{profile.customerPhone}</span>
+              )}
             </div>
 
             <nav className="border border-[#e8e8e8] rounded-2xl overflow-hidden divide-y divide-[#f0f0f0] text-xs uppercase tracking-wider font-semibold bg-white">
               <button
                 onClick={() => setActiveTab('orders')}
-                className={`w-full p-4 text-left flex items-center justify-between transition ${
+                className={`w-full p-4 text-left flex items-center justify-between transition cursor-pointer ${
                   activeTab === 'orders'
                     ? 'text-[#121212] bg-neutral-100 font-bold border-l-4 border-[#121212]'
                     : 'text-neutral-600 hover:text-neutral-950'
@@ -253,7 +282,7 @@ export default function ProfilePage() {
 
               <button
                 onClick={() => setActiveTab('sizing')}
-                className={`w-full p-4 text-left flex items-center justify-between transition ${
+                className={`w-full p-4 text-left flex items-center justify-between transition cursor-pointer ${
                   activeTab === 'sizing'
                     ? 'text-[#121212] bg-neutral-100 font-bold border-l-4 border-[#121212]'
                     : 'text-neutral-600 hover:text-neutral-950'
@@ -267,7 +296,7 @@ export default function ProfilePage() {
 
               <button
                 onClick={() => setActiveTab('personal')}
-                className={`w-full p-4 text-left flex items-center justify-between transition ${
+                className={`w-full p-4 text-left flex items-center justify-between transition cursor-pointer ${
                   activeTab === 'personal'
                     ? 'text-[#121212] bg-neutral-100 font-bold border-l-4 border-[#121212]'
                     : 'text-neutral-600 hover:text-neutral-950'
@@ -281,7 +310,7 @@ export default function ProfilePage() {
 
               <button
                 onClick={() => setActiveTab('address')}
-                className={`w-full p-4 text-left flex items-center justify-between transition ${
+                className={`w-full p-4 text-left flex items-center justify-between transition cursor-pointer ${
                   activeTab === 'address'
                     ? 'text-[#121212] bg-neutral-100 font-bold border-l-4 border-[#121212]'
                     : 'text-neutral-600 hover:text-neutral-950'
@@ -491,7 +520,7 @@ export default function ProfilePage() {
 
                 <button
                   onClick={() => handleSavePreferences('sizing')}
-                  className="btn-dawn-primary px-6 py-3 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2"
+                  className="btn-dawn-primary px-6 py-3 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>Guardar Talla Predeterminada</span>
@@ -530,7 +559,7 @@ export default function ProfilePage() {
 
                 <button
                   onClick={() => handleSavePreferences('personal')}
-                  className="btn-dawn-primary px-6 py-3 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2"
+                  className="btn-dawn-primary px-6 py-3 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>Actualizar Datos</span>
@@ -571,7 +600,7 @@ export default function ProfilePage() {
 
                 <button
                   onClick={() => handleSavePreferences('address')}
-                  className="btn-dawn-primary px-6 py-3 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2"
+                  className="btn-dawn-primary px-6 py-3 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>Guardar Dirección</span>

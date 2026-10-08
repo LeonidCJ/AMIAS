@@ -24,7 +24,7 @@ export const Header: React.FC = () => {
     if (token) {
       setIsLoggedIn(true);
       setIsAdminOrOperator(role === 'ADMIN' || role === 'OPERARIO');
-      setUserName(role === 'ADMIN' ? 'Admin Taller' : savedName || 'Carlos Rivas');
+      setUserName(role === 'ADMIN' ? 'Admin Taller' : savedName || 'Mi Cuenta');
     } else {
       setIsLoggedIn(false);
       setIsAdminOrOperator(false);
@@ -36,10 +36,23 @@ export const Header: React.FC = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user_role');
     localStorage.removeItem('user_name');
+    localStorage.removeItem('user_email');
+    localStorage.removeItem('user_phone');
+    localStorage.removeItem('user_id');
     setIsLoggedIn(false);
     setIsAdminOrOperator(false);
     setUserName(null);
     router.push('/login');
+  };
+
+  // Compute initials dynamically e.g. "Juan Perez" -> "JP"
+  const getInitials = (name: string | null) => {
+    if (!name) return 'US';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
   };
 
   return (
@@ -58,11 +71,11 @@ export const Header: React.FC = () => {
           </span>
         </button>
 
-        {/* Main Navigation Links matching login_user_normal.html */}
+        {/* Main Navigation Links */}
         <nav className="hidden md:flex items-center gap-8 text-xs uppercase tracking-[0.14em] font-semibold text-neutral-700">
           <button
             onClick={() => router.push('/catalog')}
-            className={`py-1 border-b-2 transition ${
+            className={`py-1 border-b-2 transition cursor-pointer ${
               pathname === '/catalog'
                 ? 'border-[#121212] text-[#121212] font-bold'
                 : 'border-transparent hover:text-neutral-950'
@@ -74,7 +87,7 @@ export const Header: React.FC = () => {
           {isLoggedIn && (
             <button
               onClick={() => router.push('/profile')}
-              className={`py-1 border-b-2 transition flex items-center gap-1.5 ${
+              className={`py-1 border-b-2 transition flex items-center gap-1.5 cursor-pointer ${
                 pathname === '/profile'
                   ? 'border-[#121212] text-[#121212] font-bold'
                   : 'border-transparent hover:text-neutral-950'
@@ -89,7 +102,7 @@ export const Header: React.FC = () => {
           {isLoggedIn && isAdminOrOperator && (
             <button
               onClick={() => router.push('/admin/production')}
-              className={`py-1 border-b-2 transition flex items-center gap-1.5 ${
+              className={`py-1 border-b-2 transition flex items-center gap-1.5 cursor-pointer ${
                 pathname === '/admin/production'
                   ? 'border-[#121212] text-[#121212] font-bold'
                   : 'border-transparent hover:text-neutral-950'
@@ -110,10 +123,10 @@ export const Header: React.FC = () => {
                 className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 border border-neutral-200 rounded-full hover:bg-neutral-200 transition cursor-pointer"
               >
                 <span className="w-6 h-6 rounded-full bg-[#121212] text-white flex items-center justify-center text-[10px] font-bold font-mono">
-                  {isAdminOrOperator ? 'AD' : 'CR'}
+                  {getInitials(userName)}
                 </span>
                 <span className="text-xs font-bold uppercase tracking-wider text-[#121212]">
-                  {userName || 'Carlos Rivas'}
+                  {userName}
                 </span>
               </button>
 
