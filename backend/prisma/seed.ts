@@ -32,11 +32,13 @@ async function main() {
     { name: 'Beige Crudo Vintage', hexCode: '#D8CCC0' },
   ];
 
+  const colors = [];
   for (const c of colorsData) {
-    const existing = await prisma.textileColor.findFirst({ where: { name: c.name } });
+    let existing = await prisma.textileColor.findFirst({ where: { name: c.name } });
     if (!existing) {
-      await prisma.textileColor.create({ data: c });
+      existing = await prisma.textileColor.create({ data: c });
     }
+    colors.push(existing);
   }
   console.log('Textile Colors seeded');
 
@@ -86,6 +88,39 @@ async function main() {
     where: { id: admin.id },
     data: { preferredSizeId: sizes[2].id }, // Talla L
   });
+
+  // TR-031: Seed Inventory Stock SKUs
+  for (const cut of cuts) {
+    for (const color of colors) {
+      for (const size of sizes) {
+        await prisma.inventoryStock.upsert({
+          where: {
+            cutId_colorId_sizeId: {
+              cutId: cut.id,
+              colorId: color.id,
+              sizeId: size.id,
+            },
+          },
+          update: { quantity: 50 },
+          create: {
+            cutId: cut.id,
+            colorId: color.id,
+            sizeId: size.id,
+            quantity: 50, // Initial physical plain fabric stock
+          },
+        });
+      }
+    }
+  }
+  console.log('Physical Inventory Stock SKUs seeded (50 units per SKU)');
+
+  // TR-031: Apply PostgreSQL CHECK constraint against negative stock
+  try {
+    await prisma.$executeRawUnsafe('ALTER TABLE inventory_stocks ADD CONSTRAINT check_positive_stock CHECK (quantity >= 0);');
+    console.log('PostgreSQL CHECK (quantity >= 0) constraint applied');
+  } catch (e) {
+    console.log('PostgreSQL CHECK constraint already active');
+  }
 
   // 5. Seed Master Concert Events / Tours (Giras 2026)
   const eventsData = [

@@ -13,6 +13,8 @@ import { GetCustomerProfileAndPatternUseCase } from '../application/use-cases/ge
 import { UpdateCustomerPreferencesDto, UpdateCustomerPreferencesUseCase } from '../application/use-cases/update-customer-preferences.use-case';
 import { GetWorkshopQueueUseCase } from '../application/use-cases/get-workshop-queue.use-case';
 import { UpdateOrderStatusUseCase } from '../application/use-cases/update-order-status.use-case';
+import { StartProductionUseCase } from '../application/use-cases/start-production.use-case';
+import { GetArtPresignedUrlUseCase } from '../application/use-cases/get-art-presigned-url.use-case';
 import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/infrastructure/guards/roles.guard';
 import { Roles } from '../../auth/infrastructure/decorators/roles.decorator';
@@ -27,6 +29,8 @@ export class OrdersController {
     private readonly updateCustomerPreferencesUseCase: UpdateCustomerPreferencesUseCase,
     private readonly getWorkshopQueueUseCase: GetWorkshopQueueUseCase,
     private readonly updateOrderStatusUseCase: UpdateOrderStatusUseCase,
+    private readonly startProductionUseCase: StartProductionUseCase,
+    private readonly getArtPresignedUrlUseCase: GetArtPresignedUrlUseCase,
   ) {}
 
   @Post('orders/checkout')
@@ -47,7 +51,7 @@ export class OrdersController {
     };
   }
 
-  // TR-027: Customer Profile & Pattern History (by userId or phone)
+  // TR-027: Customer Profile & Pattern History
   @Get('customers/:identifier/profile-and-pattern')
   async getCustomerProfileAndPattern(@Param('identifier') identifier: string) {
     return this.getCustomerProfileAndPatternUseCase.execute(identifier);
@@ -66,7 +70,7 @@ export class OrdersController {
     };
   }
 
-  // TR-028: Workshop Priority Queue (ADMIN / OPERARIO)
+  // TR-028: Workshop Priority Queue
   @Get('workshop/priority-queue')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.OPERARIO)
@@ -74,7 +78,30 @@ export class OrdersController {
     return this.getWorkshopQueueUseCase.execute();
   }
 
-  // Operator status advancement (ADMIN / OPERARIO)
+  // TR-030 & TR-031: Atomic ACID Stock Deduction Transaction
+  @Post('workshop/orders/:orderId/start-production')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.OPERARIO)
+  async startProduction(@Param('orderId') orderId: string) {
+    const order = await this.startProductionUseCase.execute(orderId);
+    return {
+      message: 'Confección iniciada y stock descontado en transacción atómica (ACID).',
+      order,
+    };
+  }
+
+  // TR-029: Presigned URL for DTF 300 DPI Artwork
+  @Get('workshop/orders/:orderId/items/:itemId/art-presigned-url')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.OPERARIO)
+  async getArtPresignedUrl(
+    @Param('orderId') orderId: string,
+    @Param('itemId') itemId: string,
+  ) {
+    return this.getArtPresignedUrlUseCase.execute(orderId, itemId);
+  }
+
+  // Operator status advancement
   @Patch('orders/:id/status')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.OPERARIO)

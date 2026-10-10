@@ -6,7 +6,7 @@ export class GetWorkshopQueueUseCase {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute() {
-    // 1. Fetch active manufacturing orders matching the new 4-stage OrderStatus enum
+    // 1. Fetch active manufacturing orders matching the 4-stage OrderStatus enum
     const orders = await this.prisma.order.findMany({
       where: {
         status: { in: ['CONFIRMED', 'IN_CUTTING', 'DTF_PRINTING', 'READY'] },
@@ -38,6 +38,7 @@ export class GetWorkshopQueueUseCase {
 
         const diffTime = eventDate.getTime() - now;
         const daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const isUrgent = daysRemaining <= 2 && daysRemaining >= 0; // TR-029: Urgencia < 48H
 
         return {
           orderId: order.id,
@@ -47,11 +48,13 @@ export class GetWorkshopQueueUseCase {
           customerPhone: order.customerPhone,
           orderStatus: order.status,
           itemId: item.id,
+          productId: item.productId,
           productName: item.product?.name || 'Prenda Textil',
           concertEventName: item.product?.concertEvent?.name || 'Gira Oficial',
           eventVenue: item.product?.concertEvent?.venue || 'Estadio',
           eventDate: eventDate,
           daysRemaining: daysRemaining,
+          isUrgent: isUrgent, // TR-029 Flag < 48H
           cutName: item.product?.cut?.name || 'Jersey Algodón',
           grammageGsm: item.product?.cut?.grammageGsm || 240,
           sizeLabel: item.size?.label || 'M',

@@ -56,39 +56,58 @@ model ConcertEvent {
 }
 
 model TextileCut {
-  id               String    @id @default(uuid())
+  id               String           @id @default(uuid())
   name             String
-  grammageGsm      Int       @default(240)
+  grammageGsm      Int              @default(240)
   description      String?
-  createdAt        DateTime  @default(now())
+  createdAt        DateTime         @default(now())
   products         Product[]
   preferredByUsers User[]
+  inventoryStocks  InventoryStock[]
 
   @@map("textile_cuts")
 }
 
 model TextileColor {
-  id        String   @id @default(uuid())
-  name      String
-  hexCode   String
-  createdAt DateTime @default(now())
+  id              String           @id @default(uuid())
+  name            String
+  hexCode         String
+  createdAt       DateTime         @default(now())
+  inventoryStocks InventoryStock[]
 
   @@map("textile_colors")
 }
 
 model TextileSize {
-  id               String        @id @default(uuid())
+  id               String           @id @default(uuid())
   label            String
   chestCm          Int
   lengthCm         Int
   shoulderCm       Int
   heightRef        String?
-  createdAt        DateTime      @default(now())
+  createdAt        DateTime         @default(now())
   productSizes     ProductSize[]
   orderItems       OrderItem[]
   preferredByUsers User[]
+  inventoryStocks  InventoryStock[]
 
   @@map("textile_sizes")
+}
+
+model InventoryStock {
+  id        String       @id @default(uuid())
+  cutId     String
+  cut       TextileCut   @relation(fields: [cutId], references: [id])
+  colorId   String
+  color     TextileColor @relation(fields: [colorId], references: [id])
+  sizeId    String
+  size      TextileSize  @relation(fields: [sizeId], references: [id])
+  quantity  Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([cutId, colorId, sizeId])
+  @@map("inventory_stocks")
 }
 
 model Product {

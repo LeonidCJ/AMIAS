@@ -8,6 +8,8 @@ import { GetCustomerProfileAndPatternUseCase } from './application/use-cases/get
 import { UpdateCustomerPreferencesUseCase } from './application/use-cases/update-customer-preferences.use-case';
 import { GetWorkshopQueueUseCase } from './application/use-cases/get-workshop-queue.use-case';
 import { UpdateOrderStatusUseCase } from './application/use-cases/update-order-status.use-case';
+import { StartProductionUseCase } from './application/use-cases/start-production.use-case';
+import { GetArtPresignedUrlUseCase } from './application/use-cases/get-art-presigned-url.use-case';
 import { OrdersController } from './presentation/orders.controller';
 
 @Module({
@@ -23,6 +25,8 @@ import { OrdersController } from './presentation/orders.controller';
     UpdateCustomerPreferencesUseCase,
     GetWorkshopQueueUseCase,
     UpdateOrderStatusUseCase,
+    StartProductionUseCase,
+    GetArtPresignedUrlUseCase,
   ],
   exports: [ORDER_REPOSITORY],
 })
