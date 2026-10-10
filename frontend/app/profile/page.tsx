@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Header } from '../../components/layout/Header';
 import {
   ShoppingBag,
@@ -8,14 +9,12 @@ import {
   User,
   MapPin,
   Sparkles,
-  Scissors,
-  CheckCircle2,
-  Clock,
   Shirt,
   Printer,
   Calendar,
   Save,
   AlertCircle,
+  CheckCircle2,
 } from 'lucide-react';
 import { OrderTracker } from '../../components/tracker/OrderTracker';
 import { formatCurrencyPEN } from '../../lib/utils/format-currency';
@@ -52,6 +51,7 @@ interface ActiveOrderData {
 }
 
 export default function ProfilePage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'orders' | 'sizing' | 'personal' | 'address'>('orders');
 
   // Master Data
@@ -89,6 +89,12 @@ export default function ProfilePage() {
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      // Redirect immediately using replace to purge history entry if unauthenticated
+      router.replace('/login');
+      return;
+    }
     loadMasterDataAndProfile();
   }, [API_BASE]);
 
@@ -172,7 +178,6 @@ export default function ProfilePage() {
         text: '¡Preferencias actualizadas correctamente en tu perfil!',
       });
 
-      // Update localStorage name if updated
       if (formName) {
         localStorage.setItem('user_name', formName.trim());
       }

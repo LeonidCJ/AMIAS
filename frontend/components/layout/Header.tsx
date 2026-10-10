@@ -41,7 +41,9 @@ export const Header: React.FC = () => {
     setIsLoggedIn(false);
     setIsAdminOrOperator(false);
     setUserName(null);
-    router.push('/login');
+
+    // Use router.replace to purge protected history entry and prevent back-button re-entry
+    router.replace('/login');
   };
 
   // Compute initials dynamically e.g. "Juan Perez" -> "JP"
