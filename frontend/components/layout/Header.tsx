@@ -42,7 +42,7 @@ export const Header: React.FC = () => {
     setIsAdminOrOperator(false);
     setUserName(null);
 
-    // Use router.replace to purge protected history entry and prevent back-button re-entry
+    // Use router.replace to purge protected history entry
     router.replace('/login');
   };
 
@@ -101,8 +101,8 @@ export const Header: React.FC = () => {
           )}
         </nav>
 
-        {/* Session User Controls & Logout Button matching login_user_normal.html prototype */}
-        <div className="flex items-center gap-4">
+        {/* Session User Controls & Clean Minimal Icon Logout Button */}
+        <div className="flex items-center gap-3">
           {isLoggedIn ? (
             <div className="flex items-center gap-3">
               <button
@@ -121,10 +121,9 @@ export const Header: React.FC = () => {
               <button
                 onClick={handleLogout}
                 title="Cerrar Sesión"
-                className="px-3 py-1.5 border border-neutral-300 hover:border-red-600 hover:bg-red-50 text-neutral-700 hover:text-red-700 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition cursor-pointer"
+                className="p-2 border border-neutral-200 hover:border-red-600 hover:bg-red-50 text-neutral-600 hover:text-red-600 rounded-full transition cursor-pointer"
               >
-                <LogOut className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Cerrar Sesión</span>
+                <LogOut className="w-4 h-4" />
               </button>
             </div>
           ) : (

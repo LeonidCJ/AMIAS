@@ -4,9 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Scissors,
+  Download,
   RefreshCw,
-  AlertTriangle,
+  Clock,
   CheckCircle2,
+  AlertTriangle,
+  ArrowRight,
   ShieldCheck,
   Sparkles,
   LogOut,
@@ -197,18 +200,19 @@ export default function AdminProductionPage() {
             <span className="text-[10px] tracking-[0.25em] text-neutral-400 uppercase font-sans mt-1 block">Textile Studio Lima</span>
           </button>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-neutral-100 border border-neutral-200 rounded-full text-xs font-semibold text-neutral-600 uppercase">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Panel Operativo Taller</span>
             </div>
 
+            {/* Clean Minimal Icon Logout Button */}
             <button
               onClick={handleLogoutAdmin}
-              className="text-xs uppercase tracking-wider font-bold text-neutral-500 hover:text-red-600 transition flex items-center gap-1.5 cursor-pointer"
+              title="Cerrar Sesión"
+              className="p-2 border border-neutral-200 hover:border-red-600 hover:bg-red-50 text-neutral-600 hover:text-red-600 rounded-full transition cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
-              <span>Cerrar Sesión</span>
             </button>
           </div>
         </div>
