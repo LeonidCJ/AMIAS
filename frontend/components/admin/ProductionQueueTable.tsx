@@ -69,27 +69,27 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
 
           <button
             onClick={onExportJSON}
-            className="btn-dawn-secondary px-4 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer active:scale-95 transition"
+            className="btn-dawn-secondary px-4 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer active:scale-95 transition whitespace-nowrap"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Exportar Dataset (JSON)</span>
           </button>
         </div>
 
-        {/* Prioritized Production Table (TR-028, TR-029, TR-030, TR-031) */}
-        <div className="border border-[#e8e8e8] rounded-2xl overflow-hidden">
+        {/* Prioritized Production Table with Precise Proportional Columns */}
+        <div className="border border-[#e8e8e8] rounded-2xl overflow-hidden shadow-xs bg-white">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-sans">
-              <thead className="bg-[#121212] text-white border-b border-[#e8e8e8] text-[10px] uppercase tracking-widest font-bold">
+            <table className="w-full text-left text-xs font-sans border-collapse">
+              <thead className="bg-[#121212] text-white text-[10px] uppercase tracking-widest font-bold">
                 <tr>
-                  <th className="p-4">Prioridad & Evento</th>
-                  <th className="p-4">Pedido / Cliente</th>
-                  <th className="p-4">Prenda & Silueta</th>
-                  <th className="p-4">Talla & Cant.</th>
-                  <th className="p-4">Arte DTF (300 DPI)</th>
-                  <th className="p-4">Total</th>
-                  <th className="p-4">Estado Confección</th>
-                  <th className="p-4 text-right">Acción Operario</th>
+                  <th className="py-4 px-4 whitespace-nowrap w-[20%]">Prioridad & Evento</th>
+                  <th className="py-4 px-4 whitespace-nowrap w-[15%]">Pedido / Cliente</th>
+                  <th className="py-4 px-4 whitespace-nowrap w-[20%]">Prenda & Silueta</th>
+                  <th className="py-4 px-4 whitespace-nowrap w-[10%]">Talla & Cant.</th>
+                  <th className="py-4 px-4 whitespace-nowrap w-[11%]">Arte DTF (300 DPI)</th>
+                  <th className="py-4 px-4 whitespace-nowrap w-[8%]">Total</th>
+                  <th className="py-4 px-4 whitespace-nowrap w-[10%]">Estado Confección</th>
+                  <th className="py-4 px-4 whitespace-nowrap w-[12%] text-right">Acción Operario</th>
                 </tr>
               </thead>
 
@@ -105,63 +105,63 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
                     const isUrgent = item.isUrgent || item.daysRemaining <= 2;
 
                     return (
-                      <tr key={item.itemId || idx} className="hover:bg-neutral-50 transition">
-                        {/* Priority & Concert Event (TR-029 Badge < 48H) */}
-                        <td className="p-4 space-y-1.5">
+                      <tr key={item.itemId || idx} className="hover:bg-neutral-50/80 transition items-center">
+                        {/* Priority & Concert Event */}
+                        <td className="py-4 px-4 space-y-1.5 align-middle">
                           {isUrgent ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-800 border border-red-300 animate-pulse">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-800 border border-red-300 animate-pulse whitespace-nowrap">
                               <AlertTriangle className="w-3 h-3 text-red-600" />
                               <span>URGENTE &lt; 48H</span>
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-700 border border-neutral-200">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-700 border border-neutral-200 whitespace-nowrap">
                               <Clock className="w-3 h-3 text-neutral-500" />
                               <span>En {item.daysRemaining} días</span>
                             </span>
                           )}
 
-                          <div className="font-bold text-[#121212] text-xs">
+                          <div className="font-bold text-[#121212] text-xs leading-snug">
                             {item.concertEventName}
                           </div>
-                          <div className="text-[10px] text-neutral-400 font-mono">
+                          <div className="text-[10px] text-neutral-400 font-mono whitespace-nowrap">
                             {new Date(item.eventDate).toLocaleDateString('es-PE')} • {item.eventVenue}
                           </div>
                         </td>
 
                         {/* Order Number & Customer */}
-                        <td className="p-4 space-y-0.5">
+                        <td className="py-4 px-4 space-y-0.5 align-middle">
                           <span className="font-mono font-extrabold text-xs text-[#121212] block">
                             {item.orderNumber}
                           </span>
-                          <span className="font-bold text-neutral-700 block">{item.customerName}</span>
-                          <span className="text-[10px] text-neutral-400 font-mono">
+                          <span className="font-bold text-neutral-700 block whitespace-nowrap">{item.customerName}</span>
+                          <span className="text-[10px] text-neutral-400 font-mono block">
                             {item.customerPhone}
                           </span>
                         </td>
 
                         {/* Product & Cut */}
-                        <td className="p-4 space-y-0.5">
-                          <span className="font-bold text-[#121212] block">{item.productName}</span>
+                        <td className="py-4 px-4 space-y-0.5 align-middle">
+                          <span className="font-bold text-[#121212] block leading-snug">{item.productName}</span>
                           <span className="text-[10px] text-neutral-500 font-mono block">
                             {item.cutName} ({item.grammageGsm}g GSM)
                           </span>
                         </td>
 
                         {/* Size & Quantity */}
-                        <td className="p-4 space-y-0.5">
-                          <span className="inline-block bg-[#121212] text-white text-xs font-mono font-bold px-2.5 py-0.5 rounded-md">
+                        <td className="py-4 px-4 space-y-0.5 align-middle">
+                          <span className="inline-block bg-[#121212] text-white text-xs font-mono font-bold px-2.5 py-0.5 rounded-md whitespace-nowrap">
                             Talla {item.sizeLabel}
                           </span>
-                          <span className="text-xs font-bold text-neutral-800 block pt-1">
+                          <span className="text-xs font-bold text-neutral-800 block pt-0.5 whitespace-nowrap">
                             x{item.quantity} unidad{item.quantity === 1 ? '' : 'es'}
                           </span>
                         </td>
 
-                        {/* TR-029 Presigned URL Button */}
-                        <td className="p-4">
+                        {/* Presigned URL Button */}
+                        <td className="py-4 px-4 align-middle">
                           <button
                             onClick={() => onViewArtPresignedUrl(item.orderId, item.itemId)}
-                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border border-neutral-300 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition cursor-pointer"
+                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border border-neutral-300 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap"
                           >
                             <Eye className="w-3.5 h-3.5 text-blue-600" />
                             <span>Ver Arte DTF</span>
@@ -169,12 +169,12 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
                         </td>
 
                         {/* Total PEN */}
-                        <td className="p-4 font-mono font-bold text-[#121212]">
+                        <td className="py-4 px-4 font-mono font-bold text-[#121212] align-middle whitespace-nowrap">
                           {formatCurrencyPEN(item.totalPrice)}
                         </td>
 
                         {/* Status Badge */}
-                        <td className="p-4">
+                        <td className="py-4 px-4 align-middle whitespace-nowrap">
                           <span
                             className={`inline-block px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
                               item.orderStatus === 'CONFIRMED'
@@ -196,8 +196,8 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
                           </span>
                         </td>
 
-                        {/* Action Buttons (TR-030 Atomic Stock Deduction Transaction) */}
-                        <td className="p-4 text-right">
+                        {/* Action Buttons */}
+                        <td className="py-4 px-4 text-right align-middle whitespace-nowrap">
                           {item.orderStatus === 'CONFIRMED' ? (
                             <button
                               onClick={() => onStartProductionWithStockDeduction(item.orderId)}
