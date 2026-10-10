@@ -133,57 +133,6 @@ export default function AdminProductionPage() {
     }
   };
 
-  const handleStartProductionWithStockDeduction = async (orderId: string) => {
-    setFeedback(null);
-    try {
-      setUpdatingOrderId(orderId);
-      const res = await fetch(`${API_BASE}/workshop/orders/${orderId}/start-production`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || 'Falta de stock o error al iniciar confección.');
-      }
-
-      setFeedback({
-        type: 'success',
-        text: '¡Confección iniciada y stock de tela descontado en transacción atómica (ACID)!',
-      });
-
-      await loadAllAdminData(authToken);
-    } catch (err: any) {
-      setFeedback({
-        type: 'error',
-        text: err.message || 'Error al ejecutar la transacción de stock.',
-      });
-    } finally {
-      setUpdatingOrderId(null);
-    }
-  };
-
-  const handleViewArtPresignedUrl = async (orderId: string, itemId: string) => {
-    try {
-      const res = await fetch(`${API_BASE}/workshop/orders/${orderId}/items/${itemId}/art-presigned-url`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || 'Error al solicitar URL firmada del arte.');
-      }
-
-      if (data.presignedUrl) {
-        window.open(data.presignedUrl, '_blank', 'noopener,noreferrer');
-      }
-    } catch (err: any) {
-      alert(err.message || 'Error al obtener URL firmada.');
-    }
-  };
-
   const handleAdvanceStatus = async (orderId: string, currentStatus: string) => {
     let nextStatus = 'IN_CUTTING';
     if (currentStatus === 'CONFIRMED') nextStatus = 'IN_CUTTING';
@@ -268,12 +217,12 @@ export default function AdminProductionPage() {
 
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-8 flex-1 w-full">
-        {/* 3-Module Tab Switcher */}
-        <div className="flex items-center justify-between border-b border-[#e8e8e8] pb-4">
-          <div className="flex items-center gap-2 overflow-x-auto text-xs uppercase tracking-wider font-semibold p-1 bg-neutral-100 rounded-2xl border border-[#e8e8e8]">
+        {/* Responsive 3-Module Tab Switcher & Refresh Button */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e8e8e8] pb-4">
+          <div className="flex items-center gap-2 overflow-x-auto text-xs uppercase tracking-wider font-semibold p-1 bg-neutral-100 rounded-2xl border border-[#e8e8e8] w-full sm:w-auto">
             <button
               onClick={() => { setActiveTab('events'); setFeedback(null); }}
-              className={`px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer ${
+              className={`px-4 sm:px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
                 activeTab === 'events' ? 'bg-[#121212] text-white shadow-sm font-bold' : 'text-neutral-600 hover:text-neutral-950'
               }`}
             >
@@ -284,7 +233,7 @@ export default function AdminProductionPage() {
 
             <button
               onClick={() => { setActiveTab('catalog'); setFeedback(null); }}
-              className={`px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer ${
+              className={`px-4 sm:px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
                 activeTab === 'catalog' ? 'bg-[#121212] text-white shadow-sm font-bold' : 'text-neutral-600 hover:text-neutral-950'
               }`}
             >
@@ -295,7 +244,7 @@ export default function AdminProductionPage() {
 
             <button
               onClick={() => { setActiveTab('production'); setFeedback(null); }}
-              className={`px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer ${
+              className={`px-4 sm:px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
                 activeTab === 'production' ? 'bg-[#121212] text-white shadow-sm font-bold' : 'text-neutral-600 hover:text-neutral-950'
               }`}
             >
@@ -307,10 +256,10 @@ export default function AdminProductionPage() {
 
           <button
             onClick={() => loadAllAdminData(authToken)}
-            className="btn-dawn-secondary px-4 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
+            className="btn-dawn-secondary px-4 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center justify-center gap-1.5 cursor-pointer self-end sm:self-auto shrink-0"
           >
             <RefreshCw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Actualizar Todo</span>
+            <span>Actualizar Todo</span>
           </button>
         </div>
 
