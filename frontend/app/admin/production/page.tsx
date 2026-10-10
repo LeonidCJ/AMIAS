@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
+  Scissors,
   RefreshCw,
   AlertTriangle,
   CheckCircle2,
@@ -11,7 +12,6 @@ import {
   LogOut,
   Calendar,
   Package,
-  Scissors,
   AlertCircle,
 } from 'lucide-react';
 
@@ -48,6 +48,14 @@ export default function AdminProductionPage() {
 
   useEffect(() => {
     const savedToken = localStorage.getItem('access_token') || '';
+    const savedRole = localStorage.getItem('user_role') || '';
+
+    // Guard: Require valid Admin / Operator session
+    if (!savedToken || (savedRole !== 'ADMIN' && savedRole !== 'OPERARIO')) {
+      router.replace('/login');
+      return;
+    }
+
     setAuthToken(savedToken);
     loadAllAdminData(savedToken);
   }, [API_BASE]);
@@ -160,7 +168,7 @@ export default function AdminProductionPage() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user_role');
     localStorage.removeItem('user_name');
-    router.push('/login');
+    router.replace('/login');
   };
 
   const exportSalesDatasetJSON = () => {

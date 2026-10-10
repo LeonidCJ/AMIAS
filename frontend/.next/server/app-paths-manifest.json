@@ -1,6 +1,7 @@
 {
-  "/admin/production/page": "app/admin/production/page.js",
-  "/profile/page": "app/profile/page.js",
   "/catalog/page": "app/catalog/page.js",
-  "/login/page": "app/login/page.js"
+  "/login/page": "app/login/page.js",
+  "/admin/production/page": "app/admin/production/page.js",
+  "/admin/products/new/page": "app/admin/products/new/page.js",
+  "/catalog/[id]/page": "app/catalog/[id]/page.js"
 }
