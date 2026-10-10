@@ -1,5 +1,13 @@
 import React from 'react';
-import { Download, Clock, CheckCircle2, ArrowRight } from 'lucide-react';
+import {
+  Download,
+  Clock,
+  CheckCircle2,
+  ArrowRight,
+  Eye,
+  Scissors,
+  AlertTriangle,
+} from 'lucide-react';
 import { formatCurrencyPEN } from '../../lib/utils/format-currency';
 
 export interface QueueItem {
@@ -10,23 +18,28 @@ export interface QueueItem {
   customerPhone: string;
   orderStatus: 'CONFIRMED' | 'IN_CUTTING' | 'DTF_PRINTING' | 'READY' | 'COMPLETED' | 'CANCELLED' | string;
   itemId: string;
+  productId: string;
   productName: string;
   concertEventName: string;
   eventVenue: string;
   eventDate: string;
   daysRemaining: number;
+  isUrgent?: boolean;
   cutName: string;
   grammageGsm: number;
   sizeLabel: string;
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  receiptOperationCode?: string;
 }
 
 export interface ProductionQueueTableProps {
   queue: QueueItem[];
   updatingOrderId: string | null;
   onAdvanceStatus: (orderId: string, currentStatus: string) => void;
+  onStartProductionWithStockDeduction: (orderId: string) => void;
+  onViewArtPresignedUrl: (orderId: string, itemId: string) => void;
   onExportJSON: () => void;
 }
 
@@ -34,6 +47,8 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
   queue,
   updatingOrderId,
   onAdvanceStatus,
+  onStartProductionWithStockDeduction,
+  onViewArtPresignedUrl,
   onExportJSON,
 }) => {
   return (
@@ -48,7 +63,7 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
               3. Producción & Registro de Ventas
             </h2>
             <p className="text-xs text-neutral-500 mt-0.5">
-              Los pedidos cuyo concierto esté más próximo encabezan automáticamente la cola del taller.
+              Los pedidos cuyo concierto esté más próximo (<strong className="text-[#121212]">&lt; 48h</strong>) encabezan la cola con transacciones atómicas de stock.
             </p>
           </div>
 
@@ -61,7 +76,7 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
           </button>
         </div>
 
-        {/* Prioritized Production Table (TR-028) */}
+        {/* Prioritized Production Table (TR-028, TR-029, TR-030, TR-031) */}
         <div className="border border-[#e8e8e8] rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-sans">
@@ -71,6 +86,7 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
                   <th className="p-4">Pedido / Cliente</th>
                   <th className="p-4">Prenda & Silueta</th>
                   <th className="p-4">Talla & Cant.</th>
+                  <th className="p-4">Arte DTF (300 DPI)</th>
                   <th className="p-4">Total</th>
                   <th className="p-4">Estado Confección</th>
                   <th className="p-4 text-right">Acción Operario</th>
@@ -80,35 +96,29 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
               <tbody className="divide-y divide-[#f0f0f0] text-neutral-800 bg-white">
                 {queue.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="p-8 text-center text-neutral-400">
+                    <td colSpan={8} className="p-8 text-center text-neutral-400">
                       No hay prendas activas en la cola de producción.
                     </td>
                   </tr>
                 ) : (
                   queue.map((item, idx) => {
-                    const isUrgent = item.daysRemaining <= 7;
-                    const isVeryUrgent = item.daysRemaining <= 3;
+                    const isUrgent = item.isUrgent || item.daysRemaining <= 2;
 
                     return (
                       <tr key={item.itemId || idx} className="hover:bg-neutral-50 transition">
-                        {/* Priority & Concert Event */}
+                        {/* Priority & Concert Event (TR-029 Badge < 48H) */}
                         <td className="p-4 space-y-1.5">
-                          <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                              isVeryUrgent
-                                ? 'bg-red-100 text-red-800 border border-red-300'
-                                : isUrgent
-                                ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                                : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
-                            }`}
-                          >
-                            <Clock className="w-3 h-3" />
-                            <span>
-                              {isVeryUrgent
-                                ? `¡Urgente! En ${item.daysRemaining} días`
-                                : `En ${item.daysRemaining} días`}
+                          {isUrgent ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-800 border border-red-300 animate-pulse">
+                              <AlertTriangle className="w-3 h-3 text-red-600" />
+                              <span>URGENTE &lt; 48H</span>
                             </span>
-                          </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-700 border border-neutral-200">
+                              <Clock className="w-3 h-3 text-neutral-500" />
+                              <span>En {item.daysRemaining} días</span>
+                            </span>
+                          )}
 
                           <div className="font-bold text-[#121212] text-xs">
                             {item.concertEventName}
@@ -147,6 +157,17 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
                           </span>
                         </td>
 
+                        {/* TR-029 Presigned URL Button */}
+                        <td className="p-4">
+                          <button
+                            onClick={() => onViewArtPresignedUrl(item.orderId, item.itemId)}
+                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border border-neutral-300 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition cursor-pointer"
+                          >
+                            <Eye className="w-3.5 h-3.5 text-blue-600" />
+                            <span>Ver Arte DTF</span>
+                          </button>
+                        </td>
+
                         {/* Total PEN */}
                         <td className="p-4 font-mono font-bold text-[#121212]">
                           {formatCurrencyPEN(item.totalPrice)}
@@ -175,17 +196,26 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
                           </span>
                         </td>
 
-                        {/* Action Button */}
+                        {/* Action Buttons (TR-030 Atomic Stock Deduction Transaction) */}
                         <td className="p-4 text-right">
-                          {item.orderStatus === 'READY' || item.orderStatus === 'COMPLETED' ? (
-                            <span className="text-[10px] font-bold text-emerald-600 inline-flex items-center gap-1">
+                          {item.orderStatus === 'CONFIRMED' ? (
+                            <button
+                              onClick={() => onStartProductionWithStockDeduction(item.orderId)}
+                              disabled={updatingOrderId === item.orderId}
+                              className="btn-dawn-primary px-3 py-1.5 text-[10px] uppercase tracking-wider font-bold inline-flex items-center gap-1.5 active:scale-95 disabled:opacity-50 cursor-pointer shadow-sm"
+                            >
+                              <Scissors className="w-3.5 h-3.5 text-amber-300" />
+                              <span>Iniciar Confección</span>
+                            </button>
+                          ) : item.orderStatus === 'READY' || item.orderStatus === 'COMPLETED' ? (
+                            <span className="text-[10px] font-bold text-emerald-600 inline-flex items-center justify-end gap-1">
                               <CheckCircle2 className="w-3.5 h-3.5" /> Entregado
                             </span>
                           ) : (
                             <button
                               onClick={() => onAdvanceStatus(item.orderId, item.orderStatus)}
                               disabled={updatingOrderId === item.orderId}
-                              className="btn-dawn-primary px-3 py-1.5 text-[10px] uppercase tracking-wider font-bold inline-flex items-center gap-1 active:scale-95 disabled:opacity-50 cursor-pointer"
+                              className="btn-dawn-secondary px-3 py-1.5 text-[10px] uppercase tracking-wider font-bold inline-flex items-center gap-1 active:scale-95 disabled:opacity-50 cursor-pointer"
                             >
                               <span>Avanzar Etapa</span>
                               <ArrowRight className="w-3 h-3" />

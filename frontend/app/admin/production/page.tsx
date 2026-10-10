@@ -4,12 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Scissors,
-  Download,
   RefreshCw,
-  Clock,
-  CheckCircle2,
   AlertTriangle,
-  ArrowRight,
+  CheckCircle2,
   ShieldCheck,
   Sparkles,
   LogOut,
@@ -133,6 +130,57 @@ export default function AdminProductionPage() {
       setFeedback({ type: 'error', text: err.message || 'No se pudo eliminar la prenda.' });
     } finally {
       setDeletingProduct(false);
+    }
+  };
+
+  const handleStartProductionWithStockDeduction = async (orderId: string) => {
+    setFeedback(null);
+    try {
+      setUpdatingOrderId(orderId);
+      const res = await fetch(`${API_BASE}/workshop/orders/${orderId}/start-production`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Falta de stock o error al iniciar confección.');
+      }
+
+      setFeedback({
+        type: 'success',
+        text: '¡Confección iniciada y stock de tela descontado en transacción atómica (ACID)!',
+      });
+
+      await loadAllAdminData(authToken);
+    } catch (err: any) {
+      setFeedback({
+        type: 'error',
+        text: err.message || 'Error al ejecutar la transacción de stock.',
+      });
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
+
+  const handleViewArtPresignedUrl = async (orderId: string, itemId: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/workshop/orders/${orderId}/items/${itemId}/art-presigned-url`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Error al solicitar URL firmada del arte.');
+      }
+
+      if (data.presignedUrl) {
+        window.open(data.presignedUrl, '_blank', 'noopener,noreferrer');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Error al obtener URL firmada.');
     }
   };
 
@@ -313,6 +361,8 @@ export default function AdminProductionPage() {
                 queue={queue}
                 updatingOrderId={updatingOrderId}
                 onAdvanceStatus={handleAdvanceStatus}
+                onStartProductionWithStockDeduction={handleStartProductionWithStockDeduction}
+                onViewArtPresignedUrl={handleViewArtPresignedUrl}
                 onExportJSON={exportSalesDatasetJSON}
               />
             )}
