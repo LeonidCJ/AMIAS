@@ -15,12 +15,12 @@ export class LoginUserUseCase {
   async execute(email: string, password: string): Promise<{ accessToken: string; refreshToken: string; user: UserEntity }> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials.');
+      throw new UnauthorizedException('Credenciales inválidas. Verifica tu correo y contraseña o regístrate en la pestaña "Crear Cuenta".');
     }
 
     const isPasswordValid = await argon2.verify(user.passwordHash, password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials.');
+      throw new UnauthorizedException('Credenciales inválidas. Verifica tu correo y contraseña.');
     }
 
     const payload = { sub: user.id, email: user.email, role: user.role };
