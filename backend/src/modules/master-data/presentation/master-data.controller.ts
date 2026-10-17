@@ -2,10 +2,12 @@ import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { CreateTextileColorDto } from '../application/dtos/create-textile-color.dto';
 import { CreateTextileCutDto } from '../application/dtos/create-textile-cut.dto';
 import { CreateTextileSizeDto } from '../application/dtos/create-textile-size.dto';
+import { ReplenishStockDto } from '../application/dtos/replenish-stock.dto';
 import { CreateTextileColorUseCase } from '../application/use-cases/create-textile-color.use-case';
 import { CreateTextileCutUseCase } from '../application/use-cases/create-textile-cut.use-case';
 import { CreateTextileSizeUseCase } from '../application/use-cases/create-textile-size.use-case';
 import { ListMasterDataUseCase } from '../application/use-cases/list-master-data.use-case';
+import { ReplenishStockUseCase } from '../application/use-cases/replenish-stock.use-case';
 import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/infrastructure/guards/roles.guard';
 import { Roles } from '../../auth/infrastructure/decorators/roles.decorator';
@@ -18,6 +20,7 @@ export class MasterDataController {
     private readonly createCutUseCase: CreateTextileCutUseCase,
     private readonly createSizeUseCase: CreateTextileSizeUseCase,
     private readonly listMasterDataUseCase: ListMasterDataUseCase,
+    private readonly replenishStockUseCase: ReplenishStockUseCase,
   ) {}
 
   @Post('colors')
@@ -75,6 +78,22 @@ export class MasterDataController {
         heightRef: size.heightRef,
         createdAt: size.createdAt,
       },
+    };
+  }
+
+  @Post('inventory/replenish')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.OPERARIO)
+  async replenishStock(@Body() dto: ReplenishStockDto) {
+    const stock = await this.replenishStockUseCase.execute(
+      dto.cutId,
+      dto.colorId,
+      dto.sizeId,
+      dto.quantity,
+    );
+    return {
+      message: 'Stock de tela reabastecido exitosamente.',
+      stock,
     };
   }
 
