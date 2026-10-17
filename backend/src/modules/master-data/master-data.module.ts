@@ -11,6 +11,7 @@ import { CreateTextileColorUseCase } from './application/use-cases/create-textil
 import { CreateTextileCutUseCase } from './application/use-cases/create-textile-cut.use-case';
 import { CreateTextileSizeUseCase } from './application/use-cases/create-textile-size.use-case';
 import { ListMasterDataUseCase } from './application/use-cases/list-master-data.use-case';
+import { ReplenishStockUseCase } from './application/use-cases/replenish-stock.use-case';
 import { MasterDataController } from './presentation/master-data.controller';
 
 @Module({
@@ -33,6 +34,7 @@ import { MasterDataController } from './presentation/master-data.controller';
     CreateTextileCutUseCase,
     CreateTextileSizeUseCase,
     ListMasterDataUseCase,
+    ReplenishStockUseCase,
   ],
 })
 export class MasterDataModule {}

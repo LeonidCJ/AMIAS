@@ -4,15 +4,20 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Scissors,
+  Download,
   RefreshCw,
-  AlertTriangle,
+  Clock,
   CheckCircle2,
+  AlertTriangle,
+  ArrowRight,
   ShieldCheck,
   Sparkles,
   LogOut,
   Calendar,
   Package,
   AlertCircle,
+  Layers,
+  Plus,
 } from 'lucide-react';
 
 import { EventsTab, ConcertEventItem } from '../../../components/admin/EventsTab';
@@ -20,6 +25,8 @@ import { CatalogTab, ProductItem } from '../../../components/admin/CatalogTab';
 import { ProductionQueueTable, QueueItem } from '../../../components/admin/ProductionQueueTable';
 import { CreateEventModal } from '../../../components/admin/modals/CreateEventModal';
 import { ConfirmDeleteModal } from '../../../components/admin/modals/ConfirmDeleteModal';
+import { ConfirmCancelOrderModal } from '../../../components/admin/modals/ConfirmCancelOrderModal';
+import { ReplenishStockModal } from '../../../components/admin/modals/ReplenishStockModal';
 
 export default function AdminProductionPage() {
   const router = useRouter();
@@ -39,10 +46,15 @@ export default function AdminProductionPage() {
 
   // Modal States
   const [showEventModal, setShowEventModal] = useState(false);
+  const [showReplenishModal, setShowReplenishModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState<ProductItem | null>(null);
   const [deletingProduct, setDeletingProduct] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<ConcertEventItem | null>(null);
   const [deletingEvent, setDeletingEvent] = useState(false);
+
+  // Order Cancel Modal State
+  const [orderToCancel, setOrderToCancel] = useState<{ orderId: string; orderNumber: string } | null>(null);
+  const [cancellingOrder, setCancellingOrder] = useState(false);
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -65,7 +77,7 @@ export default function AdminProductionPage() {
       setLoading(true);
       setError(null);
 
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
 
       const [resEvents, resProducts, resQueue] = await Promise.all([
         fetch(`${API_BASE}/concert-events`),
@@ -130,6 +142,44 @@ export default function AdminProductionPage() {
       setFeedback({ type: 'error', text: err.message || 'No se pudo eliminar la prenda.' });
     } finally {
       setDeletingProduct(false);
+    }
+  };
+
+  const handleCancelOrder = async () => {
+    if (!orderToCancel) return;
+
+    try {
+      setCancellingOrder(true);
+      setFeedback(null);
+
+      const res = await fetch(`${API_BASE}/orders/${orderToCancel.orderId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ status: 'CANCELLED' }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Error al cancelar el pedido.');
+      }
+
+      setFeedback({
+        type: 'success',
+        text: `¡Pedido ${orderToCancel.orderNumber} cancelado correctamente!`,
+      });
+
+      setOrderToCancel(null);
+      await loadAllAdminData(authToken);
+    } catch (err: any) {
+      setFeedback({
+        type: 'error',
+        text: err.message || 'No se pudo cancelar el pedido.',
+      });
+    } finally {
+      setCancellingOrder(false);
     }
   };
 
@@ -246,7 +296,7 @@ export default function AdminProductionPage() {
             <span className="text-[10px] tracking-[0.25em] text-neutral-400 uppercase font-sans mt-1 block">Textile Studio Lima</span>
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-6">
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-neutral-100 border border-neutral-200 rounded-full text-xs font-semibold text-neutral-600 uppercase">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Panel Operativo Taller</span>
@@ -303,13 +353,23 @@ export default function AdminProductionPage() {
             </button>
           </div>
 
-          <button
-            onClick={() => loadAllAdminData(authToken)}
-            className="btn-dawn-secondary px-4 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center justify-center gap-1.5 cursor-pointer self-end sm:self-auto shrink-0"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span>Actualizar Todo</span>
-          </button>
+          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+            <button
+              onClick={() => setShowReplenishModal(true)}
+              className="btn-dawn-primary px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer shadow-sm"
+            >
+              <Layers className="w-3.5 h-3.5 text-amber-300" />
+              <span>+ Reabastecer Tela</span>
+            </button>
+
+            <button
+              onClick={() => loadAllAdminData(authToken)}
+              className="btn-dawn-secondary px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Actualizar Todo</span>
+            </button>
+          </div>
         </div>
 
         {/* Global Feedback Banner */}
@@ -360,6 +420,7 @@ export default function AdminProductionPage() {
                 updatingOrderId={updatingOrderId}
                 onAdvanceStatus={handleAdvanceStatus}
                 onStartProductionWithStockDeduction={handleStartProductionWithStockDeduction}
+                onSelectCancelOrder={(ord) => setOrderToCancel(ord)}
                 onViewArtPresignedUrl={handleViewArtPresignedUrl}
                 onExportJSON={exportSalesDatasetJSON}
               />
@@ -369,6 +430,27 @@ export default function AdminProductionPage() {
       </main>
 
       {/* Modals */}
+      {orderToCancel && (
+        <ConfirmCancelOrderModal
+          orderNumber={orderToCancel.orderNumber}
+          isCancelling={cancellingOrder}
+          onConfirm={handleCancelOrder}
+          onClose={() => setOrderToCancel(null)}
+        />
+      )}
+
+      {showReplenishModal && (
+        <ReplenishStockModal
+          authToken={authToken}
+          apiBase={API_BASE}
+          onSuccess={() => {
+            setFeedback({ type: 'success', text: '¡Stock de tela lisa reabastecido exitosamente en el almacén!' });
+            loadAllAdminData(authToken);
+          }}
+          onClose={() => setShowReplenishModal(false)}
+        />
+      )}
+
       {productToDelete && (
         <ConfirmDeleteModal
           title="¿Quitar Prenda del Catálogo?"
