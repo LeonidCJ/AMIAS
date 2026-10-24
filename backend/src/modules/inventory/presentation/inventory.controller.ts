@@ -54,7 +54,7 @@ export class InventoryController {
 
   /**
    * TR-039: Registro transaccional (ACID) de ingreso de lote textil con incremento atómico.
-   * Endpoints: POST /inventory/batches y POST /inventory/stocks
+   * Endpoints equivalentes: POST /inventory/batches, POST /inventory/stocks y POST /inventory/stocks/batch
    */
   @Post('batches')
   @HttpCode(HttpStatus.CREATED)
@@ -72,7 +72,15 @@ export class InventoryController {
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.OPERARIO)
-  async registerBatchAlias(@Body() dto: CreateBatchInflowDto) {
+  async registerBatchStocksAlias(@Body() dto: CreateBatchInflowDto) {
+    return this.registerBatch(dto);
+  }
+
+  @Post('stocks/batch')
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.OPERARIO)
+  async registerBatchStocksBatchAlias(@Body() dto: CreateBatchInflowDto) {
     return this.registerBatch(dto);
   }
 
