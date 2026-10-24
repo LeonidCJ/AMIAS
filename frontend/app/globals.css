@@ -33,3 +33,59 @@ body {
   background-color: #121212;
   color: #ffffff;
 }
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #121212 !important;
+  }
+
+  body > *:not(#technical-sheet-backdrop) {
+    display: none !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #technical-sheet-backdrop,
+  #technical-sheet-backdrop * {
+    visibility: visible !important;
+  }
+
+  #technical-sheet-backdrop {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+
+  #printable-technical-sheet {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: 1.5px solid #121212 !important;
+    border-radius: 0 !important;
+    padding: 16px !important;
+    background: #ffffff !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

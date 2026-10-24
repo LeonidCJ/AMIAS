@@ -36,6 +36,7 @@ interface OrderHistoryItem {
   totalAmount: number;
   createdAt: string;
   items: {
+    id?: string;
     productName: string;
     concertEvent: string;
     cutName: string;
@@ -77,14 +78,48 @@ export default function CustomerHistoryPage() {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/customers/${phoneQuery.trim()}/pattern-history`);
+      const res = await fetch(`${API_BASE}/customers/${phoneQuery.trim()}/profile-and-pattern`);
       const responseData = await res.json();
 
       if (!res.ok) {
         throw new Error(responseData.message || 'No se encontró historial para este teléfono.');
       }
 
-      setData(responseData);
+      const allOrders = [
+        ...(responseData.activeOrder ? [responseData.activeOrder] : []),
+        ...(responseData.completedOrdersHistory || []),
+      ];
+
+      setData({
+        customerPhone: responseData.profile?.customerPhone || phoneQuery.trim(),
+        customerName: responseData.profile?.customerName || 'Cliente AMIAS',
+        totalOrdersCount: allOrders.length,
+        preferredCuts: (responseData.preferredCuts || []).map((c: any) => ({
+          cutName: c.name || c.cutName,
+          grammageGsm: c.grammageGsm,
+          count: c.count,
+        })),
+        anatomicalMeasurements: responseData.anatomicalMeasurements || [],
+        ordersHistory: allOrders.map((o: any) => ({
+          id: o.id,
+          orderNumber: o.orderNumber,
+          status: o.status,
+          totalAmount: o.totalAmount,
+          createdAt: o.createdAt,
+          items: (o.items || []).map((i: any, idx: number) => ({
+            id: i.id || `${o.id}-${idx}`,
+            productName: i.productName,
+            concertEvent: i.concertEventName || 'Gira Oficial',
+            cutName: i.cutName || 'Oversize Boxy',
+            sizeLabel: i.sizeLabel || 'L',
+            chestCm: i.chestCm || 58,
+            lengthCm: i.lengthCm || 74,
+            shoulderCm: i.shoulderCm || 21,
+            quantity: i.quantity,
+            unitPrice: i.unitPrice,
+          })),
+        })),
+      });
     } catch (err: any) {
       setError(err.message || 'Error inesperado al buscar tu historial.');
     } finally {

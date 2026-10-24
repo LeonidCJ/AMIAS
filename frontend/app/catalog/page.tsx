@@ -92,6 +92,14 @@ export default function CatalogPage() {
               Selecciona cualquier polo para abrir la vista técnica de detalle, personalizar color/talla y continuar al checkout directo.
             </p>
           </div>
+          <div>
+            <button
+              onClick={() => router.push('/custom')}
+              className="btn-dawn-secondary px-6 py-3.5 text-xs font-bold uppercase tracking-wider cursor-pointer whitespace-nowrap"
+            >
+              Configurar Tu Propio Arte →
+            </button>
+          </div>
         </section>
 
         {/* Dynamic Tour Filter Tabs (TR-020) */}

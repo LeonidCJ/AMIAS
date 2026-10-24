@@ -14,15 +14,20 @@ export class CreateOrderUseCase {
   ) {}
 
   async execute(dto: CreateOrderDto): Promise<OrderEntity> {
-    // 1. Fetch products to get base prices securely
+    // 1. Fetch products and official sizes to validate IDs and get base prices securely
     const productIds = dto.items.map((i) => i.productId);
-    const products = await this.prisma.product.findMany({
-      where: { id: { in: productIds } },
-    });
+    const [products, allSizes] = await Promise.all([
+      this.prisma.product.findMany({
+        where: { id: { in: productIds } },
+      }),
+      this.prisma.textileSize.findMany(),
+    ]);
 
     const productMap = new Map(products.map((p) => [p.id, p]));
+    const sizeByIdMap = new Map(allSizes.map((s) => [s.id, s]));
+    const sizeByLabelMap = new Map(allSizes.map((s) => [s.label.toUpperCase(), s]));
 
-    // 2. Build items with verified unit prices and calculate total PEN
+    // 2. Build items with verified unit prices, resolved sizeId, and calculate total PEN
     let totalAmount = 0;
     const itemsData = dto.items.map((item) => {
       const product = productMap.get(item.productId);
@@ -30,12 +35,22 @@ export class CreateOrderUseCase {
         throw new DomainException(`El producto con ID '${item.productId}' no existe o ya no está disponible.`);
       }
 
+      // Resolve sizeId by UUID or fallback label (e.g., 'size-l' -> 'L')
+      let resolvedSize = sizeByIdMap.get(item.sizeId);
+      if (!resolvedSize) {
+        const cleanedLabel = item.sizeId.replace(/^size-/i, '').toUpperCase();
+        resolvedSize = sizeByLabelMap.get(cleanedLabel);
+      }
+      if (!resolvedSize) {
+        throw new DomainException(`La talla seleccionada ('${item.sizeId}') no existe en el catálogo maestro.`);
+      }
+
       const unitPrice = product.basePrice;
       totalAmount += unitPrice * item.quantity;
 
       return {
         productId: item.productId,
-        sizeId: item.sizeId,
+        sizeId: resolvedSize.id,
         quantity: item.quantity,
         unitPrice,
       };

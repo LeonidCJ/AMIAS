@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
 import { ORDER_REPOSITORY } from './domain/order.repository';
@@ -11,6 +11,7 @@ import { UpdateOrderStatusUseCase } from './application/use-cases/update-order-s
 import { StartProductionUseCase } from './application/use-cases/start-production.use-case';
 import { GetArtPresignedUrlUseCase } from './application/use-cases/get-art-presigned-url.use-case';
 import { OrdersController } from './presentation/orders.controller';
+import { CuttingStateGuardMiddleware } from './infrastructure/middlewares/cutting-state-guard.middleware';
 
 @Module({
   imports: [PrismaModule, AuthModule],
@@ -27,7 +28,17 @@ import { OrdersController } from './presentation/orders.controller';
     UpdateOrderStatusUseCase,
     StartProductionUseCase,
     GetArtPresignedUrlUseCase,
+    CuttingStateGuardMiddleware,
   ],
   exports: [ORDER_REPOSITORY],
 })
-export class OrdersModule {}
+export class OrdersModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(CuttingStateGuardMiddleware)
+      .forRoutes(
+        { path: 'orders/:id/status', method: RequestMethod.PATCH },
+        { path: 'workshop/orders/:orderId/start-production', method: RequestMethod.POST },
+      );
+  }
+}

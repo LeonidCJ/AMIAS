@@ -1,5 +1,6 @@
 import './globals.css';
 import React from 'react';
+import { AuthRouteGuard } from '../components/auth/AuthRouteGuard';
 
 export const metadata = {
   title: 'AMIAS — Oficial & Custom Apparel',
@@ -22,7 +23,7 @@ export default function RootLayout({
         />
       </head>
       <body className="selection:bg-neutral-900 selection:text-white min-h-screen flex flex-col">
-        {children}
+        <AuthRouteGuard>{children}</AuthRouteGuard>
       </body>
     </html>
   );

@@ -8,6 +8,7 @@ import {
   Scissors,
   AlertTriangle,
   XCircle,
+  Printer,
 } from 'lucide-react';
 import { formatCurrencyPEN } from '../../lib/utils/format-currency';
 
@@ -29,6 +30,9 @@ export interface QueueItem {
   cutName: string;
   grammageGsm: number;
   sizeLabel: string;
+  chestCm?: number;
+  lengthCm?: number;
+  shoulderCm?: number;
   quantity: number;
   unitPrice: number;
   totalPrice: number;
@@ -42,6 +46,7 @@ export interface ProductionQueueTableProps {
   onStartProductionWithStockDeduction: (orderId: string) => void;
   onSelectCancelOrder: (order: { orderId: string; orderNumber: string }) => void;
   onViewArtPresignedUrl: (orderId: string, itemId: string) => void;
+  onOpenTechnicalSheet: (item: QueueItem) => void;
   onExportJSON: () => void;
 }
 
@@ -52,6 +57,7 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
   onStartProductionWithStockDeduction,
   onSelectCancelOrder,
   onViewArtPresignedUrl,
+  onOpenTechnicalSheet,
   onExportJSON,
 }) => {
   return (
@@ -171,6 +177,14 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
                       <span>Ver Arte</span>
                     </button>
 
+                    <button
+                      onClick={() => onOpenTechnicalSheet(item)}
+                      className="px-3 py-2 bg-white hover:bg-neutral-100 text-neutral-900 border border-neutral-300 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition flex-1 cursor-pointer"
+                    >
+                      <Printer className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Ficha Técnica</span>
+                    </button>
+
                     {item.orderStatus === 'CONFIRMED' ? (
                       <>
                         <button
@@ -196,14 +210,27 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
                         <CheckCircle2 className="w-4 h-4" /> Entregado
                       </span>
                     ) : (
-                      <button
-                        onClick={() => onAdvanceStatus(item.orderId, item.orderStatus)}
-                        disabled={updatingOrderId === item.orderId}
-                        className="btn-dawn-secondary px-3 py-2 text-xs uppercase tracking-wider font-bold inline-flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50 flex-1 cursor-pointer"
-                      >
-                        <span>Avanzar Etapa</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
+                      <>
+                        <button
+                          onClick={() => onAdvanceStatus(item.orderId, item.orderStatus)}
+                          disabled={updatingOrderId === item.orderId}
+                          className="btn-dawn-secondary px-3 py-2 text-xs uppercase tracking-wider font-bold inline-flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50 flex-1 cursor-pointer"
+                        >
+                          <span>Avanzar Etapa</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+
+                        {item.orderStatus === 'IN_CUTTING' && (
+                          <button
+                            onClick={() => onSelectCancelOrder({ orderId: item.orderId, orderNumber: item.orderNumber })}
+                            title="En Mesa de Corte (Interceptado con HTTP 400)"
+                            className="px-3 py-2 border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition cursor-pointer"
+                          >
+                            <XCircle className="w-3.5 h-3.5" />
+                            <span>Cancelar</span>
+                          </button>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
@@ -223,7 +250,7 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
                 <th className="py-3 px-3">Pedido / Cliente</th>
                 <th className="py-3 px-3">Prenda & Silueta</th>
                 <th className="py-3 px-2 text-center">Talla</th>
-                <th className="py-3 px-2 text-center">Arte DTF</th>
+                <th className="py-3 px-2 text-center">Arte & Ficha</th>
                 <th className="py-3 px-2 text-right">Total</th>
                 <th className="py-3 px-3 text-center">Estado</th>
                 <th className="py-3 px-3 text-right">Acción Operario</th>
@@ -295,15 +322,27 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
                         </span>
                       </td>
 
-                      {/* Presigned URL Button */}
+                      {/* Presigned URL Button + Technical Sheet Button */}
                       <td className="py-3 px-2 text-center align-middle whitespace-nowrap">
-                        <button
-                          onClick={() => onViewArtPresignedUrl(item.orderId, item.itemId)}
-                          className="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border border-neutral-300 rounded-lg text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 transition cursor-pointer"
-                        >
-                          <Eye className="w-3 h-3 text-blue-600" />
-                          <span>Ver Arte</span>
-                        </button>
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => onViewArtPresignedUrl(item.orderId, item.itemId)}
+                            title="Ver Arte DTF 300 DPI (URL Firmada)"
+                            className="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border border-neutral-300 rounded-lg text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 transition cursor-pointer"
+                          >
+                            <Eye className="w-3 h-3 text-blue-600" />
+                            <span>Arte</span>
+                          </button>
+
+                          <button
+                            onClick={() => onOpenTechnicalSheet(item)}
+                            title="Abrir e Imprimir Ficha Técnica de Taller"
+                            className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-neutral-900 border border-amber-300 rounded-lg text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 transition cursor-pointer"
+                          >
+                            <Printer className="w-3 h-3 text-amber-700" />
+                            <span>Ficha</span>
+                          </button>
+                        </div>
                       </td>
 
                       {/* Total PEN */}
@@ -362,14 +401,27 @@ export const ProductionQueueTable: React.FC<ProductionQueueTableProps> = ({
                               <CheckCircle2 className="w-3.5 h-3.5" /> Entregado
                             </span>
                           ) : (
-                            <button
-                              onClick={() => onAdvanceStatus(item.orderId, item.orderStatus)}
-                              disabled={updatingOrderId === item.orderId}
-                              className="btn-dawn-secondary px-2.5 py-1.5 text-[10px] uppercase tracking-wider font-bold inline-flex items-center gap-1 active:scale-95 disabled:opacity-50 cursor-pointer"
-                            >
-                              <span>Avanzar Etapa</span>
-                              <ArrowRight className="w-3 h-3" />
-                            </button>
+                            <>
+                              <button
+                                onClick={() => onAdvanceStatus(item.orderId, item.orderStatus)}
+                                disabled={updatingOrderId === item.orderId}
+                                className="btn-dawn-secondary px-2.5 py-1.5 text-[10px] uppercase tracking-wider font-bold inline-flex items-center gap-1 active:scale-95 disabled:opacity-50 cursor-pointer"
+                              >
+                                <span>Avanzar Etapa</span>
+                                <ArrowRight className="w-3 h-3" />
+                              </button>
+
+                              {item.orderStatus === 'IN_CUTTING' && (
+                                <button
+                                  onClick={() => onSelectCancelOrder({ orderId: item.orderId, orderNumber: item.orderNumber })}
+                                  title="Pedido en Mesa de Corte (Bloqueado por Middleware HTTP 400)"
+                                  className="px-2.5 py-1.5 border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 transition cursor-pointer"
+                                >
+                                  <XCircle className="w-3 h-3" />
+                                  <span className="hidden xl:inline">Cancelar</span>
+                                </button>
+                              )}
+                            </>
                           )}
                         </div>
                       </td>

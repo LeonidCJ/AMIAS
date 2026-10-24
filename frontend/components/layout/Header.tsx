@@ -2,47 +2,33 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import {
-  LogOut,
-  LogIn,
-  Scissors,
-} from 'lucide-react';
+import { LogOut, LogIn } from 'lucide-react';
+import { logout } from '../../lib/auth/session';
 
 export const Header: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
-  const [isAdminOrOperator, setIsAdminOrOperator] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     const role = localStorage.getItem('user_role');
     const savedName = localStorage.getItem('user_name');
 
-    if (token) {
+    if (token && role === 'CLIENT') {
       setIsLoggedIn(true);
-      setIsAdminOrOperator(role === 'ADMIN' || role === 'OPERARIO');
-      setUserName(role === 'ADMIN' ? 'Admin Taller' : savedName || 'Mi Cuenta');
+      setUserName(savedName || 'Mi Cuenta');
     } else {
       setIsLoggedIn(false);
-      setIsAdminOrOperator(false);
       setUserName(null);
     }
   }, [pathname]);
 
   const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user_role');
-    localStorage.removeItem('user_name');
-    localStorage.removeItem('user_email');
-    localStorage.removeItem('user_phone');
-    localStorage.removeItem('user_id');
+    logout();
     setIsLoggedIn(false);
-    setIsAdminOrOperator(false);
     setUserName(null);
-
-    // Use router.replace to purge protected history entry
     router.replace('/login');
   };
 
@@ -72,12 +58,12 @@ export const Header: React.FC = () => {
           </span>
         </button>
 
-        {/* Main Navigation Links matching login_user_normal.html prototype */}
+        {/* Main Navigation Links matching landing_page_principal_y_cat_logo_textil.html prototype */}
         <nav className="hidden md:flex items-center gap-8 text-xs uppercase tracking-[0.14em] font-semibold text-neutral-700">
           <button
             onClick={() => router.push('/catalog')}
             className={`py-1 border-b-2 transition cursor-pointer ${
-              pathname === '/catalog'
+              pathname === '/catalog' || pathname?.startsWith('/catalog/')
                 ? 'border-[#121212] text-[#121212] font-bold'
                 : 'border-transparent hover:text-neutral-950'
             }`}
@@ -85,20 +71,27 @@ export const Header: React.FC = () => {
             Catálogo
           </button>
 
-          {/* Admin / Operator Only Link */}
-          {isLoggedIn && isAdminOrOperator && (
-            <button
-              onClick={() => router.push('/admin/production')}
-              className={`py-1 border-b-2 transition flex items-center gap-1.5 cursor-pointer ${
-                pathname === '/admin/production'
-                  ? 'border-[#121212] text-[#121212] font-bold'
-                  : 'border-transparent hover:text-neutral-950'
-              }`}
-            >
-              <Scissors className="w-3.5 h-3.5 text-amber-600" />
-              <span>Taller & Producción</span>
-            </button>
-          )}
+          <button
+            onClick={() => router.push('/custom')}
+            className={`py-1 border-b-2 transition cursor-pointer ${
+              pathname === '/custom'
+                ? 'border-[#121212] text-[#121212] font-bold'
+                : 'border-transparent hover:text-neutral-950'
+            }`}
+          >
+            Personalizados
+          </button>
+
+          <button
+            onClick={() => router.push('/about')}
+            className={`py-1 border-b-2 transition cursor-pointer ${
+              pathname === '/about'
+                ? 'border-[#121212] text-[#121212] font-bold'
+                : 'border-transparent hover:text-neutral-950'
+            }`}
+          >
+            About
+          </button>
         </nav>
 
         {/* Session User Controls & Clean Minimal Icon Logout Button */}
@@ -106,7 +99,7 @@ export const Header: React.FC = () => {
           {isLoggedIn ? (
             <div className="flex items-center gap-3">
               <button
-                onClick={() => router.push(isAdminOrOperator ? '/admin/production' : '/profile')}
+                onClick={() => router.push('/profile')}
                 title="Ir a Mi Perfil & Medidas"
                 className="flex items-center gap-2 px-3.5 py-1.5 bg-neutral-100 border border-neutral-200 rounded-full hover:bg-neutral-200 transition cursor-pointer"
               >
