@@ -15,9 +15,23 @@ export class PrismaOrderRepository implements OrderRepository {
     items: { productId: string; sizeId: string; quantity: number; unitPrice: number }[];
   }): Promise<OrderEntity> {
     return this.prisma.$transaction(async (tx) => {
-      // 1. Calculate sequential padded order number e.g. #ORD-0001
-      const count = await tx.order.count();
-      const nextSequence = count + 1;
+      // 1. Calculate sequential padded order number (#ORD-0001) safely from max existing orderNumber
+      const latestOrder = await tx.order.findFirst({
+        orderBy: { orderNumber: 'desc' },
+        select: { orderNumber: true },
+      });
+
+      let nextSequence = 1;
+      if (latestOrder?.orderNumber) {
+        const numericMatch = latestOrder.orderNumber.match(/(\d+)$/);
+        if (numericMatch) {
+          nextSequence = parseInt(numericMatch[1], 10) + 1;
+        } else {
+          const count = await tx.order.count();
+          nextSequence = count + 1;
+        }
+      }
+
       const paddedNumber = String(nextSequence).padStart(4, '0');
       const orderNumber = `#ORD-${paddedNumber}`;
 

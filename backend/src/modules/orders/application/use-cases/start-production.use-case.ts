@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 import { OrderStatus } from '@prisma/client';
+import { OrderStateMachine } from '../../domain/order-state-machine';
 
 @Injectable()
 export class StartProductionUseCase {
@@ -12,7 +13,7 @@ export class StartProductionUseCase {
 
   async execute(orderId: string) {
     return this.prisma.$transaction(async (tx) => {
-      // 1. Verify order exists and is in CONFIRMED state
+      // 1. Verify order exists and validate FSM transition to IN_CUTTING (HTTP 400 on invalid state)
       const order = await tx.order.findUnique({
         where: { id: orderId },
         include: {
@@ -33,16 +34,11 @@ export class StartProductionUseCase {
         throw new NotFoundException(`La orden con ID '${orderId}' no fue encontrada.`);
       }
 
-      if (order.status !== OrderStatus.CONFIRMED && order.status !== OrderStatus.IN_CUTTING) {
-        throw new UnprocessableEntityException(
-          `La orden '${order.orderNumber}' ya fue procesada o no está en estado CONFIRMED.`,
-        );
-      }
-
-      // If already IN_CUTTING, simply return order
-      if (order.status === OrderStatus.IN_CUTTING) {
-        return order;
-      }
+      OrderStateMachine.validateTransition(
+        order.status,
+        OrderStatus.IN_CUTTING,
+        order.orderNumber,
+      );
 
       // 2. Default color for plain fabric stock (Negro Reactive Special)
       const defaultColor = await tx.textileColor.findFirst({

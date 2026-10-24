@@ -111,12 +111,15 @@ export default function ProfilePage() {
       }
 
       // Read authenticated user identifier from localStorage
+      const token = localStorage.getItem('access_token') || '';
       const savedPhone = localStorage.getItem('user_phone') || '';
       const savedEmail = localStorage.getItem('user_email') || '';
       const savedName = localStorage.getItem('user_name') || '';
       const identifier = savedPhone || savedEmail || '987654321';
 
-      const resProfile = await fetch(`${API_BASE}/customers/${identifier}/profile-and-pattern`);
+      const resProfile = await fetch(`${API_BASE}/customers/${identifier}/profile-and-pattern`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
       if (resProfile.ok) {
         const pData = await resProfile.json();
         setProfile({
@@ -147,6 +150,7 @@ export default function ProfilePage() {
   const handleSavePreferences = async (type: 'sizing' | 'personal' | 'address') => {
     setServerFeedback(null);
     try {
+      const token = localStorage.getItem('access_token') || '';
       const identifier = profile.customerPhone || profile.email || '987654321';
 
       let bodyPayload: any = {};
@@ -164,7 +168,10 @@ export default function ProfilePage() {
 
       const res = await fetch(`${API_BASE}/customers/${identifier}/preferences`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify(bodyPayload),
       });
 

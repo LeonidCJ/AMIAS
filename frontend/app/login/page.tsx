@@ -14,6 +14,7 @@ import {
   User as UserIcon,
   Phone,
 } from 'lucide-react';
+import { sanitizeNextPath } from '../../lib/auth/session';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -49,6 +50,7 @@ export default function LoginPage() {
       const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Recibe la cookie HttpOnly refreshToken usada por /auth/refresh
         body: JSON.stringify({
           email: email.trim(),
           password: password.trim(),
@@ -78,9 +80,9 @@ export default function LoginPage() {
 
       setTimeout(() => {
         if (data.user?.role === 'ADMIN' || data.user?.role === 'OPERARIO') {
-          router.push('/admin/production');
+          router.replace('/admin/production');
         } else {
-          router.push('/profile');
+          router.replace(sanitizeNextPath(new URLSearchParams(window.location.search).get('next')) || '/profile');
         }
       }, 1000);
     } catch (err: any) {
@@ -131,6 +133,7 @@ export default function LoginPage() {
       const resLogin = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Recibe la cookie HttpOnly refreshToken usada por /auth/refresh
         body: JSON.stringify({
           email: regEmail.trim(),
           password: regPassword.trim(),
@@ -155,7 +158,7 @@ export default function LoginPage() {
       });
 
       setTimeout(() => {
-        router.push('/profile');
+        router.replace(sanitizeNextPath(new URLSearchParams(window.location.search).get('next')) || '/profile');
       }, 1000);
     } catch (err: any) {
       setFeedback({

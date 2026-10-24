@@ -4,6 +4,16 @@ const nextConfig = {
   images: {
     domains: ['localhost', 'res.cloudinary.com'],
   },
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.cache = false;
+    }
+    return config;
+  },
 };
 
 module.exports = nextConfig;
+

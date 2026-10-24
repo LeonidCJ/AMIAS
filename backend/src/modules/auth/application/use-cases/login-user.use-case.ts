@@ -1,5 +1,6 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as argon2 from 'argon2';
+import * as crypto from 'crypto';
 import { USER_REPOSITORY, UserRepository } from '../../domain/user.repository';
 import { UserEntity } from '../../domain/user.entity';
 import { JwtService } from '../../infrastructure/services/jwt.service';
@@ -23,7 +24,12 @@ export class LoginUserUseCase {
       throw new UnauthorizedException('Credenciales inválidas. Verifica tu correo y contraseña.');
     }
 
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      jti: crypto.randomUUID(),
+    };
 
     const accessToken = this.jwtService.sign(payload, 'access', 15);
     const refreshToken = this.jwtService.sign(payload, 'refresh', 7 * 24 * 60);

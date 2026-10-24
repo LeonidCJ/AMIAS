@@ -27,10 +27,12 @@ import { CreateEventModal } from '../../../components/admin/modals/CreateEventMo
 import { ConfirmDeleteModal } from '../../../components/admin/modals/ConfirmDeleteModal';
 import { ConfirmCancelOrderModal } from '../../../components/admin/modals/ConfirmCancelOrderModal';
 import { ReplenishStockModal } from '../../../components/admin/modals/ReplenishStockModal';
+import { TechnicalSheetModal } from '../../../components/admin/modals/TechnicalSheetModal';
+import { logout } from '../../../lib/auth/session';
 
 export default function AdminProductionPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'events' | 'catalog' | 'production'>('events');
+  const [activeTab, setActiveTab] = useState<'events' | 'catalog' | 'production' | 'stock' | 'attributes'>('events');
 
   // Data States
   const [events, setEvents] = useState<ConcertEventItem[]>([]);
@@ -52,9 +54,10 @@ export default function AdminProductionPage() {
   const [eventToDelete, setEventToDelete] = useState<ConcertEventItem | null>(null);
   const [deletingEvent, setDeletingEvent] = useState(false);
 
-  // Order Cancel Modal State
+  // Order Cancel & Technical Sheet Modal States
   const [orderToCancel, setOrderToCancel] = useState<{ orderId: string; orderNumber: string } | null>(null);
   const [cancellingOrder, setCancellingOrder] = useState(false);
+  const [selectedTechnicalItem, setSelectedTechnicalItem] = useState<QueueItem | null>(null);
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -174,6 +177,7 @@ export default function AdminProductionPage() {
       setOrderToCancel(null);
       await loadAllAdminData(authToken);
     } catch (err: any) {
+      setOrderToCancel(null);
       setFeedback({
         type: 'error',
         text: err.message || 'No se pudo cancelar el pedido.',
@@ -241,6 +245,7 @@ export default function AdminProductionPage() {
 
     try {
       setUpdatingOrderId(orderId);
+      setFeedback(null);
       const res = await fetch(`${API_BASE}/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
@@ -255,18 +260,24 @@ export default function AdminProductionPage() {
         throw new Error(errData.message || 'Error al actualizar el estado.');
       }
 
+      setFeedback({
+        type: 'success',
+        text: `¡Estado de confección avanzado correctamente en la Máquina de Estados (FSM) a ${nextStatus}!`,
+      });
+
       await loadAllAdminData(authToken);
     } catch (err: any) {
-      alert(err.message || 'Error al cambiar estado.');
+      setFeedback({
+        type: 'error',
+        text: err.message || 'Error al cambiar estado en la FSM.',
+      });
     } finally {
       setUpdatingOrderId(null);
     }
   };
 
   const handleLogoutAdmin = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user_role');
-    localStorage.removeItem('user_name');
+    logout();
     router.replace('/login');
   };
 
@@ -291,7 +302,7 @@ export default function AdminProductionPage() {
       {/* Header Superior matching login_admin_predictivo.html */}
       <header className="border-b border-[#e8e8e8] bg-white sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
-          <button onClick={() => router.push('/catalog')} className="text-left cursor-pointer">
+          <button onClick={() => router.push('/admin/production')} className="text-left cursor-pointer">
             <span className="text-2xl font-extrabold tracking-[-0.04em] uppercase block leading-none">AMIAS</span>
             <span className="text-[10px] tracking-[0.25em] text-neutral-400 uppercase font-sans mt-1 block">Textile Studio Lima</span>
           </button>
@@ -316,12 +327,12 @@ export default function AdminProductionPage() {
 
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-8 flex-1 w-full">
-        {/* Responsive 3-Module Tab Switcher & Refresh Button */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e8e8e8] pb-4">
-          <div className="flex items-center gap-2 overflow-x-auto text-xs uppercase tracking-wider font-semibold p-1 bg-neutral-100 rounded-2xl border border-[#e8e8e8] w-full sm:w-auto">
+        {/* Responsive 5-Module Tab Switcher matching login_admin_predictivo.html & Refresh Button */}
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 border-b border-[#e8e8e8] pb-4">
+          <div className="flex items-center gap-1.5 overflow-x-auto text-xs uppercase tracking-wider font-semibold p-1 bg-neutral-100 rounded-2xl border border-[#e8e8e8] w-full xl:w-auto">
             <button
               onClick={() => { setActiveTab('events'); setFeedback(null); }}
-              className={`px-4 sm:px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+              className={`px-4 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
                 activeTab === 'events' ? 'bg-[#121212] text-white shadow-sm font-bold' : 'text-neutral-600 hover:text-neutral-950'
               }`}
             >
@@ -332,7 +343,7 @@ export default function AdminProductionPage() {
 
             <button
               onClick={() => { setActiveTab('catalog'); setFeedback(null); }}
-              className={`px-4 sm:px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+              className={`px-4 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
                 activeTab === 'catalog' ? 'bg-[#121212] text-white shadow-sm font-bold' : 'text-neutral-600 hover:text-neutral-950'
               }`}
             >
@@ -343,7 +354,7 @@ export default function AdminProductionPage() {
 
             <button
               onClick={() => { setActiveTab('production'); setFeedback(null); }}
-              className={`px-4 sm:px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+              className={`px-4 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
                 activeTab === 'production' ? 'bg-[#121212] text-white shadow-sm font-bold' : 'text-neutral-600 hover:text-neutral-950'
               }`}
             >
@@ -351,9 +362,28 @@ export default function AdminProductionPage() {
               <span>3. Producción & Ventas</span>
               <span className="px-2 py-0.5 bg-white text-black text-[10px] font-mono font-bold rounded-full">{queue.length}</span>
             </button>
+
+            <button
+              onClick={() => { setActiveTab('stock'); setFeedback(null); }}
+              className={`px-4 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+                activeTab === 'stock' ? 'bg-[#121212] text-white shadow-sm font-bold' : 'text-neutral-600 hover:text-neutral-950'
+              }`}
+            >
+              <span>4. Almacén & Predicción</span>
+              <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-bold rounded-full uppercase">Predicción N1</span>
+            </button>
+
+            <button
+              onClick={() => { setActiveTab('attributes'); setFeedback(null); }}
+              className={`px-4 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+                activeTab === 'attributes' ? 'bg-[#121212] text-white shadow-sm font-bold' : 'text-neutral-600 hover:text-neutral-950'
+              }`}
+            >
+              <span>5. Parámetros Textiles</span>
+            </button>
           </div>
 
-          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+          <div className="flex items-center gap-2 self-end xl:self-auto shrink-0">
             <button
               onClick={() => setShowReplenishModal(true)}
               className="btn-dawn-primary px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer shadow-sm"
@@ -422,14 +452,200 @@ export default function AdminProductionPage() {
                 onStartProductionWithStockDeduction={handleStartProductionWithStockDeduction}
                 onSelectCancelOrder={(ord) => setOrderToCancel(ord)}
                 onViewArtPresignedUrl={handleViewArtPresignedUrl}
+                onOpenTechnicalSheet={(item) => setSelectedTechnicalItem(item)}
                 onExportJSON={exportSalesDatasetJSON}
               />
+            )}
+
+            {/* MÓDULO 4: ALMACÉN TEXTIL & PREDICCIÓN DE DEMANDA (Estructura / Apartados para Semanas 10, 11 y 12) */}
+            {activeTab === 'stock' && (
+              <section className="space-y-10">
+                {/* Bloque de Predicción de Demanda e Insumos por Concierto (Semanas 11 y 12) */}
+                <div className="border-2 border-[#121212] rounded-3xl p-6 sm:p-8 bg-[#fbfbfb] space-y-6">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 bg-[#121212] text-white text-[10px] font-bold uppercase tracking-widest rounded-full">
+                          Modelo Heurístico • Prevención de Quiebre de Tela
+                        </span>
+                      </div>
+                      <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-tight mt-2">
+                        Previsión de Demanda para Conciertos
+                      </h2>
+                      <p className="text-xs text-neutral-500 mt-1">
+                        Calcula automáticamente cuántos polos base (Algodón 24/1) necesitará el taller según el aforo del evento y el stock actual disponible.
+                      </p>
+                    </div>
+                    <div className="w-full md:w-72">
+                      <label className="text-[10px] uppercase tracking-wider font-bold text-neutral-500 block mb-1.5">
+                        Seleccionar Concierto a Proyectar
+                      </label>
+                      <select
+                        disabled
+                        className="w-full px-3.5 py-2.5 border border-neutral-300 rounded-xl text-xs font-bold bg-neutral-100 text-neutral-400 cursor-not-allowed"
+                      >
+                        <option>Pendiente de activación (Semana 11)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Tarjetas de Métricas Predictivas (Sin contenido funcional aún) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="bg-white border border-[#e8e8e8] p-5 rounded-2xl">
+                      <span className="text-[10px] uppercase tracking-widest text-neutral-400 font-bold block">
+                        Aforo del Recinto
+                      </span>
+                      <p className="text-2xl font-bold font-mono mt-1 text-neutral-300">—</p>
+                      <span className="text-[11px] text-neutral-400 mt-1 block">
+                        Capacidad oficial estimada
+                      </span>
+                    </div>
+                    <div className="bg-white border border-[#e8e8e8] p-5 rounded-2xl">
+                      <span className="text-[10px] uppercase tracking-widest text-neutral-400 font-bold block">
+                        Demanda Proyectada (Tasa 0.4%)
+                      </span>
+                      <p className="text-2xl font-bold font-mono mt-1 text-neutral-300">—</p>
+                      <span className="text-[11px] text-neutral-400 mt-1 block">
+                        Prendas estimadas para este show
+                      </span>
+                    </div>
+                    <div className="bg-white border border-[#e8e8e8] p-5 rounded-2xl">
+                      <span className="text-[10px] uppercase tracking-widest text-neutral-400 font-bold block">
+                        Déficit Crítico de Tela
+                      </span>
+                      <p className="text-2xl font-bold font-mono mt-1 text-neutral-300">—</p>
+                      <span className="text-[11px] text-neutral-400 mt-1 block">
+                        Polos lisos por comprar/confeccionar
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Desglose por Talla y Recomendación de Abastecimiento (Estructura vacía) */}
+                  <div className="bg-white border border-[#e8e8e8] rounded-2xl p-5 space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-700">
+                        Desglose Sugerido por Tallas (Patronaje Boxy 24/1)
+                      </h3>
+                      <button
+                        type="button"
+                        disabled
+                        className="text-[11px] font-bold uppercase tracking-wider px-3.5 py-2 bg-neutral-200 text-neutral-400 rounded-xl cursor-not-allowed"
+                      >
+                        Auto-Rellenar en &quot;Ingresar Lote&quot; →
+                      </button>
+                    </div>
+                    <div className="border border-dashed border-neutral-300 rounded-xl p-8 text-center">
+                      <p className="text-xs font-bold uppercase tracking-widest text-neutral-400">
+                        Apartado reservado para Semanas 11 y 12 (Algoritmo Predictivo y Auto-Relleno)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bloque de Inventario Textil Liso (Semana 10) */}
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <span className="text-xs uppercase tracking-[0.2em] text-neutral-400 font-semibold block">
+                        INVENTARIO TEXTIL LISO
+                      </span>
+                      <h2 className="text-2xl font-bold uppercase tracking-tight mt-1">
+                        Polos sin Estampar Disponibles
+                      </h2>
+                    </div>
+                    <button
+                      type="button"
+                      disabled
+                      className="px-5 py-3 text-xs font-bold uppercase tracking-wider bg-neutral-200 text-neutral-400 rounded-xl cursor-not-allowed"
+                    >
+                      + Ingresar Lote de Telas
+                    </button>
+                  </div>
+
+                  <div className="border border-dashed border-neutral-300 rounded-2xl p-12 text-center bg-[#fbfbfb]">
+                    <p className="text-xs font-bold uppercase tracking-widest text-neutral-400">
+                      Apartado reservado para Semana 10 (Monitor de Inventario por SKU con Alerta &lt;10 unid. e Ingreso Transaccional)
+                    </p>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* MÓDULO 5: PARÁMETROS TEXTILES MAESTROS (Estructura / Apartados del Prototipo) */}
+            {activeTab === 'attributes' && (
+              <section className="space-y-10">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* 1. COLORES DE TELA */}
+                  <div className="border border-[#e8e8e8] rounded-2xl p-6 bg-white space-y-5 flex flex-col justify-between">
+                    <div className="space-y-4">
+                      <div>
+                        <span className="text-[10px] uppercase tracking-widest text-neutral-400 font-bold">
+                          PALETA TEXTIL MAESTRA
+                        </span>
+                        <h3 className="text-base font-bold uppercase tracking-wider mt-0.5">
+                          Colores de Algodón Reactivo
+                        </h3>
+                      </div>
+                      <div className="border border-dashed border-neutral-300 rounded-xl p-8 text-center bg-[#fbfbfb]">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-neutral-400">
+                          Apartado de Paleta Textil (Sin contenido)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2. TIPOS DE CORTE / SILUETAS */}
+                  <div className="border border-[#e8e8e8] rounded-2xl p-6 bg-white space-y-5 flex flex-col justify-between">
+                    <div className="space-y-4">
+                      <div>
+                        <span className="text-[10px] uppercase tracking-widest text-neutral-400 font-bold">
+                          PATRONAJE &amp; DENSIDAD
+                        </span>
+                        <h3 className="text-base font-bold uppercase tracking-wider mt-0.5">
+                          Tipos de Silueta / Cortes
+                        </h3>
+                      </div>
+                      <div className="border border-dashed border-neutral-300 rounded-xl p-8 text-center bg-[#fbfbfb]">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-neutral-400">
+                          Apartado de Cortes y Gramajes (Sin contenido)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 3. TALLAS Y MEDIDAS */}
+                  <div className="border border-[#e8e8e8] rounded-2xl p-6 bg-white space-y-5 flex flex-col justify-between">
+                    <div className="space-y-4">
+                      <div>
+                        <span className="text-[10px] uppercase tracking-widest text-neutral-400 font-bold">
+                          TABLA OFICIAL DE MEDIDAS
+                        </span>
+                        <h3 className="text-base font-bold uppercase tracking-wider mt-0.5">
+                          Tallas &amp; Centímetros Exactos
+                        </h3>
+                      </div>
+                      <div className="border border-dashed border-neutral-300 rounded-xl p-8 text-center bg-[#fbfbfb]">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-neutral-400">
+                          Apartado de Tallas y Medidas (Sin contenido)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
             )}
           </>
         )}
       </main>
 
       {/* Modals */}
+      {selectedTechnicalItem && (
+        <TechnicalSheetModal
+          item={selectedTechnicalItem}
+          onClose={() => setSelectedTechnicalItem(null)}
+        />
+      )}
+
       {orderToCancel && (
         <ConfirmCancelOrderModal
           orderNumber={orderToCancel.orderNumber}

@@ -55,9 +55,9 @@ export class GetCustomerProfileAndPatternUseCase {
       throw new NotFoundException(`No se encontró perfil ni historial registrado para '${cleanId}'.`);
     }
 
-    // Active order (first non-completed order or latest order)
-    const activeOrder = orders.find((o) => o.status !== 'COMPLETED' && o.status !== 'CANCELLED') || orders[0] || null;
-    const completedOrders = orders.filter((o) => o.status === 'COMPLETED');
+    // Active order is only an uncompleted/non-cancelled order
+    const activeOrder = orders.find((o) => o.status !== 'COMPLETED' && o.status !== 'CANCELLED') || null;
+    const completedOrders = orders.filter((o) => o.status === 'COMPLETED' || o.status === 'READY');
 
     // Anatomical measurements summary
     const sizeHistoryMap = new Map<string, { id: string; label: string; chestCm: number; lengthCm: number; shoulderCm: number; count: number }>();

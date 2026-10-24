@@ -59,6 +59,7 @@ export class OrdersController {
 
   // TR-027: Update Customer Preferred Cut / Size / Address
   @Patch('customers/:identifier/preferences')
+  @UseGuards(JwtAuthGuard)
   async updateCustomerPreferences(
     @Param('identifier') identifier: string,
     @Body() dto: UpdateCustomerPreferencesDto,

@@ -46,6 +46,12 @@ function CheckoutContent() {
   // UI States
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [pendingCreatedOrder, setPendingCreatedOrder] = useState<{
+    id: string;
+    orderNumber: string;
+    customerName: string;
+    totalAmount: number;
+  } | null>(null);
   const [successOrder, setSuccessOrder] = useState<{ orderNumber: string; waLink: string } | null>(null);
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
@@ -142,32 +148,37 @@ function CheckoutContent() {
     try {
       setIsSubmitting(true);
 
-      // Step 1: Create Order via POST /orders/checkout
-      const resOrder = await fetch(`${API_BASE}/orders/checkout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customerName: customerName.trim(),
-          customerPhone: customerPhone.trim(),
-          items: cartItems.map((i) => ({
-            productId: i.productId,
-            sizeId: i.sizeId,
-            quantity: i.quantity,
-          })),
-        }),
-      });
+      // Step 1: Create Order via POST /orders/checkout (or reuse pendingCreatedOrder if retrying voucher upload)
+      let createdOrder = pendingCreatedOrder;
 
-      const orderData = await resOrder.json();
-      if (!resOrder.ok) {
-        throw new Error(orderData.message || 'Error al crear la orden.');
+      if (!createdOrder) {
+        const resOrder = await fetch(`${API_BASE}/orders/checkout`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customerName: customerName.trim(),
+            customerPhone: customerPhone.trim(),
+            items: cartItems.map((i) => ({
+              productId: i.productId,
+              sizeId: i.sizeId,
+              quantity: i.quantity,
+            })),
+          }),
+        });
+
+        const orderData = await resOrder.json();
+        if (!resOrder.ok) {
+          throw new Error(orderData.message || 'Error al crear la orden.');
+        }
+
+        createdOrder = orderData.order;
+        setPendingCreatedOrder(createdOrder);
       }
-
-      const createdOrder = orderData.order;
 
       // Step 2: Upload Receipt via POST /payments/upload-receipt (TR-024, TR-025)
       const formData = new FormData();
       formData.append('file', voucherFile);
-      formData.append('orderId', createdOrder.id);
+      formData.append('orderId', createdOrder!.id);
       formData.append('operationCode', operationCode.trim());
 
       const resPayment = await fetch(`${API_BASE}/payments/upload-receipt`, {
@@ -188,15 +199,16 @@ function CheckoutContent() {
 
       // Step 3: TR-023 Generate WhatsApp Direct Link
       const waLink = generateWhatsAppOrderLink({
-        orderNumber: createdOrder.orderNumber,
-        customerName: createdOrder.customerName,
-        totalAmount: createdOrder.totalAmount,
+        orderNumber: createdOrder!.orderNumber,
+        customerName: createdOrder!.customerName,
+        totalAmount: createdOrder!.totalAmount,
         operationCode: operationCode.trim(),
         items: cartItems,
       });
 
+      setPendingCreatedOrder(null);
       setSuccessOrder({
-        orderNumber: createdOrder.orderNumber,
+        orderNumber: createdOrder!.orderNumber,
         waLink,
       });
 

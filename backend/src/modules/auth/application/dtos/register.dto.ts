@@ -18,8 +18,4 @@ export class RegisterDto {
   @IsString({ message: 'El teléfono debe ser una cadena de texto.' })
   @IsOptional()
   customerPhone?: string;
-
-  @IsEnum(UserRole, { message: 'El rol debe ser ADMIN u OPERARIO.' })
-  @IsOptional()
-  role?: UserRole;
 }

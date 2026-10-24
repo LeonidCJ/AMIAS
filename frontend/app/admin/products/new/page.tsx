@@ -19,6 +19,7 @@ import {
   ArrowLeft,
   LogOut,
 } from 'lucide-react';
+import { logout } from '../../../../lib/auth/session';
 
 interface ConcertEvent {
   id: string;
@@ -89,6 +90,11 @@ export default function NewProductAdminPage() {
 
   useEffect(() => {
     const savedToken = localStorage.getItem('access_token') || '';
+    const savedRole = localStorage.getItem('user_role') || '';
+    if (!savedToken || (savedRole !== 'ADMIN' && savedRole !== 'OPERARIO')) {
+      router.replace('/login');
+      return;
+    }
     setAuthToken(savedToken);
 
     async function loadMasterAndEvents() {
@@ -130,10 +136,8 @@ export default function NewProductAdminPage() {
   };
 
   const handleLogoutAdmin = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user_role');
-    localStorage.removeItem('user_name');
-    router.push('/login');
+    logout();
+    router.replace('/login');
   };
 
   const onSubmit = async (data: ProductFormData) => {
@@ -182,7 +186,7 @@ export default function NewProductAdminPage() {
       {/* Top Admin Header */}
       <header className="border-b border-[#e8e8e8] bg-white sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
-          <button onClick={() => router.push('/catalog')} className="text-left cursor-pointer">
+          <button onClick={() => router.push('/admin/production')} className="text-left cursor-pointer">
             <span className="text-2xl font-extrabold tracking-[-0.04em] uppercase block leading-none">AMIAS</span>
             <span className="text-[10px] tracking-[0.25em] text-neutral-400 uppercase font-sans mt-1 block">Textile Studio Lima</span>
           </button>
